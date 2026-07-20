@@ -1,115 +1,417 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+  <base target="_top">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ระบบเติมเงินเครดิต</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
   <style>
     :root {
-      --bg-color: #F8F9FA;        
-      --card-bg: #FFFFFF;         
-      --border-color: #EAEAEA;    
-      --text-main: #2D2926;       
-      --text-muted: #7A7A7A;      
-      --primary: #C5A059;         
-      --primary-hover: #AA843D;   
+      --bg-color: #F8F9FA;        /* Off-White Bright Background */
+      --card-bg: #FFFFFF;         /* Pure White Card */
+      --border-color: #EAEAEA;    /* Soft Light Gray Border */
+      --text-main: #2D2926;       /* Deep Charcoal Text */
+      --text-muted: #7A7A7A;      /* Muted Neutral Gray */
+      --primary: #C5A059;         /* Soft Champagne Gold */
+      --primary-hover: #AA843D;   /* Deeper Elegant Gold */
       --success: #10B981;
+      --success-bg: #E6F4EA;
+      --success-border: #A3E635;
       --danger: #EF4444;
+      --danger-hover: #DC2626;
+      --danger-bg: #FEE2E2;
+      --danger-border: #FCA5A5;
     }
 
     body {
-      font-family: 'Prompt', sans-serif; background-color: var(--bg-color); color: var(--text-main);
-      padding: 20px 15px; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box;
+      font-family: 'Prompt', 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 20px 15px;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
     }
 
+    /* --- การ์ดหลัก --- */
     .topup-card {
-      background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px 30px;
-      border-radius: 16px; width: 100%; max-width: 440px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); box-sizing: border-box;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 40px 30px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+      box-sizing: border-box;
+      transition: all 0.3s ease;
     }
-    .card-header { text-align: center; margin-bottom: 28px; }
+    
+    .card-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    
     .wallet-icon-box {
-      width: 64px; height: 64px; background: rgba(197, 160, 89, 0.1); color: var(--primary-hover);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto; font-size: 26px;
+      width: 64px;
+      height: 64px;
+      background: rgba(197, 160, 89, 0.1);
+      color: var(--primary-hover);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px auto;
+      font-size: 26px;
+      box-shadow: 0 4px 15px rgba(197, 160, 89, 0.15);
     }
-    .card-header h2 { font-size: 24px; font-weight: 600; margin: 0; }
-    .card-header p { font-size: 14px; color: var(--text-muted); margin: 6px 0 0 0; }
 
-    .form-group { margin-bottom: 20px; width: 100%; box-sizing: border-box; }
-    .form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; }
-    .input-wrapper { position: relative; display: flex; align-items: center; }
-    .input-icon { position: absolute; left: 14px; color: #A1A1A1; font-size: 15px; }
+    .card-header h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-main);
+    }
+
+    .card-header p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 6px 0 0 0;
+    }
+
+    /* --- ฟอร์มอินพุต --- */
+    .form-group {
+      margin-bottom: 20px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      color: #A1A1A1;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .form-input {
-      width: 100%; padding: 12px 14px 12px 40px; background-color: #FAFAFA; border: 1px solid #D1D1D1;
-      color: var(--text-main); border-radius: 10px; font-family: 'Prompt'; font-size: 15px; outline: none; box-sizing: border-box;
+      width: 100%;
+      padding: 12px 14px 12px 40px;
+      background-color: #FAFAFA;
+      border: 1px solid #D1D1D1;
+      color: var(--text-main);
+      border-radius: 10px;
+      font-family: 'Prompt';
+      font-size: 15px;
+      box-sizing: border-box;
+      outline: none;
+      transition: 0.2s ease;
     }
-    .form-input.amount-input { padding-left: 32px; font-weight: 600; font-size: 18px; color: var(--primary-hover); }
+    
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 5px rgba(197, 160, 89, 0.2);
+      background-color: #FFFFFF;
+    }
 
-    .remember-me-box { display: flex; align-items: center; margin-top: 8px; }
-    .remember-me-box input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
-    .remember-me-box label { margin: 0 0 0 8px !important; font-size: 13px !important; color: var(--text-muted); cursor: pointer; }
+    .form-input.amount-input {
+      padding-left: 32px;
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--primary-hover);
+    }
 
-    .amount-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 24px; }
+    /* --- สไตล์กล่องจดจำอุปกรณ์ --- */
+    .remember-me-box {
+      display: flex;
+      align-items: center;
+      margin-top: 8px;
+      padding-left: 2px;
+    }
+    
+    .remember-me-box input[type="checkbox"] {
+      margin: 0;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    
+    .remember-me-box label {
+      margin: 0 0 0 8px !important;
+      font-size: 13px !important;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      font-weight: 400 !important;
+    }
+    
+    .remember-me-box label:hover {
+      color: var(--text-main);
+    }
+
+    /* --- ปุ่มเลือกจำนวนเงินด่วน --- */
+    .amount-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
     .btn-amount-choice {
-      padding: 10px 0; background: #FAFAFA; border: 1px solid #E2E8F0; color: var(--text-main);
-      border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Prompt';
+      font-family: 'Prompt', sans-serif;
+      padding: 10px 0;
+      background: #FAFAFA;
+      border: 1px solid #E2E8F0;
+      color: var(--text-main);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
-    .btn-amount-choice:hover { background: rgba(197, 160, 89, 0.08); border-color: var(--primary); color: var(--primary-hover); }
 
-    .btn { font-family: 'Prompt'; width: 100%; padding: 13px; border-radius: 10px; font-weight: 500; font-size: 15px; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn-primary { background-color: var(--primary); color: #FFFFFF; }
-    .btn-primary:hover { background-color: var(--primary-hover); }
-    .btn-secondary { background-color: #F1F3F5; color: var(--text-muted); margin-top: 12px; }
-    .btn-success { background-color: var(--success); color: #FFFFFF; }
+    .btn-amount-choice:hover {
+      background: rgba(197, 160, 89, 0.08);
+      border-color: var(--primary);
+      color: var(--primary-hover);
+    }
+    
+    .btn-amount-choice:active {
+      transform: scale(0.96);
+    }
 
-    .alert-message { padding: 12px; border-radius: 10px; text-align: center; font-size: 14px; font-weight: 500; margin-top: 16px; }
-    .alert-success { background-color: #E6F4EA; color: #065F46; }
-    .alert-error { background-color: #FEE2E2; color: #991B1B; }
+    /* --- ปุ่มหลักต่างๆ --- */
+    .btn {
+      font-family: 'Prompt', sans-serif;
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(197, 160, 89, 0.15);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--primary-hover);
+      box-shadow: 0 4px 16px rgba(197, 160, 89, 0.25);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background-color: #F1F3F5;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #E9ECEF;
+      color: var(--text-main);
+    }
+
+    .btn-secondary:active {
+      transform: scale(0.98);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: #FFFFFF;
+    }
+    .btn-success:hover:not(:disabled) {
+      background-color: #059669;
+    }
+
+    .btn:disabled, .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* --- ส่วนข้อความแจ้งเตือน --- */
+    .alert-message {
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 16px;
+      box-sizing: border-box;
+      border: 1px solid transparent;
+    }
+    .alert-success { background-color: var(--success-bg); color: #065F46; border-color: rgba(16, 185, 129, 0.2); }
+    .alert-error { background-color: var(--danger-bg); color: #991B1B; border-color: rgba(239, 68, 68, 0.2); }
     .hidden { display: none !important; }
 
-    .spinner { width: 18px; height: 18px; border: 2px solid #FFFFFF; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+    /* --- ออนิเมชั่นสปินเนอร์หลอดโหลด --- */
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #FFFFFF;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .modal-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(0, 0, 0, 0.4); display: flex; justify-content: center; align-items: center; padding: 15px; }
-    .modal-box { background: var(--card-bg); border-radius: 20px; width: 100%; max-width: 380px; padding: 24px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); position: relative; text-align: center; }
-    .modal-close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); }
-    .qr-container { background: #FFFFFF; padding: 12px; border-radius: 16px; display: inline-block; border: 1px solid var(--border-color); margin: 4px 0; }
-    .qr-image { width: 190px; height: 190px; display: block; }
-    .file-upload-box { text-align: left; border-top: 1px solid var(--border-color); padding-top: 16px; margin-bottom: 16px; }
-    .file-input-styled { width: 100%; font-size: 12px; border: 1px solid #D1D1D1; border-radius: 10px; padding: 6px; background: #FFFFFF; }
+    /* --- หน้าต่างป๊อปอัพ Modal คิวอาร์ --- */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0, 0, 0, 0.4); backdrop-blur: 4px;
+      display: flex; justify-content: center; align-items: center;
+      padding: 15px; box-sizing: border-box;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+      position: relative;
+      text-align: center;
+      box-sizing: border-box;
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .modal-overlay.show .modal-box { transform: scale(1); }
+
+    .modal-close-btn {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; font-size: 22px;
+      cursor: pointer; color: var(--text-muted);
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: 0.2s;
+    }
+    .modal-close-btn:hover { background: #F1F3F5; color: var(--text-main); }
+
+    .qr-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin: 8px 0 12px 0; }
+    .qr-container {
+      background: #FFFFFF; padding: 12px; border-radius: 16px;
+      display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-color); margin: 4px 0;
+    }
+    .qr-image { width: 190px; height: 190px; mx-auto; display: block; object-fit: contain;}
+    .account-holder { font-size: 13px; color: var(--text-muted); font-weight: 500; margin: 6px 0 16px 0; }
+
+    /* --- ปรับแต่ง Input ไฟล์ให้สวยงามแนวพรีเมียม --- */
+    .file-upload-box {
+      text-align: left;
+      border-top: 1px solid var(--border-color);
+      padding-top: 16px;
+      margin-bottom: 16px;
+    }
+    .file-upload-box label { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+    .file-input-styled {
+      width: 100%; font-size: 12px; color: var(--text-muted);
+      border: 1px solid #D1D1D1; border-radius: 10px; padding: 6px;
+      background: #FFFFFF; outline: none; cursor: pointer; box-sizing: border-box;
+    }
+    .file-input-styled::file-selector-button {
+      font-family: 'Prompt'; background: rgba(197, 160, 89, 0.1);
+      color: var(--primary-hover); border: 0; padding: 6px 14px;
+      border-radius: 8px; font-size: 12px; font-weight: 500;
+      margin-right: 10px; cursor: pointer; transition: 0.2s;
+    }
+    .file-input-styled::file-selector-button:hover { background: var(--primary); color: #FFFFFF; }
+
+    /* ==========================================================
+       RESPONSIVE BREAKPOINTS 
+       ========================================================== */
+    @media(max-width: 480px) {
+      body { padding: 10px; }
+      .topup-card { padding: 30px 20px; border-radius: 14px; }
+      .amount-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .card-header h2 { font-size: 21px; }
+      .form-input { font-size: 14px; }
+    }
+    
+    @media(max-width: 360px) {
+      .amount-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
   <div class="topup-card">
     <div class="card-header">
-      <div class="wallet-icon-box"><i class="fa-solid fa-wallet"></i></div>
+      <div class="wallet-icon-box">
+        <i class="fa-solid fa-wallet"></i>
+      </div>
       <h2>ระบบเติมเงินอัตโนมัติ</h2>
-      <p>เพิ่มเครดิตเข้าสู่บัญชี Mailly OTP</p>
+      <p>เพิ่มเครดิตเข้าสู่บัญชี Mailly OTP ของคุณ</p>
     </div>
 
     <div class="form-group">
-      <label>ชื่อผู้ใช้งาน (Username)</label>
+      <label for="username">ชื่อผู้ใช้งาน (Username)</label>
       <div class="input-wrapper">
         <span class="input-icon"><i class="fa-solid fa-user"></i></span>
-        <input type="text" id="username" placeholder="ระบุ Username" class="form-input">
+        <input type="text" id="username" oninput="handleInputChange()" placeholder="ระบุ Username เดียวกับในระบบเดิม" class="form-input">
       </div>
+
       <div class="remember-me-box">
         <input type="checkbox" id="rememberMe">
-        <label for="rememberMe">จดจำอุปกรณ์นี้ไว้</label>
+        <label for="rememberMe">จดจำอุปกรณ์นี้ไว้ (ไม่ต้องกรอก Username ซ้ำ)</label>
       </div>
     </div>
 
     <div class="form-group">
-      <label>จำนวนเงิน (ขั้นต่ำ 50 บาท)</label>
+      <label for="amount">จำนวนเงินที่ต้องการเติม (ขั้นต่ำ 50 บาท)</label>
       <div class="input-wrapper">
         <span class="input-icon" style="font-weight: bold; color: var(--primary-hover);">฿</span>
-        <input type="number" id="amount" placeholder="50.00" min="50" class="form-input amount-input">
+        <input type="number" id="amount" oninput="handleInputChange()" placeholder="50.00" min="50" class="form-input amount-input">
       </div>
     </div>
 
@@ -128,25 +430,34 @@
     <div id="resultMessage" class="alert-message hidden"></div>
 
     <button type="button" onclick="backToMain()" class="btn btn-secondary">
-      <i class="fa-solid fa-arrow-left"></i> ย้อนกลับไปหน้าหลัก
+      <i class="fa-solid fa-arrow-left" style="font-size: 13px;"></i>
+      <span>ย้อนกลับไปหน้าหลัก</span>
     </button>
   </div>
 
+
   <div id="qrModal" class="modal-overlay hidden">
-    <div class="modal-box">
-      <button onclick="closeModal()" class="modal-close-btn">&times;</button>
+    <div class="absolute-blur" style="position: absolute; inset: 0;" onclick="closeModal()"></div>
+    
+    <div id="modalContent" class="modal-box">
+      <button onclick="closeModal()" class="modal-close-btn">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
       <div>
-        <p style="font-weight: 600; margin-bottom: 10px;">สแกนจ่ายผ่านแอปธนาคาร</p>
-        <div class="qr-container"><img id="qrImage" src="" class="qr-image"></div>
-        <p style="font-size: 13px; color: var(--text-muted); margin: 6px 0 16px 0;">ชื่อผู้รับ: ชนกานต์ ปีนะถา</p>
+        <p class="qr-title"><i class="fa-solid fa-qrcode" style="color: var(--primary); margin-right: 4px;"></i> สแกนจ่ายผ่านแอปธนาคาร</p>
+        <div class="qr-container">
+          <img id="qrImage" src="" alt="PromptPay QR Code" class="qr-image">
+        </div>
+        <p class="account-holder">ชื่อบัญชีผู้รับ: ชนกานต์ ปีนะถา</p>
       </div>
       
       <div class="file-upload-box">
-        <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px;">อัปโหลดรูปภาพสลิป:</label>
-        <input type="file" id="slipFile" accept="image/*" class="file-input-styled">
+        <label for="slipFile"><i class="fa-solid fa-image" style="color: var(--success); margin-right: 4px;"></i> อัปโหลดรูปภาพสลิปโอนเงิน:</label>
+        <input type="file" id="slipFile" onchange="document.getElementById('modalResultMessage').classList.add('hidden')" accept="image/*" class="file-input-styled">
       </div>
 
-      <div id="modalResultMessage" class="alert-message alert-error hidden" style="margin-bottom: 14px; padding: 10px;"></div>
+      <div id="modalResultMessage" class="alert-message alert-error hidden" style="margin-top: 0; margin-bottom: 14px; padding: 10px; font-size: 13px;"></div>
 
       <button id="btnSubmit" onclick="submitTopup()" class="btn btn-success">
         <span id="btnText">อัปโหลด & ยืนยันสลิป</span>
@@ -156,9 +467,13 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxRNWvNC9bo7x8v3iIPOtKazYLr-hom5zhdr4E0deu4wum9K7zGjULYaRw7vNSAAKB7hg/exec";
+    // ⬇️ ตรงนี้อย่าลืมเอา URL จาก Google Apps Script ของคุณมาวางทับนะครับ
+    const API_URL = "https://script.google.com/macros/s/AKfycbxcIKWi6j8zM9yMoZn5s8MlVUWh-XT-UscoN0niabrTcLKEkO1tWm07RUPddSPaPIML-g/exec";
+    
+    // ตัวแปรพร้อมเพย์หลักของระบบ
     const PROMPTPAY_ID = "0633390911"; 
 
+    // --- เช็คระบบความจำตอนโหลดหน้าเว็บเข้าครั้งแรก (Auto-Fill Trigger) ---
     window.addEventListener('DOMContentLoaded', () => {
       const savedUser = localStorage.getItem('mailly_otp_username');
       if (savedUser) {
@@ -167,25 +482,78 @@
       }
     });
 
-    function setAmount(v) { document.getElementById('amount').value = v; }
-    function openModal() { document.getElementById('qrModal').classList.remove('hidden'); }
-    function closeModal() { document.getElementById('qrModal').classList.add('hidden'); }
+    function setAmount(value) {
+      document.getElementById('amount').value = value;
+      handleInputChange();
+    }
+
+    function handleInputChange() {
+      document.getElementById('resultMessage').classList.add('hidden');
+    }
+
+    function openModal() {
+      const modal = document.getElementById('qrModal');
+      document.getElementById('modalResultMessage').classList.add('hidden'); 
+      
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.add('show');
+      }, 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('qrModal');
+      modal.classList.remove('show');
+      
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
 
     function confirmAndGenerateQR() {
       const username = document.getElementById('username').value.trim();
       const amount = document.getElementById('amount').value.trim();
+      const qrImage = document.getElementById('qrImage');
       
-      if (!username) return showResult('กรุณากรอกชื่อผู้ใช้งาน', 'error');
-      if (!amount || parseFloat(amount) < 50) return showResult('กรุณาระบุขั้นต่ำ 50 บาท', 'error');
+      const btnGenerateQR = document.getElementById('btnGenerateQR');
+      const btnQRText = document.getElementById('btnQRText');
+      const qrSpinner = document.getElementById('qrSpinner');
 
-      if (document.getElementById('rememberMe').checked) {
+      if (!username) { return showResult('กรุณากรอกชื่อผู้ใช้งานก่อนครับ', 'error'); }
+      
+      if (!amount || parseFloat(amount) < 50) { 
+        return showResult('❌ กรุณาระบุจำนวนเงินขั้นต่ำ 50 บาทครับ', 'error'); 
+      }
+
+      const cleanPromptPayId = PROMPTPAY_ID.replace(/[^0-9]/g, '');
+
+      if (cleanPromptPayId === "" || PROMPTPAY_ID.includes("X")) {
+        return showResult('❌ ลืมแก้โค้ด: กรุณาแก้ไขตัวแปร PROMPTPAY_ID ให้เป็นเบอร์ของคุณก่อนครับ', 'error');
+      }
+
+      // ทำการบันทึก หรือ ลบ ความจำตามสถานะของปุ่มติ๊ก
+      const rememberMeChecked = document.getElementById('rememberMe').checked;
+      if (rememberMeChecked) {
         localStorage.setItem('mailly_otp_username', username);
       } else {
         localStorage.removeItem('mailly_otp_username');
       }
 
-      document.getElementById('qrImage').src = "https://promptpay.io/" + PROMPTPAY_ID + "/" + parseFloat(amount).toFixed(2) + ".png";
-      openModal();
+      btnGenerateQR.disabled = true;
+      btnGenerateQR.style.pointerEvents = 'none';
+      btnQRText.innerText = 'กำลังสร้างคิวอาร์โค้ด...';
+      qrSpinner.classList.remove('hidden');
+      document.getElementById('resultMessage').classList.add('hidden');
+
+      qrImage.src = "https://promptpay.io/" + cleanPromptPayId + "/" + parseFloat(amount).toFixed(2) + ".png";
+      
+      setTimeout(() => {
+        btnGenerateQR.disabled = false;
+        btnGenerateQR.style.pointerEvents = 'auto';
+        btnQRText.innerText = 'ยืนยันจำนวนเงิน & สร้าง QR Code';
+        qrSpinner.classList.add('hidden');
+        openModal();
+      }, 1000);
     }
 
     function submitTopup() {
@@ -193,56 +561,121 @@
       const amount = document.getElementById('amount').value.trim();
       const fileInput = document.getElementById('slipFile');
       
+      const btnSubmit = document.getElementById('btnSubmit');
+      const btnText = document.getElementById('btnText');
+      const spinner = document.getElementById('spinner');
+
       if (fileInput.files.length === 0) {
-        document.getElementById('modalResultMessage').innerText = 'กรุณาเลือกไฟล์สลิป';
-        document.getElementById('modalResultMessage').classList.remove('hidden');
+        showModalResult('กรุณาเลือกรูปภาพสลิปโอนเงินก่อนครับ', 'error');
         return;
       }
 
-      const btnSubmit = document.getElementById('btnSubmit');
       btnSubmit.disabled = true;
-      document.getElementById('spinner').classList.remove('hidden');
+      btnSubmit.style.pointerEvents = 'none';
+      btnText.innerText = 'กำลังส่งตรวจสลิป...';
+      spinner.classList.remove('hidden');
+      document.getElementById('modalResultMessage').classList.add('hidden');
 
+      const file = fileInput.files[0];
       const reader = new FileReader();
+      
       reader.onload = function(e) {
-        const base64Data = e.target.result.split(',')[1];
-        const imageObj = { base64: base64Data, mimeType: 'image/jpeg' };
-
-        fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "topupUserCredit",
-            payload: { username: username, amount: amount, imageObj: imageObj }
-          })
-        })
-        .then(res => res.json())
-        .then(response => {
-          btnSubmit.disabled = false;
-          document.getElementById('spinner').classList.add('hidden');
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
           
-          if (response.success) {
-            closeModal();
-            showResult(response.message + '<br>ยอดเงินใหม่: ' + response.newCredit + ' ฿', 'success');
+          const MAX_SIZE = 1000;
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
           } else {
-            document.getElementById('modalResultMessage').innerHTML = response.message;
-            document.getElementById('modalResultMessage').classList.remove('hidden');
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
           }
-        }).catch(err => {
-          btnSubmit.disabled = false;
-          document.getElementById('spinner').classList.add('hidden');
-          alert('Error: ' + err);
-        });
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+          const base64Data = compressedDataUrl.split(',')[1];
+
+          const imageObj = {
+            base64: base64Data,
+            mimeType: 'image/jpeg'
+          };
+
+          // เปลี่ยนจากการเรียก google.script.run เป็น fetch API ของ Vercel
+          fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "topupUserCredit",
+              payload: { username: username, amount: amount, imageObj: imageObj }
+            })
+          })
+          .then(res => res.json())
+          .then(response => {
+            resetButton();
+            if (response.success) {
+              closeModal(); 
+              showResult(response.message + '<br>ยอดเงินคงเหลือใหม่: ' + response.newCredit + ' ฿', 'success');
+              document.getElementById('amount').value = '';
+              fileInput.value = '';
+            } else {
+              showModalResult(response.message, 'error');
+            }
+          })
+          .catch(err => {
+            resetButton();
+            showModalResult('ระบบขัดข้อง: ' + err.toString(), 'error');
+          });
+        };
+        img.src = e.target.result;
       };
-      reader.readAsDataURL(fileInput.files[0]);
+      reader.readAsDataURL(file);
+    }
+
+    function resetButton() {
+      const btnSubmit = document.getElementById('btnSubmit');
+      const btnText = document.getElementById('btnText');
+      const spinner = document.getElementById('spinner');
+      
+      btnSubmit.disabled = false;
+      btnSubmit.style.pointerEvents = 'auto';
+      btnText.innerText = 'อัปโหลด & ยืนยันสลิป';
+      spinner.classList.add('hidden');
     }
 
     function showResult(msg, type) {
-      const rm = document.getElementById('resultMessage');
-      rm.innerHTML = msg;
-      rm.className = `alert-message ${type === 'success' ? 'alert-success' : 'alert-error'}`;
+      const resultMessage = document.getElementById('resultMessage');
+      resultMessage.innerHTML = msg;
+      resultMessage.classList.remove('hidden', 'alert-success', 'alert-error');
+      
+      if (type === 'success') {
+        resultMessage.classList.add('alert-success');
+      } else {
+        resultMessage.classList.add('alert-error');
+      }
     }
 
-    function backToMain() { window.location.href = 'index.html'; }
+    function showModalResult(msg, type) {
+      const modalResult = document.getElementById('modalResultMessage');
+      modalResult.innerHTML = msg;
+      modalResult.classList.remove('hidden');
+    }
+
+    function backToMain() {
+      // เปลี่ยนจากการเรียก WebAppURL ของ Google เป็นการลิงก์ไปหน้า index.html โดยตรงบน Vercel
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>
