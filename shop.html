@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailly Shop - ร้านค้าออนไลน์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen text-gray-800">
+
+    <nav class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-xl font-bold">🛒 Mailly Shop</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="displayUsername" class="text-sm bg-indigo-700 px-3 py-1.5 rounded-full">กำลังโหลด...</span>
+                <span class="text-sm bg-amber-500 text-white px-3 py-1.5 rounded-full font-semibold">เครดิต: <span id="displayCredit">0</span> ฿</span>
+                <a href="/" class="text-sm bg-white text-indigo-600 px-3 py-1.5 rounded-lg font-medium hover:bg-gray-100 transition">กลับหน้าหลัก</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">สินค้าและบริการทั้งหมด</h1>
+            <p class="text-gray-500">เลือกสินค้าที่คุณต้องการ และระบบจะตัดเครดิตของคุณทันที</p>
+        </div>
+
+        <div id="productList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-500 p-6 text-white">
+                    <span class="bg-white/20 text-xs px-2.5 py-1 rounded-full font-medium">ยอดนิยม</span>
+                    <h3 class="text-xl font-bold mt-3">แพ็กเกจเสริมพิเศษ A</h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm mb-4">รายละเอียดสินค้าหรือบริการอธิบายสั้นๆ ตรงนี้ ให้ลูกค้าเข้าใจง่ายขึ้น</p>
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-2xl font-bold text-indigo-600">50 ฿</span>
+                        <span class="text-xs text-gray-400">สต็อก: พร้อมส่ง</span>
+                    </div>
+                    <button onclick="buyProduct('PROD-001', 'แพ็กเกจเสริมพิเศษ A', 50)" class="w-full bg-indigo-600 text-white font-medium py-2.5 rounded-xl hover:bg-indigo-700 transition shadow-sm">
+                        🛒 ซื้อสินค้าทันที
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white">
+                    <span class="bg-white/20 text-xs px-2.5 py-1 rounded-full font-medium">คุ้มค่าสุดๆ</span>
+                    <h3 class="text-xl font-bold mt-3">แพ็กเกจเสริมพิเศษ B</h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm mb-4">รายละเอียดสินค้าหรือบริการอธิบายสั้นๆ ตรงนี้ ให้ลูกค้าเข้าใจง่ายขึ้น</p>
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-2xl font-bold text-indigo-600">120 ฿</span>
+                        <span class="text-xs text-gray-400">สต็อก: พร้อมส่ง</span>
+                    </div>
+                    <button onclick="buyProduct('PROD-002', 'แพ็กเกจเสริมพิเศษ B', 120)" class="w-full bg-indigo-600 text-white font-medium py-2.5 rounded-xl hover:bg-indigo-700 transition shadow-sm">
+                        🛒 ซื้อสินค้าทันที
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // เปลี่ยน URL นี้เป็น Web App URL ของ Google Apps Script (ตัวเดียวกับที่คุณใช้ในหน้า Index/Page2)
+        const API_URL = "ใส่_URL_Google_Apps_Script_ของคุณตรงนี้"; 
+
+        // ดึงข้อมูล Username จาก localStorage (สมมติระบบเดิมเก็บบันทึกตอน Login ไว้)
+        let currentUser = localStorage.getItem('username') || '';
+
+        window.onload = function() {
+            if (!currentUser) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'กรุณาเข้าสู่ระบบก่อน',
+                    text: 'คุณยังไม่ได้เข้าสู่ระบบ กรุณาเข้าสู่ระบบจากหน้าหลักก่อนใช้งานร้านค้า',
+                    confirmButtonText: 'ตกลง'
+                }).then(() => {
+                    window.location.href = '/'; // เด้งกลับหน้าหลัก
+                });
+            } else {
+                document.getElementById('displayUsername').innerText = `ผู้ใช้: ${currentUser}`;
+                loadUserCredit();
+            }
+        };
+
+        // ฟังก์ชันดึงเครดิตคงเหลือ
+        async function loadUserCredit() {
+            try {
+                let response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'loginUser', payload: { username: currentUser } })
+                });
+                let result = await response.json();
+                if (result.success) {
+                    document.getElementById('displayCredit').innerText = result.credit;
+                }
+            } catch (e) {
+                console.error("Error loading credit:", e);
+            }
+        }
+
+        // ฟังก์ชันกดซื้อสินค้า
+        async function buyProduct(productId, productName, price) {
+            const confirm = await Swal.fire({
+                title: `ยืนยันการซื้อ "${productName}"?`,
+                text: `ระบบจะหักเครดิตของคุณจำนวน ${price} บาท`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'ยืนยันซื้อ',
+                cancelButtonText: 'ยกเลิก'
+            });
+
+            if (!confirm.isConfirmed) return;
+
+            Swal.fire({ title: 'กำลังดำเนินการ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                let response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'buyProductWithCredit',
+                        payload: {
+                            username: currentUser,
+                            productId: productId,
+                            productName: productName,
+                            price: price
+                        }
+                    })
+                });
+                let result = await response.json();
+
+                if (result.success) {
+                    Swal.fire('สำเร็จ!', 'ซื้อสินค้าเรียบร้อยแล้ว', 'success').then(() => {
+                        document.getElementById('displayCredit').innerText = result.newCredit;
+                    });
+                } else {
+                    Swal.fire('ผิดพลาด!', result.message, 'error');
+                }
+            } catch (e) {
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับระบบหลังบ้านได้', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
