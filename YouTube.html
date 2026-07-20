@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบเช็คสถานะแฟมยูทูป</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
+    .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); }
+    #dashboard-page, #renew-page, #payment-page, #admin-page, #loading { display: none; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col items-center w-full overflow-x-hidden">
+
+  <datalist id="status-options">
+    <option value="ใช้งานได้"><option value="ชำระเงินแล้ว"><option value="ยังไม่ชำระเงิน"><option value="รอแอดมินตรวจสอบ">
+  </datalist>
+
+  <div id="login-page" class="w-full flex-grow flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-md p-6 sm:p-10 rounded-3xl text-center shadow-lg">
+      <h1 class="text-2xl font-bold mb-1">ระบบจัดการแฟมยูทูป</h1>
+      <p class="text-slate-500 mb-6 text-sm">เข้าสู่ระบบเพื่อเช็คสถานะ</p>
+      <input type="text" id="usernameInput" placeholder="กรอกชื่อผู้ใช้ของคุณ" class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-center mb-3">
+      <div class="flex items-center justify-start mb-5 px-1">
+        <input type="checkbox" id="rememberMe" class="w-4 h-4 text-red-600 rounded">
+        <label for="rememberMe" class="ml-2 text-sm text-slate-500 cursor-pointer">จดจำอุปกรณ์นี้ไว้</label>
+      </div>
+      <button onclick="login()" class="w-full bg-slate-900 text-white py-3.5 rounded-2xl font-medium">เข้าสู่ระบบ</button>
+      <button onclick="window.location.href='index.html'" class="w-full mt-3 bg-slate-100 text-slate-600 py-2.5 rounded-2xl text-sm">กลับหน้าหลัก OTP</button>
+    </div>
+  </div>
+
+  <div id="loading" class="w-full flex-grow flex flex-col items-center justify-center gap-4">
+    <div class="animate-spin rounded-full h-10 w-10 border-4 border-slate-200 border-t-red-500"></div>
+    <p class="text-slate-400 text-sm">กำลังดำเนินการ...</p>
+  </div>
+
+  <div id="dashboard-page" class="w-full max-w-6xl p-4 sm:p-6 mx-auto pb-20">
+    <div class="flex flex-col xl:flex-row justify-between items-center mb-6 gap-4">
+      <div><h2 class="text-2xl font-bold">สวัสดี, คุณ<span id="displayUsername" class="text-red-600 ml-2"></span></h2></div>
+      <div class="flex gap-2">
+        <button onclick="goToRenewPage()" class="px-4 py-2 bg-slate-50 text-slate-800 rounded-xl text-sm font-semibold">ต่ออายุแฟม</button>
+        <button onclick="logout()" class="px-4 py-2 text-red-500 rounded-xl text-sm">ออกจากระบบ</button>
+      </div>
+    </div>
+    <div id="familyList" class="flex flex-col gap-3"></div>
+  </div>
+
+  <div id="admin-page" class="w-full max-w-6xl p-4 sm:p-6 mx-auto pb-20">
+    <h2 class="text-2xl font-bold mb-4">ระบบแอดมินหลังบ้าน 🛠️</h2>
+    <div class="bg-white rounded-3xl p-6 shadow-sm overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="border-b text-slate-400 text-xs">
+            <th class="pb-3">ลูกค้า</th><th class="pb-3">แฟม</th><th class="pb-3">อีเมล</th><th class="pb-3">สลิป</th><th class="pb-3">วันหมดอายุ</th><th class="pb-3">สถานะ</th><th class="pb-3 text-center">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody" class="text-sm"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzD5Vd4gKsriNzdEwkhdlY-c24o71ToUcZ3KiMs7a2xGytAQ6RvTQcJpFFxRKWpdhLvQA/exec";
+    let userData = [];
+
+    function callAPI(action, payload = {}) {
+      return fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: action, payload: payload })
+      }).then(res => res.json());
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUser = localStorage.getItem('yt_family_username');
+      if (savedUser) {
+        document.getElementById('usernameInput').value = savedUser;
+        document.getElementById('rememberMe').checked = true;
+        login(true);
+      }
+    });
+
+    function showPage(pageId) {
+      ['login-page', 'loading', 'dashboard-page', 'admin-page'].forEach(id => {
+        document.getElementById(id).style.display = (id === pageId) ? 'block' : 'none';
+      });
+    }
+
+    function login() {
+      const username = document.getElementById('usernameInput').value.trim();
+      if (!username) return alert('กรุณากรอกชื่อผู้ใช้');
+      showPage('loading');
+
+      if (username.toLowerCase() === 'admin') {
+        loadAdminDashboard();
+        return;
+      }
+
+      callAPI("getYtUserData", { username: username }).then(response => {
+        if (!response || response.length === 0) {
+          alert('ไม่พบข้อมูลของชื่อผู้ใช้นี้');
+          showPage('login-page');
+          return;
+        }
+        if (document.getElementById('rememberMe').checked) {
+          localStorage.setItem('yt_family_username', username);
+        } else {
+          localStorage.removeItem('yt_family_username');
+        }
+        userData = response;
+        document.getElementById('displayUsername').textContent = username;
+        renderDashboard();
+        showPage('dashboard-page');
+      });
+    }
+
+    function logout() {
+      localStorage.removeItem('yt_family_username');
+      showPage('login-page');
+    }
+
+    function loadAdminDashboard() {
+      callAPI("getAllYtDataForAdmin").then(allData => {
+        const tbody = document.getElementById('adminTableBody');
+        tbody.innerHTML = '';
+        allData.forEach(row => {
+          const tr = document.createElement('tr');
+          let ISOdate = row.expireDate ? row.expireDate.substring(0, 10) : "";
+          let slipHtml = row.slipUrl ? `<a href="${row.slipUrl}" target="_blank" class="text-blue-600 underline">เปิดสลิป</a>` : "ไม่มี";
+          
+          tr.innerHTML = `
+            <td class="py-3 font-semibold">${row.username}</td>
+            <td class="py-3">${row.familyId}</td>
+            <td class="py-3">${row.email}</td>
+            <td class="py-3">${slipHtml}</td>
+            <td class="py-3"><input type="date" id="date-${row.rowNumber}" value="${ISOdate}" class="border rounded p-1 text-xs"></td>
+            <td class="py-3"><input type="text" id="status-${row.rowNumber}" value="${row.status || ''}" class="border rounded p-1 text-xs"></td>
+            <td class="py-3 text-center"><button onclick="saveAdmin(${row.rowNumber})" class="bg-slate-900 text-white px-3 py-1 rounded text-xs">บันทึก</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+        showPage('admin-page');
+      });
+    }
+
+    function saveAdmin(rowNumber) {
+      const status = document.getElementById(`status-${rowNumber}`).value;
+      const date = document.getElementById(`date-${rowNumber}`).value;
+      callAPI("updateYtUserDataFromAdmin", { rowNumber: rowNumber, newStatus: status, newExpireDate: date }).then(res => {
+        alert(res === 'success' ? 'บันทึกสำเร็จ' : 'เกิดข้อผิดพลาด');
+        loadAdminDashboard();
+      });
+    }
+
+    function renderDashboard() {
+      const container = document.getElementById('familyList');
+      container.innerHTML = '';
+      userData.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-4 shadow-sm border flex justify-between items-center";
+        card.innerHTML = `<div><b>แฟม ${item.familyId}</b><br><span class="text-sm text-slate-500">${item.email}</span></div><div><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">${item.status || 'ใช้งานได้'}</span></div>`;
+        container.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
