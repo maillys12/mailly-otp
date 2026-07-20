@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mailly otp</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-color: #F8F9FA;        
+      --card-bg: #FFFFFF;         
+      --border-color: #EAEAEA;    
+      --text-main: #2D2926;       
+      --text-muted: #7A7A7A;      
+      --primary: #C5A059;         
+      --primary-hover: #AA843D;   
+      --success: #10B981;
+      --danger: #EF4444;
+      --danger-hover: #DC2626;
+    }
+
+    body {
+      font-family: 'Prompt', 'Inter', sans-serif; 
+      background-color: var(--bg-color); 
+      color: var(--text-main); 
+      padding: 20px 15px; 
+      margin: 0;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    #loginScreen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg-color); z-index: 9999;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: 15px; box-sizing: border-box;
+    }
+    .login-box {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      padding: 40px 30px; border-radius: 16px; width: 100%; max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.05); text-align: center; box-sizing: border-box;
+    }
+    .login-input {
+      width: 100%; padding: 14px 16px; margin: 20px 0 12px 0; 
+      background-color: #FAFAFA; border: 1px solid #D1D1D1; color: var(--text-main);
+      border-radius: 8px; font-family: 'Prompt'; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.3s;
+    }
+    .login-input:focus { border-color: var(--primary); box-shadow: 0 0 5px rgba(197, 160, 89, 0.2); background-color: #FFF; }
+
+    .remember-me-container { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; text-align: left; width: 100%; }
+    .remember-me-container input[type="checkbox"] { cursor: pointer; width: 16px; height: 16px; accent-color: var(--primary); }
+    .remember-me-container label { font-size: 14px; color: var(--text-muted); cursor: pointer; user-select: none; }
+
+    .header-bar {
+      width: 100%; max-width: 650px; display: none; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; background: var(--card-bg); padding: 15px 20px; border-radius: 12px;
+      border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.02); box-sizing: border-box; gap: 12px; flex-wrap: wrap;
+    }
+    .user-info { display: flex; align-items: center; gap: 10px; font-weight: 500; flex-shrink: 0; }
+    .user-info i { color: var(--primary); }
+    
+    .btn-keep-number, .btn-topup, .btn-youtube {
+      font-family: 'Prompt', sans-serif; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; box-sizing: border-box;
+    }
+    .btn-keep-number { background: transparent; color: var(--primary-hover); border: 1px solid var(--primary); }
+    .btn-keep-number:hover { background: var(--primary); color: #FFFFFF; }
+    .btn-topup { background: var(--primary); color: #FFFFFF; border: 1px solid var(--primary); }
+    .btn-topup:hover { background: var(--primary-hover); }
+    .btn-youtube { background: #DE3545; color: #FFFFFF; border: 1px solid #DE3545; }
+    .btn-youtube:hover { background: #C82333; }
+
+    .credit-badge {
+      background: rgba(197, 160, 89, 0.1); color: var(--primary-hover); padding: 6px 16px;
+      border-radius: 20px; font-weight: 600; border: 1px solid rgba(197, 160, 89, 0.2); flex-shrink: 0; display: inline-flex; align-items: center;
+    }
+
+    .app-title { font-size: 26px; font-weight: 600; color: var(--primary-hover); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; letter-spacing: 0.5px; }
+    #mainApp { display: none; width: 100%; flex-direction: column; align-items: center;}
+    .app-container { width:100%; max-width: 650px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;}
+
+    .card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 650px; 
+      margin-bottom: 24px; box-shadow: 0 4px 25px rgba(0,0,0,0.03); box-sizing: border-box; overflow: hidden;
+    }
+    .card-header { background-color: #FCFCFC; padding: 18px 24px; border-bottom: 1px solid var(--border-color); font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+    .card-header i { color: var(--primary); }
+    .card-body { padding: 30px 24px; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; }
+
+    .form-group { width: 100%; max-width: 500px; margin-bottom: 15px; box-sizing: border-box; }
+    .form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; }
+
+    .select2-container { width: 100% !important; }
+    .select2-container--default .select2-selection--single {
+      border: 1px solid #D1D1D1 !important; border-radius: 8px !important; height: 50px !important; background-color: #FAFAFA !important; display: flex !important; align-items: center !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered { color: var(--text-main) !important; width: 100%; padding-left: 16px !important; padding-right: 30px !important; font-size: 15px; font-family: 'Prompt'; }
+    .select2-dropdown { background-color: var(--card-bg) !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important; font-family: 'Prompt'; }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] { background-color: var(--primary) !important; color: white !important; }
+    .img-flag { width: 24px; height: 16px; margin-right: 10px; vertical-align: middle; border-radius: 3px; object-fit: cover; display: inline-block; }
+
+    .swap-btn {
+      background-color: rgba(197, 160, 89, 0.08); color: var(--primary-hover); border: 1px solid rgba(197, 160, 89, 0.2); border-radius: 50%;
+      width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; margin: 10px 0; cursor: pointer; transition: 0.2s;
+    }
+    .swap-btn:hover { background-color: var(--primary); color: white; }
+
+    .result-section { display: none; }
+    .quick-buy-bar { display: flex; justify-content: space-between; padding: 16px 24px; font-size: 14px; background: #FCFCFC; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 10px; }
+    .quick-buy-bar span { color: var(--primary-hover); font-weight: 600; }
+
+    .table-responsive { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 450px; }
+    th, td { padding: 16px 24px; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { color: var(--text-muted); font-weight: 600; font-size: 13px; text-transform: uppercase; background: #FAFAFA; }
+    
+    .progress-bar { width: 100px; background-color: #EAEAEA; border-radius: 20px; overflow: hidden; display: inline-block; vertical-align: middle; height: 8px; margin-right: 8px; }
+    .progress-fill { height: 100%; background-color: var(--success); border-radius: 20px; }
+    
+    .btn { font-family: 'Prompt'; padding: 10px 20px; border-radius: 8px; font-weight: 500; font-size: 14px; cursor: pointer; border: none; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; }
+    .btn-buy { background-color: var(--primary); color: white; border: 1px solid var(--primary); width:100%;}
+    .btn-buy:hover:not(:disabled) { background-color: var(--primary-hover); }
+    .btn-buy:disabled { opacity: 0.4; cursor: not-allowed; }
+    
+    .btn-red { background-color: var(--danger); color: white; border-radius: 20px; padding: 6px 18px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; }
+    .btn-red:hover:not(:disabled) { background-color: var(--danger-hover); }
+    .btn-red:disabled { background-color: #FEE2E2; color: #EF4444; cursor: not-allowed; border: 1px solid #FCA5A5; }
+
+    .section-title { width: 100%; max-width: 650px; font-size: 15px; font-weight: 600; color: var(--text-main); margin: 15px 0 8px 0; display: flex; align-items: center; gap: 8px; }
+    .section-title i { color: var(--primary); }
+    .order-list-box { width: 100%; max-width: 650px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 10px; }
+    .empty-text { text-align: center; color: var(--text-muted); font-size: 13px; padding: 25px; background: #FFFFFF; border-radius: 12px; border: 1px dashed #D1D1D1; }
+
+    .otp-box { padding: 24px 20px; border: 1px dashed var(--primary); border-radius: 12px; text-align: center; background: rgba(197, 160, 89, 0.03); }
+    .otp-box h3 { margin: 0; color: var(--text-main); font-size: 16px; }
+    .phone-container { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0 20px 0; flex-wrap: wrap; }
+    .phone-number-display { font-size: 26px; font-weight: 600; letter-spacing: 0.5px; color: var(--primary-hover); word-break: break-all; }
+    .action-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 15px; width: 100%; }
+    .otp-result { margin-top: 20px; padding: 15px; background: #FAFAFA; border-radius: 8px; border: 1px solid var(--border-color); display: inline-block; min-width: 280px; text-align: center; }
+    .otp-content { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 22px; font-weight: 600; color: var(--success); }
+
+    .btn-icon { background: #FFFFFF; color: var(--text-muted); border: 1px solid #D1D1D1; border-radius: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+    .btn-icon:hover { background: #FAFAFA; color: var(--text-main); }
+
+    #toast { visibility: hidden; min-width: 250px; background-color: #2D2926; color: #FFFFFF; text-align: center; border-radius: 30px; padding: 12px 24px; position: fixed; z-index: 10000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    #toast.show { visibility: visible; animation: fadein 0.3s, fadeout 0.5s 2.5s; }
+    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+    .history-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; color: var(--text-main); margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+    .history-row { display: flex; align-items: center; margin-bottom: 14px; }
+    .history-label { width: 90px; color: var(--text-muted); font-size: 14px; flex-shrink: 0; }
+    .history-value { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .badge-service { background: rgba(197, 160, 89, 0.08); color: var(--primary-hover); border: 1px solid rgba(197, 160, 89, 0.2); padding: 4px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; }
+    .badge-price { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 16px; border-radius: 20px; font-size: 14px; }
+    .copyable-box { background: #FAFAFA; border: 1px solid #D1D1D1; border-radius: 20px; padding: 4px 16px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 15px; transition: 0.2s; }
+    .copyable-box:hover { background: #FFFFFF; border-color: var(--primary); }
+    .status-success { background: var(--success); color: white; padding: 6px 18px; border-radius: 20px; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+    .status-refund { background: #06B6D4; color: white; padding: 6px 18px; border-radius: 20px; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+    .history-time { color: var(--text-muted); font-size: 14px; }
+
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box; }
+    .modal-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; }
+    .modal-header { background: #FCFCFC; padding: 18px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+    .modal-body { padding: 24px; overflow-y: auto; flex-grow: 1; }
+    .price-display-box { width: 100%; padding: 15px; background: rgba(197, 160, 89, 0.08); border: 1px dashed var(--primary); border-radius: 8px; text-align: center; margin-top: 20px; }
+    .price-amount { font-size: 24px; font-weight: 600; color: var(--primary-hover); }
+    
+    @media(max-width: 600px) {
+      body { padding: 12px 8px; }
+      .header-bar { display: grid !important; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+      .user-info { grid-column: 1; font-size: 14px; }
+      .credit-badge { grid-column: 2; font-size: 14px; text-align: right; }
+      .btn-keep-number { grid-column: 1 / span 2; width: 100%; justify-content: center; }
+      .btn-topup { grid-column: 1; width: 100%; justify-content: center; } 
+      .btn-youtube { grid-column: 2; width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loginScreen">
+    <div class="login-box">
+      <div class="app-title" style="justify-content: center; margin-bottom: 10px;">
+        <i class="fa-solid fa-comment-sms"></i> Mailly otp
+      </div>
+      <p style="color: var(--text-muted); margin-bottom: 25px;">เข้าสู่ระบบเพื่อเริ่มใช้งาน</p>
+      
+      <input type="text" id="usernameInput" class="login-input" placeholder="ใส่ชื่อผู้ใช้ (Username)..." onkeypress="if(event.key === 'Enter') doLogin()">
+      
+      <div class="remember-me-container">
+        <input type="checkbox" id="rememberDevice">
+        <label for="rememberDevice">จดจำอุปกรณ์นี้ (ไม่ต้องเข้าสู่ระบบทุกครั้ง)</label>
+      </div>
+
+      <button class="btn btn-buy" id="loginBtn" onclick="doLogin()" style="padding: 14px; font-size: 16px; width: 100%;">เข้าสู่ระบบ</button>
+      <div id="loginError" style="color: var(--danger); margin-top: 15px; font-size: 14px; display: none;"></div>
+    </div>
+  </div>
+
+  <div class="header-bar" id="headerBar">
+    <div class="user-info">
+      <i class="fa-regular fa-user"></i>
+      <span id="displayUsername">User</span>
+    </div>
+    
+    <button class="btn-keep-number" onclick="openKeepNumberModal()">
+      <i class="fa-solid fa-box-archive"></i> ซื้อ OTP แบบเก็บเบอร์
+    </button>
+    
+    <button class="btn-topup" onclick="goToTopup()">
+      <i class="fa-solid fa-circle-plus"></i> เติมเงินเครดิต
+    </button>
+
+    <button class="btn-youtube" onclick="goToYoutubePremium()">
+      <i class="fa-brands fa-youtube"></i> ต่ออายุยูทูป
+    </button>
+    
+    <div class="credit-badge"><i class="fa-solid fa-wallet" style="margin-right: 4px;"></i> <span id="displayCredit">0.00</span> ฿</div>
+  </div>
+
+  <div class="app-container" id="mainApp">
+    <div class="card">
+      <div class="card-header"><i class="fa-solid fa-globe"></i> เลือกแอปพลิเคชันและประเทศ</div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>แอปพลิเคชัน (Service)</label>
+          <select id="service" style="width: 100%;"><option value="" disabled selected>⏳ กำลังโหลดข้อมูล...</option></select>
+        </div>
+        <button class="swap-btn" id="swapSelectBtn" title="สลับแถวโฟกัส"><i class="fa-solid fa-arrows-up-down"></i></button>
+        <div class="form-group">
+          <label>ประเทศ (Country)</label>
+          <select id="country" style="width: 100%;"><option value="" disabled selected>-- กรุณาเลือกแอปพลิเคชันก่อน --</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card result-section" id="resultCard">
+      <div class="quick-buy-bar">
+        <div>Service: <span id="displayServiceName">-</span></div>
+        <div>Country: <span id="displayCountryName">-</span></div>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr><th>ราคา (Price)</th><th>อัตราสำเร็จ (Success)</th><th>ดำเนินการ</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color: var(--primary-hover); font-weight: 600; font-size: 16px;"><span id="displayPrice">0</span> ฿</td>
+              <td>
+                <div class="progress-bar"><div class="progress-fill" id="successFill"></div></div>
+                <span style="font-size: 12px; color: var(--text-muted); font-weight:500;" id="displaySuccessRate">0%</span>
+              </td>
+              <td>
+                <button class="btn btn-buy" id="mainBuyBtn" onclick="buyNumber()"><i class="fa-solid fa-cart-shopping"></i> ซื้อเบอร์ (<span id="btnPrice">0</span> ฿)</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> เบอร์ที่กำลังเปิดใช้งานใหม่</div>
+    <div id="newOrdersContainer" class="order-list-box">
+      <div class="empty-text" id="newOrdersEmpty">ไม่มีเบอร์ที่กำลังเปิดใช้งานใหม่ในขณะนี้</div>
+    </div>
+
+    <div class="section-title" style="margin-top:25px;"><i class="fa-solid fa-list-check"></i> ประวัติเบอร์เก่าที่รอ SMS ค้างอยู่</div>
+    <div id="historyOrdersContainer" class="order-list-box" style="margin-bottom: 50px;">
+      <div class="empty-text" id="historyOrdersEmpty">ไม่มีงานเก่าค้างอยู่ในระบบ</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="keepNumberModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span><i class="fa-solid fa-box-archive" style="color: var(--primary); margin-right: 6px;"></i> เช่าเบอร์ / ซื้อแบบเก็บเบอร์</span>
+        <button onclick="closeKeepNumberModal()" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="max-width: 100%;">
+          <label>1. เลือกแอปพลิเคชัน</label>
+          <select id="modalService" style="width: 100%;"></select>
+        </div>
+        <div class="form-group" style="max-width: 100%; margin-top: 15px;">
+          <label>2. เลือกประเทศ</label>
+          <select id="modalCountry" style="width: 100%;">
+            <option value="" disabled selected>เลือกประเทศ...</option>
+            <option value="th" data-code="th">Thailand (ไทย)</option>
+            <option value="usa" data-code="us">USA (อเมริกา)</option>
+            <option value="id" data-code="id">Indonesia (อินโดนีเซีย)</option>
+          </select>
+        </div>
+        <div class="form-group" style="max-width: 100%; margin-top: 15px;">
+          <label>3. จำนวนวันที่จะเช่า</label>
+          <select id="modalDays" style="width: 100%;">
+            <option value="7">7 วัน</option>
+            <option value="30" selected>30 วัน</option>
+            <option value="365">365 วัน</option>
+          </select>
+        </div>
+        <div class="price-display-box">
+          <div style="font-size: 13px; color: var(--text-muted);">ราคาค่าเช่าระบบ</div>
+          <div class="price-amount"><span id="modalPriceDisplay">0</span> ฿</div>
+        </div>
+        <button class="btn btn-buy" id="modalSubmitBtn" onclick="submitKeepNumber()" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 15px;">
+          <i class="fa-solid fa-check"></i> ยืนยันการสั่งซื้อแบบเก็บเบอร์
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast">ข้อความ</div>
+
+  <script>
+    // ⚙️ ตั้งค่า Apps Script Web App URL ของคุณที่นี่
+    const API_URL = "https://script.google.com/macros/s/AKfycbzD5Vd4gKsriNzdEwkhdlY-c24o71ToUcZ3KiMs7a2xGytAQ6RvTQcJpFFxRKWpdhLvQA/exec";
+
+    let currentUser = ""; 
+    let currentCountryData = [];
+    let allApiServices = []; 
+    const activeOrders = {}; 
+
+    function callAPI(action, payload = {}) {
+      return fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: action, payload: payload })
+      })
+      .then(res => res.json())
+      .catch(err => {
+        console.error("API Error:", err);
+        return { success: false, message: "เชื่อมต่อ Server ขัดข้อง" };
+      });
+    }
+
+    $(document).ready(function() {
+      const savedUser = localStorage.getItem('mailly_remembered_user');
+      if (savedUser) {
+        $('#usernameInput').val(savedUser);
+        $('#rememberDevice').prop('checked', true);
+        doLogin();
+      }
+    });
+
+    function goToYoutubePremium() {
+      window.location.href = 'youtube.html';
+    }
+
+    function goToTopup() {
+      window.location.href = 'page2.html';
+    }
+
+    function convertPriceToTHB(usdPrice) {
+      const price = parseFloat(usdPrice);
+      if (isNaN(price)) return 0;
+      if (price < 0.10) return 7;
+      if (price <= 0.29) return 10;
+      if (price <= 0.44) return 15;
+      if (price <= 0.60) return 20;
+      if (price <= 0.80) return 30;
+      return 45; 
+    }
+
+    function doLogin() {
+      const username = $('#usernameInput').val().trim();
+      if(!username) return;
+      
+      $('#loginBtn').html('⏳ กำลังตรวจสอบ...');
+      $('#loginBtn').prop('disabled', true);
+      $('#loginError').hide();
+
+      callAPI("loginUser", { username: username }).then(res => {
+        if(res && res.success) {
+          currentUser = res.username;
+          $('#displayUsername').text(currentUser);
+          updateCreditDisplay(res.credit);
+          
+          if ($('#rememberDevice').is(':checked')) {
+            localStorage.setItem('mailly_remembered_user', currentUser);
+          } else {
+            localStorage.removeItem('mailly_remembered_user');
+          }
+
+          $('#loginScreen').fadeOut();
+          $('#headerBar').css('display', 'grid');
+          $('#mainApp').css('display', 'flex');
+          
+          if(res.activeOrders && res.activeOrders.length > 0) {
+            $('#historyOrdersEmpty').hide(); 
+            res.activeOrders.forEach(order => {
+              activeOrders[order.order_id] = { price: order.price };
+              let rawPhone = order.fullNumber.toString().replace(/[^0-9]/g, '');
+              createOrderCard(order.order_id, order.fullNumber, rawPhone, true, order.time);
+              
+              let createdTime = new Date(order.time).getTime();
+              let nowTime = new Date().getTime();
+              let elapsedSeconds = Math.floor((nowTime - createdTime) / 1000);
+              let totalSecondsLimit = 600; 
+              let secondsLeft = totalSecondsLimit - elapsedSeconds;
+
+              if (secondsLeft > 0) {
+                startCancelCountdown(order.order_id, secondsLeft);
+                startAutoPolling(order.order_id, true);
+              } else {
+                autoRefundOnTimeout(order.order_id);
+              }
+            });
+            showToast("🔄 กู้คืนประวัติงานเก่าสำเร็จ");
+          }
+          initApp();
+        } else {
+          localStorage.removeItem('mailly_remembered_user');
+          $('#loginBtn').html('เข้าสู่ระบบ');
+          $('#loginBtn').prop('disabled', false);
+          $('#loginError').text(res ? res.message : 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้').show();
+        }
+      });
+    }
+
+    function updateCreditDisplay(amount) {
+      $('#displayCredit').text(parseFloat(amount).toFixed(2));
+    }
+
+    function initApp() {
+      $('#service').select2({ placeholder: "ค้นหาแอปพลิเคชัน..." });
+      $('#country').select2({ placeholder: "ค้นหาประเทศ...", templateResult: formatCountry, templateSelection: formatCountry });
+      
+      $('#modalService').select2({ placeholder: "ค้นหาแอปพลิเคชัน...", dropdownParent: $('#keepNumberModal') });
+      $('#modalCountry').select2({ placeholder: "เลือกประเทศ...", minimumResultsForSearch: -1, templateResult: formatCountry, templateSelection: formatCountry, dropdownParent: $('#keepNumberModal') });
+      $('#modalDays').select2({ minimumResultsForSearch: -1, dropdownParent: $('#keepNumberModal') });
+
+      $('#service').on('change', onServiceChange);
+      $('#country').on('change', onCountryChange);
+      $('#modalCountry, #modalDays').on('change', calculateKeepNumberPrice);
+
+      callAPI("getServices").then(services => {
+        populateServices(services);
+      });
+    }
+
+    function formatCountry(country) {
+      if (!country.id || !country.element) return country.text;
+      var shortName = $(country.element).data('code'); 
+      if (shortName) {
+        return $('<span><img src="https://flagcdn.com/w40/' + shortName.toLowerCase() + '.png" class="img-flag" /> ' + country.text + '</span>');
+      }
+      return country.text;
+    }
+
+    function populateServices(services) {
+      const serviceSelect = $('#service');
+      const modalServiceSelect = $('#modalService');
+      
+      serviceSelect.empty().append('<option value="" disabled selected>ค้นหาแอปพลิเคชัน...</option>');
+      modalServiceSelect.empty().append('<option value="" disabled selected>ค้นหาแอปพลิเคชัน...</option>');
+      
+      let items = [];
+      if (Array.isArray(services)) items = services;
+      else if (services && typeof services === 'object') items = Object.values(services);
+      
+      allApiServices = items; 
+      items.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      
+      items.forEach(s => {
+        if(s.ID && s.name) serviceSelect.append(new Option(s.name, s.ID, false, false));
+      });
+      serviceSelect.trigger('change.select2');
+    }
+
+    function onServiceChange() {
+      const serviceId = $('#service').val();
+      if(!serviceId) return;
+      $('#country').empty().append('<option value="" disabled selected>⏳ กำลังโหลดข้อมูลประเทศ...</option>').trigger('change.select2');
+      $('#resultCard').hide();
+      
+      callAPI("getCountryDataForService", { serviceId: serviceId }).then(data => {
+        populateCountries(data);
+      });
+    }
+
+    function populateCountries(data) {
+      let items = [];
+      if (Array.isArray(data)) items = data;
+      else if (data && typeof data === 'object') {
+        items = Object.keys(data).map(key => {
+          let item = data[key];
+          if(!item.country_id && !item.id) item.id = key;
+          return item;
+        });
+      }
+      
+      currentCountryData = items; 
+      const countrySelect = $('#country');
+      countrySelect.empty().append('<option value="" disabled selected>ค้นหาประเทศ...</option>');
+      
+      items.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      items.forEach(c => {
+        let thbPrice = convertPriceToTHB(c.price);
+        let targetId = c.country_id || c.id;
+        let opt = $('<option></option>').val(targetId).text(`${c.name} ( ${thbPrice} ฿ )`);
+        if(c.code) opt.attr('data-code', c.code); 
+        countrySelect.append(opt);
+      });
+      countrySelect.trigger('change.select2');
+    }
+
+    function onCountryChange() {
+      const countryId = $('#country').val();
+      if (countryId) {
+        const countryInfo = currentCountryData.find(c => (c.country_id == countryId || c.id == countryId));
+        if(countryInfo) {
+           let thbPrice = convertPriceToTHB(countryInfo.price);
+           $('#displayServiceName').text($('#service option:selected').text());
+           $('#displayCountryName').text(countryInfo.name);
+           $('#displayPrice').text(thbPrice);
+           $('#btnPrice').text(thbPrice);
+           const rate = countryInfo.success_rate || 0;
+           $('#displaySuccessRate').text(rate + '%');
+           $('#successFill').css('width', Math.min(rate, 100) + '%');
+           $('#resultCard').show();
+        }
+      }
+    }
+
+    function openKeepNumberModal() {
+      const modalServiceSelect = $('#modalService');
+      modalServiceSelect.empty().append('<option value="" disabled selected>ค้นหาแอปพลิเคชัน...</option>');
+      const filtered = allApiServices.filter(s => s.name && (s.name.toLowerCase().includes('google') || s.name.toLowerCase().includes('gmail')));
+      
+      if(filtered.length > 0) {
+        filtered.forEach(s => modalServiceSelect.append(new Option(s.name, s.ID, false, false)));
+        modalServiceSelect.val(filtered[0].ID).trigger('change.select2');
+      } else {
+        modalServiceSelect.append(new Option("Google/Gmail", "google_fallback", false, false)).trigger('change.select2');
+      }
+      $('#keepNumberModal').css('display', 'flex');
+      calculateKeepNumberPrice();
+    }
+
+    function closeKeepNumberModal() { $('#keepNumberModal').hide(); }
+
+    function calculateKeepNumberPrice() {
+      const country = $('#modalCountry').val();
+      const days = $('#modalDays').val();
+      let price = 0;
+      if (!country) { $('#modalPriceDisplay').text('0'); return; }
+      if (country === 'id') { price = days === '7' ? 50 : (days === '30' ? 150 : 300); }
+      else { price = days === '7' ? 80 : (days === '30' ? 200 : 400); }
+      $('#modalPriceDisplay').text(price);
+    }
+
+    function submitKeepNumber() {
+      const serviceId = $('#modalService').val();
+      const country = $('#modalCountry').val();
+      const days = $('#modalDays').val();
+      const finalPrice = parseInt($('#modalPriceDisplay').text());
+
+      const submitBtn = document.getElementById('modalSubmitBtn');
+      submitBtn.innerHTML = '⏳ กำลังทำรายการ...';
+      submitBtn.disabled = true;
+
+      callAPI("buyKeepNumberWithCredit", { username: currentUser, country: country, serviceId: serviceId, finalPrice: finalPrice, days: days }).then(response => {
+        submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> ยืนยันการสั่งซื้อแบบเก็บเบอร์';
+        submitBtn.disabled = false;
+
+        if (response && response.success) {
+          updateCreditDisplay(response.newCredit);
+          closeKeepNumberModal();
+          showToast(`📦 เช่าเบอร์สำเร็จ! หัก ${finalPrice} ฿`);
+          
+          const orderId = response.order_id;
+          const rawPhone = response.phonenumber;
+          activeOrders[orderId] = { price: finalPrice };
+          
+          $('#newOrdersEmpty').hide();
+          createOrderCard(orderId, "📦 [เก็บเบอร์] " + rawPhone, rawPhone, false);
+          startCancelCountdown(orderId, 600);
+          startAutoPolling(orderId, false);
+        } else {
+          alert("❌ " + (response ? response.message : "เกิดข้อผิดพลาด"));
+        }
+      });
+    }
+
+    function buyNumber() {
+      const serviceId = $('#service').val();
+      const countryId = $('#country').val();
+      const thbPrice = parseInt($('#btnPrice').text()); 
+      
+      const buyBtn = document.getElementById('mainBuyBtn');
+      buyBtn.innerHTML = '⏳ กำลังประมวลผล...';
+      buyBtn.disabled = true;
+
+      callAPI("buyNumberWithCredit", { username: currentUser, countryId: countryId, serviceId: serviceId, thbPrice: thbPrice }).then(response => {
+        buyBtn.innerHTML = '<i class="fa-solid fa-cart-shopping"></i> ซื้อเบอร์ (' + thbPrice + ' ฿)';
+        buyBtn.disabled = false;
+
+        if(response && (response.success === 1 || response.success === true)) {
+          updateCreditDisplay(response.newCredit); 
+          const orderId = response.order_id;
+          const fullNumber = "+" + response.cc + " " + response.phonenumber;
+          const rawPhone = response.cc + response.phonenumber;
+          
+          activeOrders[orderId] = { price: thbPrice };
+          $('#newOrdersEmpty').hide(); 
+          createOrderCard(orderId, fullNumber, rawPhone, false);
+          startCancelCountdown(orderId, 600); 
+          startAutoPolling(orderId, false);
+          showToast("✅ สั่งซื้อสำเร็จ! หักเครดิต " + thbPrice + " ฿");
+        } else {
+          alert("❌ " + (response ? response.message : "เกิดข้อผิดพลาด"));
+        }
+      });
+    }
+
+    function createOrderCard(orderId, fullNumber, rawPhone, isHistory = false, existingTime = null) {
+      const originalPrice = activeOrders[orderId].price || 0;
+      const resendCost = originalPrice <= 25 ? 25 : 50;
+
+      if (isHistory) {
+        const currentService = $('#service option:selected').text() || "บริการ";
+        let timeString = existingTime || new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+        const cardHTML = `
+          <div class="history-card" id="order-card-${orderId}">
+            <div class="history-row">
+              <div class="history-label">รายละเอียด</div>
+              <div class="history-value">
+                <span class="badge-service">${currentService}</span>
+                <span class="badge-price">฿ ${parseFloat(originalPrice).toFixed(2)}</span>
+              </div>
+            </div>
+            <div class="history-row">
+              <div class="history-label">เบอร์</div>
+              <div class="history-value">
+                <div class="copyable-box" onclick="copyText('${rawPhone}')"><i class="fa-regular fa-copy"></i><span>${rawPhone}</span></div>
+              </div>
+            </div>
+            <div class="history-row">
+              <div class="history-label">ข้อความ</div>
+              <div class="history-value" id="otpDisplay-${orderId}"><div class="copyable-box" style="color:#A1A1A1;">—</div></div>
+            </div>
+            <div class="history-row">
+              <div class="history-label">สถานะ</div>
+              <div class="history-value" id="statusContainer-${orderId}"><button class="btn-red" id="cancelBtn-${orderId}" disabled>⏳ รอตรวจสอบ</button></div>
+            </div>
+            <div class="history-row" style="margin-bottom:0;"><div class="history-label">time</div><div class="history-value history-time">${timeString}</div></div>
+          </div>
+        `;
+        document.getElementById('historyOrdersContainer').insertAdjacentHTML('afterbegin', cardHTML);
+      } else {
+        const cardHTML = `
+          <div class="card otp-box" id="order-card-${orderId}">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="color: var(--text-main); font-weight:600;"><i class="fa-solid fa-hashtag" style="color:var(--primary); margin-right:4px;"></i> เบอร์โทรศัพท์ (Order: ${orderId})</h3>
+              <button class="btn-icon" onclick="closeOrderCard('${orderId}')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="phone-container">
+              <span class="phone-number-display" id="phoneDisplay-${orderId}">${fullNumber}</span>
+              <button class="btn-icon" onclick="copyText('${rawPhone}')"><i class="fa-regular fa-copy"></i></button>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">⚠️ กดยกเลิกรับเงินคืนได้หลังผ่านไป 3 นาที</div>
+            <div class="action-group">
+              <button class="btn btn-red" id="cancelBtn-${orderId}" onclick="cancelOrderClick('${orderId}', false)" disabled>⏳ รอครบ 3 นาที</button>
+              <button class="btn" id="resendBtn-${orderId}" onclick="resendOrderClick('${orderId}')" disabled style="background-color: #f59e0b; color: white; opacity: 0.4;"><i class="fa-solid fa-rotate"></i> ขอ OTP อีกครั้ง (+${resendCost} ฿)</button>
+            </div>
+            <div class="otp-result" id="otpDisplay-${orderId}">
+              <span style="color:#f59e0b; font-size:15px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังรอ SMS...</span>
+            </div>
+          </div>
+        `;
+        document.getElementById('newOrdersContainer').insertAdjacentHTML('afterbegin', cardHTML);
+      }
+    }
+
+    function startCancelCountdown(orderId, secondsLeft) {
+      if (activeOrders[orderId].cancelTimer) clearInterval(activeOrders[orderId].cancelTimer);
+      activeOrders[orderId].cancelTimer = setInterval(function() {
+        const cancelBtn = document.getElementById(`cancelBtn-${orderId}`);
+        if(!cancelBtn) { clearInterval(activeOrders[orderId].cancelTimer); return; }
+        secondsLeft--;
+        let timePassed = 600 - secondsLeft; 
+        if (timePassed < 180) {
+          cancelBtn.disabled = true;
+          let secondsToWait = 180 - timePassed;
+          let minStr = String(Math.floor(secondsToWait / 60)).padStart(2, '0');
+          let secStr = String(secondsToWait % 60).padStart(2, '0');
+          cancelBtn.innerText = `⏳ รออีก ${minStr}:${secStr}`;
+        } else {
+          cancelBtn.disabled = false;
+          let minStr = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+          let secStr = String(secondsLeft % 60).padStart(2, '0');
+          cancelBtn.innerHTML = `❌ ยกเลิกและคืนเงิน (${minStr}:${secStr})`;
+        }
+        if (secondsLeft <= 0) {
+          clearInterval(activeOrders[orderId].cancelTimer);
+          autoRefundOnTimeout(orderId);
+        }
+      }, 1000);
+    }
+
+    function startAutoPolling(orderId, isHistory = false) {
+      if (activeOrders[orderId].autoCheckTimer) clearInterval(activeOrders[orderId].autoCheckTimer);
+      activeOrders[orderId].autoCheckTimer = setInterval(function() {
+        const otpDisplay = document.getElementById(`otpDisplay-${orderId}`);
+        if(!otpDisplay) { clearInterval(activeOrders[orderId].autoCheckTimer); return; }
+        
+        callAPI("checkOTP", { orderId: orderId }).then(response => {
+          if(!response) return;
+          if(response.status === 3 || response.sms) { 
+            clearInterval(activeOrders[orderId].autoCheckTimer);
+            clearInterval(activeOrders[orderId].cancelTimer); 
+            if (isHistory) {
+              document.getElementById(`otpDisplay-${orderId}`).innerHTML = `<div class="copyable-box" onclick="copyText('${response.sms}')"><i class="fa-regular fa-copy"></i><span>${response.sms}</span></div>`;
+              document.getElementById(`statusContainer-${orderId}`).innerHTML = `<span class="status-success"><i class="fa-solid fa-check"></i> สำเร็จ</span>`;
+            } else {
+              $(`#cancelBtn-${orderId}`).prop('disabled', true).html("🔒 สำเร็จแล้ว");
+              const resendBtn = document.getElementById(`resendBtn-${orderId}`);
+              if (resendBtn) { resendBtn.disabled = false; resendBtn.style.opacity = "1"; }
+              document.getElementById(`otpDisplay-${orderId}`).innerHTML = `
+                <div class="otp-content">💬 OTP: <span style='color:var(--success); font-size:24px;'>${response.sms}</span></div>`;
+            }
+            showToast("🔔 มีข้อความ SMS เข้ามาแล้ว!");
+          }
+        });
+      }, 5000); 
+    }
+
+    function cancelOrderClick(orderId, isHistory = false) {
+      if(confirm("ต้องการยกเลิกเพื่อรับเงินคืน ใช่หรือไม่?")) {
+        clearInterval(activeOrders[orderId].autoCheckTimer);
+        clearInterval(activeOrders[orderId].cancelTimer);
+        let priceToRefund = activeOrders[orderId].price || 0;
+        
+        callAPI("cancelOrderWithRefund", { username: currentUser, orderId: orderId, thbPrice: priceToRefund }).then(response => {
+          if(response && (response.success === 1 || response.success === true)) {
+            updateCreditDisplay(response.newCredit); 
+            if (isHistory) {
+              document.getElementById(`statusContainer-${orderId}`).innerHTML = `<span class="status-refund">คืนเครดิต</span>`;
+            } else {
+              document.getElementById(`otpDisplay-${orderId}`).innerHTML = '<span style="color:#10b981;">✅ คืนเงินเรียบร้อย</span>';
+              $(`#cancelBtn-${orderId}`).text("❌ ยกเลิกแล้ว").prop('disabled', true);
+            }
+            showToast("คืนเงิน " + priceToRefund + " ฿ แล้ว");
+          } else {
+            alert("❌ ไม่สามารถยกเลิกได้");
+          }
+        });
+      }
+    }
+
+    function resendOrderClick(orderId) {
+      const originalPrice = activeOrders[orderId].price || 0;
+      const resendCost = originalPrice <= 25 ? 25 : 50;
+      if(confirm(`ต้องการขอรหัส OTP ซ้ำ หักเพิ่ม ${resendCost} ฿?`)) {
+        callAPI("resendSMSWithCredit", { username: currentUser, orderId: orderId, originalPrice: originalPrice }).then(response => {
+          if(response && (response.success === 1 || response.success === true)) {
+            updateCreditDisplay(response.newCredit);
+            showToast(`🔄 ส่งคำขอซ้ำสำเร็จ!`);
+            document.getElementById(`otpDisplay-${orderId}`).innerHTML = '<span style="color:#f59e0b;"><i class="fa-solid fa-spinner fa-spin"></i> รอ SMS ตัวใหม่...</span>';
+            startAutoPolling(orderId, false);
+          } else {
+            alert("❌ " + (response ? response.message : "ส่งซ้ำไม่ได้"));
+          }
+        });
+      }
+    }
+
+    function autoRefundOnTimeout(orderId) {
+      clearInterval(activeOrders[orderId].autoCheckTimer);
+      clearInterval(activeOrders[orderId].cancelTimer);
+      let priceToRefund = activeOrders[orderId].price || 0;
+      callAPI("cancelOrderWithRefund", { username: currentUser, orderId: orderId, thbPrice: priceToRefund }).then(response => {
+        if(response && (response.success === 1 || response.success === true)) {
+          updateCreditDisplay(response.newCredit);
+        }
+      });
+    }
+
+    function closeOrderCard(orderId) {
+      if (activeOrders[orderId]) { clearInterval(activeOrders[orderId].autoCheckTimer); clearInterval(activeOrders[orderId].cancelTimer); }
+      $(`#order-card-${orderId}`).remove();
+    }
+
+    function copyText(text) {
+      if(text === "—") return;
+      navigator.clipboard.writeText(text).then(() => showToast("✅ คัดลอกสำเร็จ"));
+    }
+
+    function showToast(text) {
+      const x = document.getElementById("toast");
+      x.innerText = text;
+      x.className = "show";
+      setTimeout(() => { x.className = x.className.replace("show", ""); }, 3000);
+    }
+  </script>
+</body>
+</html>
