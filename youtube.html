@@ -7,162 +7,792 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
-    .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); }
+    body { 
+      font-family: 'Prompt', sans-serif; 
+      background-color: #f8fafc;
+      background-image: radial-gradient(at 0% 0%, hsla(353,100%,96%,1) 0, transparent 50%), 
+                        radial-gradient(at 100% 100%, hsla(210,100%,97%,1) 0, transparent 50%);
+      background-attachment: fixed;
+    }
+    .glass-card { 
+      background: rgba(255, 255, 255, 0.7); 
+      backdrop-filter: blur(16px); 
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
     #dashboard-page, #renew-page, #payment-page, #admin-page, #loading { display: none; }
+    
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 flex flex-col items-center w-full overflow-x-hidden">
+<body class="min-h-screen text-slate-800 flex flex-col items-center selection:bg-red-100 selection:text-red-900 w-full overflow-x-hidden">
 
   <datalist id="status-options">
-    <option value="ใช้งานได้"><option value="ชำระเงินแล้ว"><option value="ยังไม่ชำระเงิน"><option value="รอแอดมินตรวจสอบ">
+    <option value="ใช้งานได้">
+    <option value="ชำระเงินแล้ว">
+    <option value="ยังไม่ชำระเงิน">
+    <option value="รอแอดมินตรวจสอบ">
+    <option value="ระงับบริการชั่วคราว">
   </datalist>
 
-  <div id="login-page" class="w-full flex-grow flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-md p-6 sm:p-10 rounded-3xl text-center shadow-lg">
-      <h1 class="text-2xl font-bold mb-1">ระบบจัดการแฟมยูทูป</h1>
-      <p class="text-slate-500 mb-6 text-sm">เข้าสู่ระบบเพื่อเช็คสถานะ</p>
-      <input type="text" id="usernameInput" placeholder="กรอกชื่อผู้ใช้ของคุณ" class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-center mb-3">
+  <div id="login-page" class="w-full flex-grow flex items-center justify-center p-4 sm:p-6">
+    <div class="glass-card w-full max-w-md p-6 sm:p-10 rounded-3xl sm:rounded-[2rem] shadow-[0_20px_50px_rgb(0,0,0,0.05)] text-center relative overflow-hidden">
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-red-500/10 rounded-full blur-2xl"></div>
+      <div class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-tr from-red-600 to-red-400 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg shadow-red-500/30">
+        <svg class="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418c-0.86,0.23-1.538,0.908-1.768,1.768C22,7.746,22,12,22,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.86-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/></svg>
+      </div>
+      <h1 class="text-xl sm:text-2xl font-bold text-slate-800 mb-1.5 tracking-tight">ระบบจัดการแฟมยูทูป</h1>
+      <p class="text-slate-500 mb-6 sm:mb-8 text-xs sm:text-sm">เข้าสู่ระบบเพื่อจัดการหรือเช็คสถานะ</p>
+      
+      <div class="relative mb-3">
+        <input type="text" id="usernameInput" placeholder="กรอกชื่อผู้ใช้ของคุณ" 
+               class="w-full px-4 sm:px-6 py-3.5 sm:py-4 bg-white/80 border border-slate-200 rounded-2xl text-center text-slate-700 font-medium focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-400 transition-all shadow-sm placeholder:font-normal text-sm sm:text-base">
+      </div>
+
       <div class="flex items-center justify-start mb-5 px-1">
-        <input type="checkbox" id="rememberMe" class="w-4 h-4 text-red-600 rounded">
-        <label for="rememberMe" class="ml-2 text-sm text-slate-500 cursor-pointer">จดจำอุปกรณ์นี้ไว้</label>
+        <input type="checkbox" id="rememberMe" class="w-4 h-4 text-red-600 border-slate-300 rounded focus:ring-red-500/20 accent-red-600 cursor-pointer">
+        <label for="rememberMe" class="ml-2 text-xs sm:text-sm text-slate-500 select-none cursor-pointer font-medium hover:text-slate-700 transition-colors">
+          จดจำอุปกรณ์นี้ไว้ (ไม่ต้องกรอกชื่อผู้ใช้ซ้ำ)
+        </label>
       </div>
-      <button onclick="login()" class="w-full bg-slate-900 text-white py-3.5 rounded-2xl font-medium">เข้าสู่ระบบ</button>
-      <button onclick="window.location.href='index.html'" class="w-full mt-3 bg-slate-100 text-slate-600 py-2.5 rounded-2xl text-sm">กลับหน้าหลัก OTP</button>
+
+      <button onclick="login()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 sm:py-4 rounded-2xl transition-all shadow-lg shadow-slate-900/20 active:scale-[0.98] text-sm sm:text-base">เข้าสู่ระบบ</button>
+      
+      <button onclick="window.location.href='index.html';" class="w-full mt-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-2.5 sm:py-3 rounded-2xl transition-all active:scale-[0.98] text-xs sm:text-sm flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        กลับสู่เว็บไซต์หลัก
+      </button>
     </div>
   </div>
 
-  <div id="loading" class="w-full flex-grow flex flex-col items-center justify-center gap-4">
-    <div class="animate-spin rounded-full h-10 w-10 border-4 border-slate-200 border-t-red-500"></div>
-    <p class="text-slate-400 text-sm">กำลังดำเนินการ...</p>
+  <div id="loading" class="w-full flex-grow flex flex-col items-center justify-center gap-4 p-4">
+    <div class="animate-spin rounded-full h-10 w-10 border-[3px] border-slate-200 border-t-red-500"></div>
+    <p class="text-slate-400 text-sm font-medium animate-pulse">กำลังดำเนินการ...</p>
   </div>
 
-  <div id="dashboard-page" class="w-full max-w-6xl p-4 sm:p-6 mx-auto pb-20">
-    <div class="flex flex-col xl:flex-row justify-between items-center mb-6 gap-4">
-      <div><h2 class="text-2xl font-bold">สวัสดี, คุณ<span id="displayUsername" class="text-red-600 ml-2"></span></h2></div>
-      <div class="flex gap-2">
-        <button onclick="goToRenewPage()" class="px-4 py-2 bg-slate-50 text-slate-800 rounded-xl text-sm font-semibold">ต่ออายุแฟม</button>
-        <button onclick="logout()" class="px-4 py-2 text-red-500 rounded-xl text-sm">ออกจากระบบ</button>
+  <div id="dashboard-page" class="w-full max-w-6xl p-4 sm:p-6 md:p-8 mx-auto pb-20">
+    <div class="flex flex-col xl:flex-row justify-between items-center mb-6 sm:mb-10 gap-4 sm:gap-6">
+      <div class="flex items-center gap-4 w-full xl:w-auto justify-center xl:justify-start">
+        <div class="hidden md:flex w-12 h-12 bg-white rounded-2xl items-center justify-center shadow-sm border border-slate-100">
+          <span class="text-2xl">👋</span>
+        </div>
+        <div class="text-center xl:text-left">
+          <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">สวัสดี, คุณ<span id="displayUsername" class="text-red-600 ml-2"></span></h2>
+          <div class="flex items-center justify-center xl:justify-start gap-2 mt-1">
+            <p class="text-slate-500 text-xs sm:text-sm">ยินดีต้อนรับสู่ระบบจัดการสถานะแฟมของคุณ</p>
+            <div class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex p-1.5 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto w-full xl:w-auto max-w-full justify-start sm:justify-center xl:justify-start">
+        <button onclick="showPage('dashboard-page')" class="px-4 sm:px-5 py-2 bg-slate-50 text-slate-800 font-semibold text-xs sm:text-sm rounded-xl transition whitespace-nowrap">แดชบอร์ด</button>
+        <button onclick="goToRenewPage()" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap">ต่ออายุแฟม</button>
+        <button class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap">ขอเมลสำรอง</button>
+        
+        <button onclick="window.location.href='index.html';" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+          หน้าหลัก
+        </button>
+
+        <div class="w-[1px] bg-slate-100 my-2 mx-1 shrink-0"></div>
+        <button onclick="logout()" class="px-4 sm:px-5 py-2 text-red-500 hover:bg-red-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap flex items-center gap-2">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>ออก
+        </button>
       </div>
     </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-6 sm:mb-10">
+      <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex items-center gap-4 sm:gap-5">
+        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+        </div>
+        <div>
+          <p class="text-slate-400 text-xs sm:text-sm font-medium mb-0.5">จำนวนแฟมทั้งหมด</p>
+          <div class="flex items-baseline gap-1.5">
+            <h3 class="text-2xl sm:text-3xl font-bold text-slate-800" id="statTotal">0</h3><span class="text-slate-400 text-xs sm:text-sm">แฟม</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex items-center gap-4 sm:gap-5">
+        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 text-teal-500 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div>
+          <p class="text-slate-400 text-xs sm:text-sm font-medium mb-0.5">ยังไม่หมดอายุ</p>
+          <div class="flex items-baseline gap-1.5">
+            <h3 class="text-2xl sm:text-3xl font-bold text-teal-600" id="statActive">0</h3><span class="text-teal-400 text-xs sm:text-sm">แฟม</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex items-center gap-4 sm:gap-5">
+        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div>
+          <p class="text-slate-400 text-xs sm:text-sm font-medium mb-0.5">หมดอายุแล้ว</p>
+          <div class="flex items-baseline gap-1.5">
+            <h3 class="text-2xl sm:text-3xl font-bold text-rose-600" id="statExpired">0</h3><span class="text-rose-400 text-xs sm:text-sm">แฟม</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden md:grid grid-cols-12 gap-4 px-6 text-slate-400 text-xs font-semibold uppercase tracking-wider mb-3">
+      <div class="col-span-1">แฟมที่</div>
+      <div class="col-span-3">อีเมล</div>
+      <div class="col-span-2">วันหมดอายุ</div>
+      <div class="col-span-4">นับถอยหลัง</div>
+      <div class="col-span-2 text-right">สถานะ</div>
+    </div>
+    
     <div id="familyList" class="flex flex-col gap-3"></div>
   </div>
 
-  <div id="admin-page" class="w-full max-w-6xl p-4 sm:p-6 mx-auto pb-20">
-    <h2 class="text-2xl font-bold mb-4">ระบบแอดมินหลังบ้าน 🛠️</h2>
-    <div class="bg-white rounded-3xl p-6 shadow-sm overflow-x-auto">
-      <table class="w-full text-left">
+  <div id="admin-page" class="w-full max-w-6xl p-4 sm:p-6 md:p-8 mx-auto pb-20">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 tracking-tight">ระบบแอดมินหลังบ้าน 🛠️</h2>
+        <p class="text-slate-500 text-xs sm:text-sm mt-1">จัดการแก้ไข ตรวจสอบสลิปโอนเงิน และอนุมัติวันหมดอายุของลูกค้าทุกคน</p>
+      </div>
+      <button onclick="logout()" class="w-full sm:w-auto px-5 py-2.5 bg-red-100 text-red-600 hover:bg-red-200 font-semibold text-xs sm:text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+        ออกจากระบบแอดมิน
+      </button>
+    </div>
+
+    <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-100 overflow-x-auto">
+      <table class="w-full text-left border-collapse min-w-[850px]">
         <thead>
-          <tr class="border-b text-slate-400 text-xs">
-            <th class="pb-3">ลูกค้า</th><th class="pb-3">แฟม</th><th class="pb-3">อีเมล</th><th class="pb-3">สลิป</th><th class="pb-3">วันหมดอายุ</th><th class="pb-3">สถานะ</th><th class="pb-3 text-center">จัดการ</th>
+          <tr class="border-b border-slate-100 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+            <th class="pb-4 pt-2 font-medium">ลูกค้า</th>
+            <th class="pb-4 pt-2 font-medium">แฟม</th>
+            <th class="pb-4 pt-2 font-medium">อีเมล</th>
+            <th class="pb-4 pt-2 font-medium">หลักฐานสลิป</th>
+            <th class="pb-4 pt-2 font-medium w-[150px]">วันหมดอายุ</th>
+            <th class="pb-4 pt-2 font-medium w-[200px]">แก้ไข/ระบุสถานะ</th>
+            <th class="pb-4 pt-2 text-center font-medium w-[140px]">การกระทำ</th>
           </tr>
         </thead>
-        <tbody id="adminTableBody" class="text-sm"></tbody>
+        <tbody id="adminTableBody" class="divide-y divide-slate-50 text-sm text-slate-700"></tbody>
       </table>
     </div>
   </div>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxRNWvNC9bo7x8v3iIPOtKazYLr-hom5zhdr4E0deu4wum9K7zGjULYaRw7vNSAAKB7hg/exec";
-    let userData = [];
+  <div id="renew-page" class="w-full flex-grow flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white w-full max-w-lg p-5 sm:p-10 rounded-3xl sm:rounded-[2.5rem] shadow-[0_20px_60px_rgb(0,0,0,0.08)] border border-slate-100 text-center relative mt-4">
+      <button onclick="showPage('dashboard-page')" class="absolute top-4 left-4 sm:top-8 sm:left-8 text-slate-400 hover:text-slate-800 transition-colors bg-slate-50 p-2 rounded-full">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      </button>
+      <div class="w-14 h-14 sm:w-16 sm:h-16 bg-amber-100 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 mt-6 sm:mt-2">
+        <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-1.5">ต่ออายุการใช้งาน</h2>
+      <p class="text-slate-500 text-xs sm:text-sm mb-6">โปรดเลือกอีเมลแฟมและระยะเวลาที่คุณต้องการต่ออายุ</p>
+      
+      <label class="block text-left text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 pl-1">1. เลือกอีเมลที่ต้องการต่ออายุ</label>
+      <div class="relative inline-block w-full mb-4 text-left group">
+        <select id="renewEmailSelect" onchange="updateRenewDetails()" class="block w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-3.5 sm:py-4 px-4 sm:px-5 pr-10 rounded-2xl leading-tight focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-400 font-medium transition-all cursor-pointer hover:bg-slate-100 text-sm sm:text-base"></select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 sm:px-5 text-slate-400 group-hover:text-slate-600 transition-colors">
+          <svg class="fill-current h-5 w-5" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+        </div>
+      </div>
 
+      <label class="block text-left text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 pl-1">2. เลือกระยะเวลา (ยิ่งเลือกเยอะ ยิ่งลดเยอะ) 🔥</label>
+      <div class="relative inline-block w-full mb-6 text-left group">
+        <select id="renewMonthsSelect" onchange="updateRenewDetails()" class="block w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-3.5 sm:py-4 px-4 sm:px-5 pr-10 rounded-2xl leading-tight focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-400 font-bold transition-all cursor-pointer hover:bg-slate-100 text-sm sm:text-base">
+          <option value="1">1 เดือน (ราคาปกติ)</option>
+          <option value="2">2 เดือน (รับส่วนลดพิเศษ **5%**) 🌟</option>
+          <option value="3" selected>3 เดือน (รับส่วนลดคุ้มๆ **8%**) 👍 [การันตีไม่มีหลุด]</option>
+          <option value="4">4 เดือน (รับส่วนลดจุใจ **10%**) ✨</option>
+          <option value="6">6 เดือน (รับส่วนลดสูงสุด **15%**) 🚀 [คุ้มค่าที่สุด]</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 sm:px-5 text-slate-400 group-hover:text-slate-600 transition-colors">
+          <svg class="fill-current h-5 w-5" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+        </div>
+      </div>
+      
+      <div id="renewDetails" class="mb-6 bg-slate-50 p-4 sm:p-5 rounded-3xl border border-slate-100 text-left text-xs sm:text-sm">
+        <div class="flex justify-between mb-2">
+          <span class="text-slate-500">วันหมดอายุเดิม:</span>
+          <span class="font-bold text-slate-800" id="renewExpireDateDisplay">-</span>
+        </div>
+        <div class="flex justify-between mb-2 border-b border-slate-200 pb-2">
+          <span class="text-slate-500">สถานะเวลาปัจจุบัน:</span>
+          <span id="renewCountdownDisplay">-</span>
+        </div>
+        <div class="flex justify-between mt-2 text-[11px] sm:text-xs">
+          <span class="text-slate-400">ราคาปกติสะสม:</span>
+          <span class="text-slate-500 line-through font-medium" id="rawPriceDisplay">0.00 บาท</span>
+        </div>
+        <div class="flex justify-between text-[11px] sm:text-xs text-teal-600 font-medium mb-2">
+          <span id="discountPercentDisplay">ส่วนลด (0%):</span>
+          <span id="discountAmountDisplay">-0.00 บาท</span>
+        </div>
+        <div class="flex justify-between items-center pt-2 border-t border-dashed border-slate-300">
+          <span class="font-bold text-slate-800 text-sm sm:text-base">ยอดสุทธิที่ต้องชำระ:</span>
+          <span class="font-extrabold text-lg sm:text-xl text-red-600 tracking-tight" id="calculatedTotalDisplay">0.00 บาท</span>
+        </div>
+      </div>
+      
+      <div class="flex flex-col gap-2.5">
+        <button onclick="goToPaymentPageDynamic()" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-900 font-bold text-base sm:text-lg py-3.5 sm:py-4 px-6 sm:px-8 rounded-2xl shadow-lg shadow-amber-500/30 transition-all transform hover:-translate-y-0.5 active:scale-[0.98]">
+          ดำเนินการไปยังหน้าสแกนเงิน
+        </button>
+        <button onclick="showPage('dashboard-page')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-2xl transition-all active:scale-[0.98] text-xs sm:text-sm">
+          ย้อนกลับไปหน้าหลัก
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="payment-page" class="w-full flex-grow flex items-center justify-center p-4 sm:p-6">
+    <div class="glass-card w-full max-w-md p-5 sm:p-8 rounded-3xl sm:rounded-[2.5rem] shadow-[0_20px_60px_rgb(0,0,0,0.08)] text-center relative mt-4">
+      <button onclick="showPage('renew-page')" class="absolute top-4 left-4 sm:top-8 sm:left-8 text-slate-400 hover:text-slate-800 transition-colors bg-slate-50 p-2 rounded-full">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      </button>
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-1 mt-6 sm:mt-4">สแกนชำระเงิน</h2>
+      <p class="text-slate-500 text-xs sm:text-sm mb-4">ระบบพร้อมเพย์ (PromptPay)</p>
+      <div class="mb-4 bg-red-50 py-2.5 sm:py-3 px-4 rounded-2xl border border-red-100">
+        <p class="text-slate-500 font-semibold text-[11px] sm:text-xs mb-0.5">ยอดเงินที่ต้องชำระ</p>
+        <p class="text-xl sm:text-2xl font-extrabold text-red-600" id="paymentAmountDisplay">0.00 บาท</p>
+      </div>
+      <div class="bg-white p-3 sm:p-4 rounded-3xl inline-block shadow-sm border border-slate-100 mb-4 sm:mb-5">
+        <img id="promptPayQr" src="https://promptpay.io/0633390911.png" alt="PromptPay QR Code" class="w-40 h-40 sm:w-48 sm:h-48 mx-auto">
+      </div>
+      <div class="mb-4 sm:mb-5 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-100 text-xs sm:text-sm">
+        <p class="text-slate-500 font-medium text-[11px] sm:text-xs">เบอร์พร้อมเพย์</p>
+        <p class="text-base sm:text-lg font-bold text-slate-800 tracking-wider">063-339-0911</p>
+        <p class="text-[11px] sm:text-xs text-red-500 mt-1 font-medium truncate">ต่ออายุสำหรับเมล: <span id="paymentEmailDisplay" class="font-bold text-slate-700"></span></p>
+      </div>
+      <div class="mb-5 sm:mb-6 text-left">
+        <label class="block text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">แนบรูปภาพสลิปการโอนเงิน</label>
+        <div class="w-full">
+          <label class="flex flex-col items-center justify-center w-full h-28 sm:h-32 border-2 border-slate-200 border-dashed rounded-2xl cursor-pointer bg-slate-50/50 hover:bg-slate-100/50 transition-colors relative overflow-hidden">
+            <div class="flex flex-col items-center justify-center pt-4 pb-5 text-center px-4" id="upload-prompt">
+              <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+              <p class="text-[11px] sm:text-xs text-slate-500 font-medium">กดที่นี่เพื่ออัปโหลดไฟล์สลิป</p>
+            </div>
+            <div class="hidden flex-col items-center justify-center text-center p-4" id="upload-selected">
+              <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-1 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <p class="text-xs sm:text-sm text-teal-600 font-bold truncate max-w-[240px] sm:max-w-[280px]" id="fileNameDisplay">Selected_File.png</p>
+              <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5">คลิกอีกครั้งหากต้องการเปลี่ยนรูป</p>
+            </div>
+            <input type="file" id="slipInput" accept="image/*" class="hidden" onchange="handleFileChange(this)">
+          </label>
+        </div>
+      </div>
+      <button onclick="submitPayment()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 sm:py-4 rounded-2xl transition-all shadow-lg shadow-slate-900/20 active:scale-[0.98] text-sm sm:text-base">
+        ยืนยันชำระเงินและส่งข้อมูล
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ⬇️ ตรงนี้อย่าลืมเอา URL จาก Google Apps Script ของคุณมาวางทับนะครับ
+    const API_URL = "https://script.google.com/macros/s/AKfycbxcIKWi6j8zM9yMoZn5s8MlVUWh-XT-UscoN0niabrTcLKEkO1tWm07RUPddSPaPIML-g/exec";
+
+    let userData = [];
+    let timerInterval = null;
+    let autoRefreshInterval = null;
+    let currentSelectedMonths = 3; 
+
+    // Helper Function สำหรับเชื่อมต่อไปยัง Backend Vercel
     function callAPI(action, payload = {}) {
       return fetch(API_URL, {
         method: "POST",
         body: JSON.stringify({ action: action, payload: payload })
-      }).then(res => res.json());
+      }).then(res => res.json())
+      .catch(err => {
+        console.error("API Error:", err);
+        throw new Error(err);
+      });
     }
 
+    // --- เช็คระบบความจำตอนโหลดหน้าเว็บเข้าครั้งแรก (Auto-Login Trigger) ---
     window.addEventListener('DOMContentLoaded', () => {
       const savedUser = localStorage.getItem('yt_family_username');
       if (savedUser) {
         document.getElementById('usernameInput').value = savedUser;
         document.getElementById('rememberMe').checked = true;
+        // ทำการล็อกอินให้ทันทีโดยที่ผู้ใช้ไม่ต้องกดอะไรเลย
         login(true);
       }
     });
 
     function showPage(pageId) {
-      ['login-page', 'loading', 'dashboard-page', 'admin-page'].forEach(id => {
-        document.getElementById(id).style.display = (id === pageId) ? 'block' : 'none';
-      });
+      document.getElementById('login-page').style.display = 'none';
+      document.getElementById('dashboard-page').style.display = 'none';
+      document.getElementById('renew-page').style.display = 'none';
+      document.getElementById('payment-page').style.display = 'none';
+      document.getElementById('admin-page').style.display = 'none';
+      document.getElementById('loading').style.display = 'none';
+      
+      if(pageId === 'dashboard-page' || pageId === 'admin-page') {
+        document.getElementById(pageId).style.display = 'block';
+      } else {
+        document.getElementById(pageId).style.display = 'flex';
+      }
     }
 
-    function login() {
+    // ปรับฟังก์ชัน login ให้รองรับการทำงานผ่าน API
+    function login(isAutoLogin = false) {
       const username = document.getElementById('usernameInput').value.trim();
       if (!username) return alert('กรุณากรอกชื่อผู้ใช้');
-      showPage('loading');
 
+      showPage('loading');
+      
       if (username.toLowerCase() === 'admin') {
         loadAdminDashboard();
         return;
       }
 
-      callAPI("getYtUserData", { username: username }).then(response => {
-        if (!response || response.length === 0) {
-          alert('ไม่พบข้อมูลของชื่อผู้ใช้นี้');
+      callAPI("getYtUserData", { username: username })
+        .then(response => {
+          if (!response || response.length === 0) {
+            alert('ไม่พบข้อมูลของชื่อผู้ใช้นี้ โปรดตรวจสอบอีกครั้ง');
+            localStorage.removeItem('yt_family_username'); // ล้างความจำหากใส่ Username ผิด
+            showPage('login-page');
+            return;
+          }
+
+          // ตรวจสอบสถานะปุ่มติ๊กจดจำอุปกรณ์
+          const rememberMeChecked = document.getElementById('rememberMe').checked;
+          if (rememberMeChecked) {
+            localStorage.setItem('yt_family_username', username);
+          } else {
+            localStorage.removeItem('yt_family_username');
+          }
+
+          userData = response;
+          document.getElementById('displayUsername').textContent = username;
+          renderDashboard();
+          showPage('dashboard-page');
+          startAutoSync(username);
+        })
+        .catch(err => {
+          alert('❌ เกิดข้อผิดพลาดฝั่งเซิร์ฟเวอร์: ' + err.message);
           showPage('login-page');
-          return;
-        }
-        if (document.getElementById('rememberMe').checked) {
-          localStorage.setItem('yt_family_username', username);
-        } else {
-          localStorage.removeItem('yt_family_username');
-        }
-        userData = response;
-        document.getElementById('displayUsername').textContent = username;
-        renderDashboard();
-        showPage('dashboard-page');
-      });
+        });
     }
 
     function logout() {
+      userData = [];
+      document.getElementById('usernameInput').value = '';
+      document.getElementById('rememberMe').checked = false;
+      
+      // ลบข้อมูลที่จดจำออกจากเครื่องเมื่อกดยืนยันออกจากระบบอย่างตั้งใจ
       localStorage.removeItem('yt_family_username');
+      
+      if(timerInterval) clearInterval(timerInterval);
+      if(autoRefreshInterval) clearInterval(autoRefreshInterval);
       showPage('login-page');
     }
 
     function loadAdminDashboard() {
-      callAPI("getAllYtDataForAdmin").then(allData => {
-        const tbody = document.getElementById('adminTableBody');
-        tbody.innerHTML = '';
-        allData.forEach(row => {
-          const tr = document.createElement('tr');
-          let ISOdate = row.expireDate ? row.expireDate.substring(0, 10) : "";
-          let slipHtml = row.slipUrl ? `<a href="${row.slipUrl}" target="_blank" class="text-blue-600 underline">เปิดสลิป</a>` : "ไม่มี";
+      callAPI("getAllYtDataForAdmin")
+        .then(allData => {
+          const tbody = document.getElementById('adminTableBody');
+          tbody.innerHTML = '';
           
-          tr.innerHTML = `
-            <td class="py-3 font-semibold">${row.username}</td>
-            <td class="py-3">${row.familyId}</td>
-            <td class="py-3">${row.email}</td>
-            <td class="py-3">${slipHtml}</td>
-            <td class="py-3"><input type="date" id="date-${row.rowNumber}" value="${ISOdate}" class="border rounded p-1 text-xs"></td>
-            <td class="py-3"><input type="text" id="status-${row.rowNumber}" value="${row.status || ''}" class="border rounded p-1 text-xs"></td>
-            <td class="py-3 text-center"><button onclick="saveAdmin(${row.rowNumber})" class="bg-slate-900 text-white px-3 py-1 rounded text-xs">บันทึก</button></td>
-          `;
-          tbody.appendChild(tr);
+          if (!allData || allData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">❌ ยังไม่มีข้อมูลลูกค้าในระบบกูเกิลชีต</td></tr>`;
+            showPage('admin-page');
+            return;
+          }
+          
+          allData.forEach(row => {
+            const tr = document.createElement('tr');
+            let ISOdate = "";
+            if (row.expireDate) {
+              const d = new Date(row.expireDate);
+              ISOdate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            }
+
+            let slipHtml = `<span class="text-slate-400 text-xs">ไม่มีสลิป</span>`;
+            if (row.slipUrl) {
+              slipHtml = `<a href="${row.slipUrl}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold underline text-xs bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-xl transition-all">📄 เปิดตรวจสลิป</a>`;
+            }
+
+            let rowBgClass = "border-b border-slate-50 hover:bg-slate-50/50 transition-colors";
+            let actionButtonsHtml = `<button onclick="saveRowFromAdmin(${row.rowNumber})" class="bg-slate-900 text-white text-xs font-medium px-4 py-2 rounded-xl hover:bg-slate-800 shadow-sm transition-all active:scale-95">บันทึก</button>`;
+
+            if (row.status && row.status.includes('รอแอดมินตรวจสอบ')) {
+              rowBgClass = "border-b border-amber-100 bg-amber-50/30 hover:bg-amber-50/60 transition-colors";
+              actionButtonsHtml = `
+                <div class="flex items-center justify-center gap-1">
+                  <button onclick="quickApprove(${row.rowNumber})" class="bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-emerald-500 shadow-sm transition-all active:scale-95">อนุมัติ</button>
+                  <button onclick="saveRowFromAdmin(${row.rowNumber})" class="bg-slate-300 text-slate-700 text-xs font-medium px-2 py-2 rounded-xl hover:bg-slate-400 shadow-sm transition-all active:scale-95">บันทึก</button>
+                </div>
+              `;
+            }
+
+            tr.className = rowBgClass;
+            tr.innerHTML = `
+              <td class="py-4 font-semibold text-slate-800">${row.username}</td>
+              <td class="py-4 font-mono text-xs text-slate-500">แฟม ${row.familyId}</td>
+              <td class="py-4 font-medium">${row.email}</td>
+              <td class="py-4">${slipHtml}</td>
+              <td class="py-4">
+                <input type="date" id="date-${row.rowNumber}" value="${ISOdate}" class="bg-slate-50 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-medium focus:outline-none focus:border-red-400">
+              </td>
+              <td class="py-4">
+                <input type="text" id="status-${row.rowNumber}" list="status-options" value="${row.status || ''}" placeholder="เลือกหรือพิมพ์สถานะเอง" class="bg-slate-50 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none focus:border-red-400 w-full cursor-pointer">
+              </td>
+              <td class="py-4 text-center">${actionButtonsHtml}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+          showPage('admin-page');
+        })
+        .catch(error => {
+          alert("❌ เกิดข้อผิดพลาดจากระบบหลังบ้าน: " + error.message);
+          showPage('login-page');
         });
-        showPage('admin-page');
-      });
     }
 
-    function saveAdmin(rowNumber) {
-      const status = document.getElementById(`status-${rowNumber}`).value;
-      const date = document.getElementById(`date-${rowNumber}`).value;
-      callAPI("updateYtUserDataFromAdmin", { rowNumber: rowNumber, newStatus: status, newExpireDate: date }).then(res => {
-        alert(res === 'success' ? 'บันทึกสำเร็จ' : 'เกิดข้อผิดพลาด');
-        loadAdminDashboard();
-      });
+    function quickApprove(rowNumber) {
+      const dateValue = document.getElementById(`date-${rowNumber}`).value;
+      if(!dateValue) return alert('กรุณาระบุหรือตรวจสอบวันหมดอายุของลูกค้ารายนี้ก่อนกดอนุมัติครับ');
+
+      showPage('loading');
+      callAPI("updateYtUserDataFromAdmin", { rowNumber: rowNumber, newStatus: "ชำระเงินแล้ว", newExpireDate: dateValue })
+        .then(status => {
+           if(status === 'success') {
+             alert('🎉 อนุมัติรูปสลิปและปรับสถานะสำเร็จเรียบร้อย!');
+             loadAdminDashboard();
+           } else {
+             alert('เกิดข้อผิดพลาด: ' + status);
+             showPage('admin-page');
+           }
+        })
+        .catch(err => {
+           alert('❌ ระบบหลังบ้านขัดข้อง: ' + err.message);
+           showPage('admin-page');
+        });
+    }
+
+    function saveRowFromAdmin(rowNumber) {
+      const inputElement = document.getElementById(`status-${rowNumber}`);
+      let statusValue = inputElement.value.trim();
+
+      const dateValue = document.getElementById(`date-${rowNumber}`).value;
+      if(!dateValue) return alert('กรุณาระบุวันหมดอายุ');
+
+      showPage('loading');
+      callAPI("updateYtUserDataFromAdmin", { rowNumber: rowNumber, newStatus: statusValue, newExpireDate: dateValue })
+        .then(status => {
+           if(status === 'success') {
+             alert('💾 บันทึกข้อมูลสถานะสำเร็จ!');
+             loadAdminDashboard();
+           } else {
+             alert('เกิดข้อผิดพลาด: ' + status);
+             showPage('admin-page');
+           }
+        })
+        .catch(err => {
+           alert('❌ ไม่สามารถบันทึกได้: ' + err.message);
+           showPage('admin-page');
+        });
+    }
+
+    function submitPayment() {
+      const username = document.getElementById('displayUsername').textContent;
+      const email = document.getElementById('paymentEmailDisplay').textContent;
+      const fileInput = document.getElementById('slipInput');
+      
+      if (!fileInput.files || fileInput.files.length === 0) {
+        return alert('กรุณาแนบรูปภาพสลิปการโอนเงินเพื่อยืนยันก่อนครับ');
+      }
+      
+      const file = fileInput.files[0];
+      if (file.size > 8 * 1024 * 1024) {
+        return alert('❌ ไฟล์สลิปมีขนาดใหญ่เกิน 8MB กรุณาใช้รูปแคปหน้าจอธรรมดา หรือแคปให้ไฟล์เล็กลงแล้วลองใหม่อีกครั้งครับ');
+      }
+
+      showPage('loading');
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const base64Data = e.target.result.split(',')[1];
+          
+          callAPI("processYtPayment", {
+            username: username,
+            email: email,
+            base64Data: base64Data,
+            fileName: file.name,
+            months: currentSelectedMonths
+          })
+          .then(status => {
+            if (status === 'success') {
+              alert('🎉 แจ้งโอนเงินสำเร็จ! ข้อมูลถูกส่งไปให้แอดมินเรียบร้อยแล้วครับ');
+              callAPI("getYtUserData", { username: username }).then(res => {
+                 userData = res;
+                 renderDashboard();
+                 showPage('dashboard-page');
+                 startAutoSync(username);
+              });
+            } else if (status.startsWith('error:')) {
+              alert('❌ ปฏิเสธการบันทึก: ' + status.replace('error: ', ''));
+              showPage('payment-page');
+            } else {
+              alert('เกิดข้อผิดพลาดในการเซฟข้อมูล กรุณาลองใหม่อีกครั้ง');
+              showPage('payment-page');
+            }
+          })
+          .catch(error => {
+            alert('❌ เกิดความล้มเหลวในการส่งข้อมูลเข้า Server: ' + error.message);
+            showPage('payment-page');
+          });
+
+        } catch(jsErr) {
+          alert('เกิดข้อผิดพลาดบนหน้าเว็บ: ' + jsErr.message);
+          showPage('payment-page');
+        }
+      };
+      
+      reader.onerror = function() {
+        alert('ตัวอ่านไฟล์ขัดข้อง ไม่สามารถประมวลผลรูปภาพนี้ได้');
+        showPage('payment-page');
+      };
+      
+      reader.readAsDataURL(file);
+    }
+
+    function startAutoSync(username) {
+      if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+      autoRefreshInterval = setInterval(function() {
+        if (document.getElementById('dashboard-page').style.display === 'block') {
+          callAPI("getYtUserData", { username: username }).then(newResponse => {
+            if (newResponse && newResponse.length > 0) {
+              if (JSON.stringify(newResponse) !== JSON.stringify(userData)) {
+                userData = newResponse;
+                renderDashboard();
+              }
+            }
+          });
+        }
+      }, 20000);
+    }
+
+    function calculateTimeDiff(expireDateStr) {
+      const expireTime = new Date(expireDateStr).getTime();
+      const now = new Date().getTime();
+      const diff = expireTime - now;
+      const isExpired = diff < 0;
+      const absDiff = Math.abs(diff);
+
+      const d = Math.floor(absDiff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((absDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((absDiff % (1000 * 60 * 60)) / (1000 * 60));
+
+      return { isExpired, d, h, m, raw: expireTime };
     }
 
     function renderDashboard() {
       const container = document.getElementById('familyList');
       container.innerHTML = '';
-      userData.forEach(item => {
+      
+      let total = userData.length;
+      let active = 0;
+      let expired = 0;
+
+      userData.forEach((item) => {
+        const timeInfo = calculateTimeDiff(item.expireDate);
+        if (timeInfo.isExpired) expired++;
+        else active++;
+
+        const dateObj = new Date(item.expireDate);
+        const dateStr = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth()+1).padStart(2, '0')}/${dateObj.getFullYear()}`;
+
+        let statusHtml = '';
+        let statusText = item.status ? item.status.trim() : '';
+        
+        const standardStatuses = ["ชำระเงินแล้ว", "ยังไม่ชำระเงิน", "รอแอดมินตรวจสอบ", "ใช้งานได้", "ค้างชำระ", "ใกล้หมดอายุ", ""];
+
+        if (!standardStatuses.includes(statusText)) {
+          statusHtml = `<span class="px-3 py-1 bg-slate-100 text-slate-900 border border-slate-400 rounded-full text-xs font-semibold whitespace-nowrap">${statusText}</span>`;
+        } else {
+          if (timeInfo.isExpired) {
+            if (statusText === 'รอแอดมินตรวจสอบ') {
+              statusHtml = `
+                <div class="flex flex-col gap-1 items-end justify-center text-right">
+                  <span class="px-3 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[11px] font-semibold whitespace-nowrap">ชำระเงินแล้ว</span>
+                  <span class="px-3 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[11px] font-semibold whitespace-nowrap">รอแอดมินแก้ไขพรีเมี่ยม</span>
+                </div>
+              `;
+            } else {
+              statusHtml = `<span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-semibold whitespace-nowrap">ค้างชำระ</span>`;
+            }
+          } else {
+            if (statusText === 'รอแอดมินตรวจสอบ') {
+              statusHtml = `
+                <div class="flex flex-col gap-1 items-end justify-center text-right">
+                  <span class="px-3 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[11px] font-semibold whitespace-nowrap">ชำระเงินแล้ว</span>
+                  <span class="px-3 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[11px] font-semibold whitespace-nowrap">รอแอดมินแก้ไขพรีเมี่ยม</span>
+                </div>
+              `;
+            } else {
+              if (timeInfo.d < 7) {
+                statusHtml = `<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold whitespace-nowrap">ใกล้หมดอายุ</span>`;
+              } else {
+                statusHtml = `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold whitespace-nowrap">ใช้งานได้</span>`;
+              }
+            }
+          }
+        }
+
         const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl p-4 shadow-sm border flex justify-between items-center";
-        card.innerHTML = `<div><b>แฟม ${item.familyId}</b><br><span class="text-sm text-slate-500">${item.email}</span></div><div><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">${item.status || 'ใช้งานได้'}</span></div>`;
+        card.className = "bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] border border-slate-100 hover:shadow-xl hover:border-red-200/60 transition-all duration-300 flex flex-col md:grid md:grid-cols-12 gap-2 md:gap-4 items-stretch md:items-center group";
+        
+        card.innerHTML = `
+          <div class="md:col-span-1 grid grid-cols-[85px_1fr] md:block items-center border-b border-slate-100/60 md:border-none py-1.5 md:py-0">
+            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">แฟมที่:</span> 
+            <span class="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center font-bold text-slate-600 border border-slate-100 group-hover:bg-red-50 group-hover:text-red-600 transition-colors font-mono text-xs">${item.familyId}</span>
+          </div>
+          <div class="md:col-span-3 grid grid-cols-[85px_1fr] md:block items-center border-b border-slate-100/60 md:border-none py-1.5 md:py-0">
+            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">อีเมล:</span> 
+            <span class="font-semibold text-slate-700 text-sm break-all">${item.email}</span>
+          </div>
+          <div class="md:col-span-2 grid grid-cols-[85px_1fr] md:block items-center border-b border-slate-100/60 md:border-none py-1.5 md:py-0">
+            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">หมดอายุ:</span> 
+            <span class="text-slate-600 font-medium text-sm">${dateStr}</span>
+          </div>
+          <div class="md:col-span-4 grid grid-cols-[85px_1fr] md:block items-center border-b border-slate-100/60 md:border-none py-1.5 md:py-0">
+            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">เหลือเวลา:</span>
+            <div class="countdown-text" data-expire="${item.expireDate}"></div>
+          </div>
+          <div class="md:col-span-2 grid grid-cols-[85px_1fr] md:block items-center py-1.5 md:py-0 md:text-right flex justify-start md:justify-end">
+            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">สถานะ:</span> 
+            <div>${statusHtml}</div>
+          </div>
+        `;
         container.appendChild(card);
       });
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statActive').textContent = active;
+      document.getElementById('statExpired').textContent = expired;
+
+      updateCountdowns();
+      if(timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(updateCountdowns, 60000);
+    }
+
+    function updateCountdowns() {
+      document.querySelectorAll('.countdown-text').forEach(el => {
+        const timeInfo = calculateTimeDiff(el.dataset.expire);
+        if (timeInfo.isExpired) {
+          el.innerHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-rose-50 text-rose-600 rounded-lg text-xs font-semibold"><div class="w-1.5 h-1.5 rounded-full bg-rose-500"></div> หมดอายุแล้ว (${timeInfo.d} วัน)</span>`;
+        } else {
+          el.innerHTML = `<span class="inline-flex items-center gap-1.5 text-teal-600 font-semibold text-xs"><div class="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></div> ${timeInfo.d} วัน ${timeInfo.h} ชม. ${timeInfo.m} นาที</span>`;
+        }
+      });
+    }
+
+    function goToRenewPage() {
+      const select = document.getElementById('renewEmailSelect');
+      select.innerHTML = '';
+      userData.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.email;
+        option.textContent = item.email;
+        select.appendChild(option);
+      });
+      
+      document.getElementById('renewMonthsSelect').value = "3";
+      updateRenewDetails();
+      showPage('renew-page');
+    }
+
+    function updateRenewDetails() {
+      const selectedEmail = document.getElementById('renewEmailSelect').value;
+      const selectedMonths = parseInt(document.getElementById('renewMonthsSelect').value) || 1;
+      currentSelectedMonths = selectedMonths; 
+      
+      const data = userData.find(i => i.email === selectedEmail);
+      if(!data) return;
+
+      const dateObj = new Date(data.expireDate);
+      const dateStr = `${String(dateObj.getDate()).padStart(2, '0')} / ${String(dateObj.getMonth()+1).padStart(2, '0')} / ${dateObj.getFullYear()}`;
+      document.getElementById('renewExpireDateDisplay').textContent = dateStr;
+
+      const timeInfo = calculateTimeDiff(data.expireDate);
+      const displayObj = document.getElementById('renewCountdownDisplay');
+      
+      if (timeInfo.isExpired) {
+        displayObj.className = "text-xs text-rose-500 font-semibold flex items-center gap-1";
+        displayObj.innerHTML = `หมดอายุมาแล้ว ${timeInfo.d} วัน`;
+      } else {
+        displayObj.className = "text-xs text-teal-600 font-semibold flex items-center gap-1";
+        displayObj.innerHTML = `ใช้งานได้อีก ${timeInfo.d} วัน`;
+      }
+
+      let basePrice = Number(data.price) || 0;
+      let rawTotalPrice = basePrice * selectedMonths;
+      let discountRate = 0;
+
+      if (selectedMonths === 2) discountRate = 0.05;
+      else if (selectedMonths === 3) discountRate = 0.08;
+      else if (selectedMonths === 4) discountRate = 0.10;
+      else if (selectedMonths === 6) discountRate = 0.15;
+
+      let discountAmount = rawTotalPrice * discountRate;
+      let netTotal = rawTotalPrice - discountAmount;
+
+      document.getElementById('rawPriceDisplay').textContent = rawTotalPrice.toFixed(2) + ' บาท';
+      document.getElementById('discountPercentDisplay').textContent = `ส่วนลด (${(discountRate * 100)}%):`;
+      document.getElementById('discountAmountDisplay').textContent = `-${discountAmount.toFixed(2)} บาท`;
+      document.getElementById('calculatedTotalDisplay').textContent = netTotal.toFixed(2) + ' บาท';
+    }
+
+    function goToPaymentPageDynamic() {
+      const selectedEmail = document.getElementById('renewEmailSelect').value;
+      if (!selectedEmail) return alert('โปรดเลือกอีเมลที่ต้องการต่ออายุครับ');
+      
+      const currentData = userData.find(item => item.email === selectedEmail);
+      let basePrice = currentData && currentData.price ? currentData.price : 0;
+      
+      let rawTotalPrice = basePrice * currentSelectedMonths;
+      let discountRate = 0;
+      
+      if (currentSelectedMonths === 2) discountRate = 0.05;
+      else if (currentSelectedMonths === 3) discountRate = 0.08;
+      else if (currentSelectedMonths === 4) discountRate = 0.10;
+      else if (currentSelectedMonths === 6) discountRate = 0.15;
+
+      let netTotal = rawTotalPrice * (1 - discountRate);
+      
+      document.getElementById('paymentAmountDisplay').textContent = netTotal.toFixed(2) + ' บาท (' + currentSelectedMonths + ' เดือน)';
+      document.getElementById('paymentEmailDisplay').textContent = selectedEmail;
+      
+      const qrImageElement = document.getElementById('promptPayQr');
+      if (netTotal > 0) {
+        qrImageElement.src = `https://promptpay.io/0633390911/${netTotal.toFixed(2)}.png`;
+      } else {
+        qrImageElement.src = `https://promptpay.io/0633390911.png`;
+      }
+      
+      document.getElementById('slipInput').value = '';
+      document.getElementById('upload-prompt').classList.remove('hidden');
+      document.getElementById('upload-selected').classList.add('hidden');
+      
+      showPage('payment-page');
+    }
+
+    function handleFileChange(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById('fileNameDisplay').textContent = input.files[0].name;
+        document.getElementById('upload-prompt').classList.add('hidden');
+        document.getElementById('upload-selected').classList.remove('hidden');
+      }
     }
   </script>
 </body>
