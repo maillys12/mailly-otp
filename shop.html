@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mailly Shop - ร้านค้าออนไลน์</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 สำหรับแจ้งเตือนสวยๆ -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -13,27 +15,32 @@
 </head>
 <body class="bg-gray-50 min-h-screen text-gray-800">
 
+    <!-- Navbar -->
     <nav class="bg-indigo-600 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center flex-wrap gap-4">
             <div class="flex items-center space-x-3">
                 <span class="text-xl font-bold">🛒 Mailly Shop</span>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-4 flex-wrap gap-2">
                 <span id="displayUsername" class="text-sm bg-indigo-700 px-3 py-1.5 rounded-full">กำลังโหลด...</span>
                 <span class="text-sm bg-amber-500 text-white px-3 py-1.5 rounded-full font-semibold">เครดิต: <span id="displayCredit">0</span> ฿</span>
-                <a href="/" class="text-sm bg-white text-indigo-600 px-3 py-1.5 rounded-lg font-medium hover:bg-gray-100 transition">กลับหน้าหลัก</a>
+                <a href="index.html" class="text-sm bg-white text-indigo-600 px-3 py-1.5 rounded-lg font-medium hover:bg-gray-100 transition">กลับหน้าหลัก</a>
             </div>
         </div>
     </nav>
 
+    <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 py-8">
         
+        <!-- ส่วนหัวข้อ -->
         <div class="text-center mb-10">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">สินค้าและบริการทั้งหมด</h1>
             <p class="text-gray-500">เลือกสินค้าที่คุณต้องการ และระบบจะตัดเครดิตของคุณทันที</p>
         </div>
 
+        <!-- รายการสินค้า (Grid Layout) -->
         <div id="productList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- สินค้าตัวอย่างที่ 1 -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
                 <div class="bg-gradient-to-r from-blue-500 to-indigo-500 p-6 text-white">
                     <span class="bg-white/20 text-xs px-2.5 py-1 rounded-full font-medium">ยอดนิยม</span>
@@ -51,6 +58,7 @@
                 </div>
             </div>
 
+            <!-- สินค้าตัวอย่างที่ 2 -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
                 <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white">
                     <span class="bg-white/20 text-xs px-2.5 py-1 rounded-full font-medium">คุ้มค่าสุดๆ</span>
@@ -60,7 +68,7 @@
                     <p class="text-gray-600 text-sm mb-4">รายละเอียดสินค้าหรือบริการอธิบายสั้นๆ ตรงนี้ ให้ลูกค้าเข้าใจง่ายขึ้น</p>
                     <div class="flex justify-between items-center mb-6">
                         <span class="text-2xl font-bold text-indigo-600">120 ฿</span>
-                        <span class="text-xs text-gray-400">สต็อก: พร้อมส่ง</span>
+                        <span class="text-xs text-gray-400">สต็อก:พร้อมส่ง</span>
                     </div>
                     <button onclick="buyProduct('PROD-002', 'แพ็กเกจเสริมพิเศษ B', 120)" class="w-full bg-indigo-600 text-white font-medium py-2.5 rounded-xl hover:bg-indigo-700 transition shadow-sm">
                         🛒 ซื้อสินค้าทันที
@@ -71,12 +79,13 @@
 
     </main>
 
+    <!-- Script สำหรับเชื่อมต่อระบบ -->
     <script>
-        // เปลี่ยน URL นี้เป็น Web App URL ของ Google Apps Script (ตัวเดียวกับที่คุณใช้ในหน้า Index/Page2)
+        // ใช้ URL เดียวกับหน้าหลักของคุณ
         const API_URL = "https://script.google.com/macros/s/AKfycbxRNWvNC9bo7x8v3iIPOtKazYLr-hom5zhdr4E0deu4wum9K7zGjULYaRw7vNSAAKB7hg/exec"; 
 
-        // ดึงข้อมูล Username จาก localStorage (สมมติระบบเดิมเก็บบันทึกตอน Login ไว้)
-        let currentUser = localStorage.getItem('username') || '';
+        // ดึงชื่อผู้ใช้จาก localStorage ที่แชร์ร่วมกับหน้า index.html (เช็คทั้ง username และ mailly_remembered_user)
+        let currentUser = localStorage.getItem('username') || localStorage.getItem('mailly_remembered_user') || '';
 
         window.onload = function() {
             if (!currentUser) {
@@ -86,9 +95,11 @@
                     text: 'คุณยังไม่ได้เข้าสู่ระบบ กรุณาเข้าสู่ระบบจากหน้าหลักก่อนใช้งานร้านค้า',
                     confirmButtonText: 'ตกลง'
                 }).then(() => {
-                    window.location.href = '/'; // เด้งกลับหน้าหลัก
+                    window.location.href = 'index.html'; // เด้งกลับหน้าหลัก
                 });
             } else {
+                // หากเจอ username แต่ในหน้า index บันทึกเป็นชื่ออื่น ให้เซ็ตซิงค์กันไว้
+                localStorage.setItem('username', currentUser);
                 document.getElementById('displayUsername').innerText = `ผู้ใช้: ${currentUser}`;
                 loadUserCredit();
             }
@@ -103,7 +114,11 @@
                 });
                 let result = await response.json();
                 if (result.success) {
-                    document.getElementById('displayCredit').innerText = result.credit;
+                    document.getElementById('displayCredit').innerText = parseFloat(result.credit).toFixed(2);
+                } else {
+                    Swal.fire('แจ้งเตือน', 'เซสชันผู้ใช้หมดอายุ กรุณาเข้าสู่ระบบใหม่', 'warning').then(() => {
+                        window.location.href = 'index.html';
+                    });
                 }
             } catch (e) {
                 console.error("Error loading credit:", e);
@@ -142,7 +157,7 @@
 
                 if (result.success) {
                     Swal.fire('สำเร็จ!', 'ซื้อสินค้าเรียบร้อยแล้ว', 'success').then(() => {
-                        document.getElementById('displayCredit').innerText = result.newCredit;
+                        document.getElementById('displayCredit').innerText = parseFloat(result.newCredit).toFixed(2);
                     });
                 } else {
                     Swal.fire('ผิดพลาด!', result.message, 'error');
