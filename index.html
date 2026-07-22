@@ -5,37 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mailly OTP - บริการรับ SMS อัตโนมัติ</title>
   
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- jQuery & Select2 -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     :root {
-      --bg-color: #F4F6F9;
-      --card-bg: #FFFFFF;
-      --border-color: #E2E8F0;
-      --text-main: #1E293B;
-      --text-muted: #64748B;
-      --primary: #C5A059;
-      --primary-hover: #A8833D;
-      --primary-light: rgba(197, 160, 89, 0.1);
-      --success: #10B981;
-      --danger: #EF4444;
-      --danger-hover: #DC2626;
-      --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
-      --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05);
-      --radius: 14px;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --danger-light: #fef2f2;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --shadow-lg: 0 10px 25px -5px rgba(37, 99, 235, 0.1);
+      --radius: 16px;
     }
 
     * { box-sizing: border-box; }
 
     body {
-      font-family: 'Prompt', 'Inter', sans-serif; 
+      font-family: 'Prompt', sans-serif; 
       background-color: var(--bg-color); 
       color: var(--text-main); 
       padding: 20px 15px; 
@@ -50,7 +58,8 @@
     /* --- Login Screen --- */
     #loginScreen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: var(--bg-color); z-index: 9999;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      z-index: 9999;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
       padding: 20px;
     }
@@ -61,17 +70,17 @@
       border-radius: var(--radius); 
       width: 100%; 
       max-width: 420px;
-      box-shadow: var(--shadow-md); 
+      box-shadow: var(--shadow-lg); 
       text-align: center;
     }
     .login-input {
       width: 100%; 
       padding: 14px 16px; 
       margin: 20px 0 14px 0; 
-      background-color: #F8FAFC;
+      background-color: #f8fafc;
       border: 1.5px solid var(--border-color);
       color: var(--text-main);
-      border-radius: 10px; 
+      border-radius: 12px; 
       font-family: 'Prompt'; 
       font-size: 15px; 
       outline: none; 
@@ -94,7 +103,7 @@
     .header-bar {
       width: 100%; max-width: 650px; display: none;
       grid-template-columns: repeat(2, 1fr); gap: 12px;
-      margin-bottom: 20px; background: var(--card-bg); padding: 18px 20px; 
+      margin-bottom: 20px; background: var(--card-bg); padding: 20px; 
       border-radius: var(--radius); border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
     }
@@ -103,7 +112,7 @@
     
     .credit-badge {
       background: var(--primary-light); color: var(--primary-hover); padding: 8px 16px;
-      border-radius: 20px; font-weight: 700; border: 1px solid rgba(197, 160, 89, 0.2);
+      border-radius: 20px; font-weight: 700; border: 1px solid var(--primary-border);
       display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; font-size: 15px;
     }
 
@@ -111,31 +120,31 @@
       grid-column: 1 / span 2;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-top: 5px;
+      gap: 10px;
+      margin-top: 8px;
     }
 
     .btn-keep-number, .btn-topup, .btn-youtube, .btn-shop {
       font-family: 'Prompt', sans-serif;
-      padding: 10px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 500;
+      padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 500;
       cursor: pointer; transition: all 0.2s ease;
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       border: none; width: 100%;
     }
 
-    .btn-keep-number { background: #FFF; color: var(--primary-hover); border: 1px solid var(--primary); grid-column: 1 / span 2; }
-    .btn-keep-number:hover { background: var(--primary); color: #FFF; }
+    .btn-keep-number { background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border-color); grid-column: 1 / span 2; }
+    .btn-keep-number:hover { background: #e2e8f0; color: var(--text-main); }
 
     .btn-topup { background: var(--primary); color: #FFF; }
     .btn-topup:hover { background: var(--primary-hover); }
 
-    .btn-youtube { background: #EF4444; color: #FFF; }
-    .btn-youtube:hover { background: #DC2626; }
+    .btn-youtube { background: #dc2626; color: #FFF; }
+    .btn-youtube:hover { background: #b91c1c; }
 
-    .btn-shop { background: #10B981; color: #FFF; grid-column: 1 / span 2; }
+    .btn-shop { background: #10b981; color: #FFF; grid-column: 1 / span 2; }
     .btn-shop:hover { background: #059669; }
 
-    .app-title { font-size: 24px; font-weight: 700; color: var(--primary-hover); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+    .app-title { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
     #mainApp { display: none; width: 100%; flex-direction: column; align-items: center; }
     .app-container { width:100%; max-width: 650px; display: flex; flex-direction: column; align-items: center; }
 
@@ -144,67 +153,71 @@
       border-radius: var(--radius); width: 100%; max-width: 650px; 
       margin-bottom: 20px; box-shadow: var(--shadow-sm); overflow: hidden;
     }
-    .card-header { background-color: #F8FAFC; padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; font-size: 15px; }
+    .card-header { background-color: #f8fafc; padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; font-size: 15px; }
     .card-header i { color: var(--primary); }
     .card-body { padding: 24px 20px; display: flex; flex-direction: column; align-items: center; width: 100%; }
 
     .form-group { width: 100%; max-width: 500px; margin-bottom: 12px; }
     .form-group label { display: block; font-size: 13.5px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
 
-    /* Select2 Custom Styling */
+    /* Select2 Custom Styling matched with Shop.html */
     .select2-container { width: 100% !important; }
     .select2-container--default .select2-selection--single {
-      border: 1.5px solid var(--border-color) !important; border-radius: 10px !important; height: 48px !important;
-      background-color: #F8FAFC !important; display: flex !important; align-items: center !important;
+      border: 1.5px solid var(--border-color) !important; border-radius: 12px !important; height: 48px !important;
+      background-color: #f8fafc !important; display: flex !important; align-items: center !important;
+      transition: all 0.2s ease;
+    }
+    .select2-container--default .select2-selection--single:hover {
+      border-color: var(--primary-border) !important;
     }
     .select2-container--default .select2-selection--single .select2-selection__rendered { color: var(--text-main) !important; padding-left: 14px !important; font-size: 14.5px; font-family: 'Prompt'; }
-    .select2-dropdown { border: 1px solid var(--border-color) !important; border-radius: 10px !important; box-shadow: var(--shadow-md) !important; }
+    .select2-dropdown { border: 1px solid var(--border-color) !important; border-radius: 12px !important; box-shadow: var(--shadow-lg) !important; overflow: hidden; }
     .select2-container--default .select2-results__option--highlighted[aria-selected] { background-color: var(--primary) !important; }
-    .img-flag { width: 22px; height: 15px; margin-right: 8px; vertical-align: middle; border-radius: 2px; object-fit: cover; }
+    .img-flag { width: 22px; height: 15px; margin-right: 8px; vertical-align: middle; border-radius: 3px; object-fit: cover; }
 
     .swap-btn {
-      background-color: var(--primary-light); color: var(--primary-hover); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 50%;
-      width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; margin: 8px 0; cursor: pointer; transition: 0.2s;
+      background-color: var(--primary-light); color: var(--primary-hover); border: 1px solid var(--primary-border); border-radius: 50%;
+      width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; margin: 8px 0; cursor: pointer; transition: 0.2s;
     }
-    .swap-btn:hover { background-color: var(--primary); color: white; }
+    .swap-btn:hover { background-color: var(--primary); color: white; transform: rotate(180deg); }
 
     .result-section { display: none; }
-    .quick-buy-bar { display: flex; justify-content: space-between; padding: 14px 20px; font-size: 14px; background: #F8FAFC; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 8px; }
+    .quick-buy-bar { display: flex; justify-content: space-between; padding: 14px 20px; font-size: 14px; background: #f8fafc; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 8px; }
     .quick-buy-bar span { color: var(--primary-hover); font-weight: 600; }
 
     .table-responsive { width: 100%; overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
     th, td { padding: 14px 20px; text-align: left; border-bottom: 1px solid var(--border-color); }
-    th { color: var(--text-muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; background: #F8FAFC; }
+    th { color: var(--text-muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; background: #f8fafc; }
     
-    .progress-bar { width: 80px; background-color: #E2E8F0; border-radius: 20px; overflow: hidden; display: inline-block; vertical-align: middle; height: 7px; margin-right: 6px; }
+    .progress-bar { width: 80px; background-color: #e2e8f0; border-radius: 20px; overflow: hidden; display: inline-block; vertical-align: middle; height: 7px; margin-right: 6px; }
     .progress-fill { height: 100%; background-color: var(--success); border-radius: 20px; }
     
-    .btn { font-family: 'Prompt'; padding: 10px 18px; border-radius: 8px; font-weight: 500; font-size: 14px; cursor: pointer; border: none; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn { font-family: 'Prompt'; padding: 10px 18px; border-radius: 10px; font-weight: 500; font-size: 14px; cursor: pointer; border: none; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
     .btn-buy { background-color: var(--primary); color: white; width:100%; }
     .btn-buy:hover:not(:disabled) { background-color: var(--primary-hover); }
     .btn-buy:disabled { opacity: 0.5; cursor: not-allowed; }
     
-    .btn-red { background-color: var(--danger); color: white; border-radius: 20px; padding: 6px 16px; font-size: 13.5px; font-weight: 500; cursor: pointer; border: none; }
+    .btn-red { background-color: var(--danger); color: white; border-radius: 20px; padding: 6px 16px; font-size: 13.5px; font-weight: 500; cursor: pointer; border: none; transition: 0.2s; }
     .btn-red:hover:not(:disabled) { background-color: var(--danger-hover); }
-    .btn-red:disabled { background-color: #FEE2E2; color: #EF4444; cursor: not-allowed; border: 1px solid #FCA5A5; }
+    .btn-red:disabled { background-color: var(--danger-light); color: var(--danger); cursor: not-allowed; border: 1px solid #fca5a5; }
 
     .section-title { width: 100%; max-width: 650px; font-size: 15px; font-weight: 600; color: var(--text-main); margin: 20px 0 10px 0; display: flex; align-items: center; gap: 8px; }
     .section-title i { color: var(--primary); }
     .order-list-box { width: 100%; max-width: 650px; display: flex; flex-direction: column; gap: 12px; }
-    .empty-text { text-align: center; color: var(--text-muted); font-size: 13.5px; padding: 20px; background: #FFFFFF; border-radius: var(--radius); border: 1px dashed var(--border-color); }
+    .empty-text { text-align: center; color: var(--text-muted); font-size: 13.5px; padding: 24px; background: #FFFFFF; border-radius: var(--radius); border: 1px dashed var(--border-color); }
 
-    .otp-box { padding: 20px; border: 1px dashed var(--primary); border-radius: var(--radius); text-align: center; background: rgba(197, 160, 89, 0.02); }
+    .otp-box { padding: 20px; border: 1.5px dashed var(--primary-border); border-radius: var(--radius); text-align: center; background: var(--primary-light); }
     .phone-container { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0 16px 0; flex-wrap: wrap; }
     .phone-number-display { font-size: 24px; font-weight: 700; color: var(--primary-hover); letter-spacing: 0.5px; }
     .action-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; width: 100%; }
-    .otp-result { margin-top: 16px; padding: 14px; background: #F8FAFC; border-radius: 10px; border: 1px solid var(--border-color); display: inline-block; width: 100%; max-width: 380px; }
+    .otp-result { margin-top: 16px; padding: 14px; background: #ffffff; border-radius: 12px; border: 1px solid var(--border-color); display: inline-block; width: 100%; max-width: 380px; box-shadow: var(--shadow-sm); }
     .otp-content { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 20px; font-weight: 600; color: var(--success); flex-wrap: wrap; }
 
-    .btn-icon { background: #FFFFFF; color: var(--text-muted); border: 1px solid var(--border-color); border-radius: 6px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-    .btn-icon:hover { background: #F8FAFC; color: var(--text-main); }
+    .btn-icon { background: #FFFFFF; color: var(--text-muted); border: 1px solid var(--border-color); border-radius: 8px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+    .btn-icon:hover { background: #f8fafc; color: var(--text-main); border-color: var(--primary-border); }
 
-    #toast { visibility: hidden; min-width: 240px; max-width: 90%; background-color: #1E293B; color: #FFFFFF; text-align: center; border-radius: 30px; padding: 12px 24px; position: fixed; z-index: 10000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 13.5px; box-shadow: var(--shadow-md); }
+    #toast { visibility: hidden; min-width: 240px; max-width: 90%; background-color: #0f172a; color: #FFFFFF; text-align: center; border-radius: 30px; padding: 12px 24px; position: fixed; z-index: 10000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 13.5px; box-shadow: var(--shadow-lg); }
     #toast.show { visibility: visible; animation: fadein 0.3s, fadeout 0.5s 2.5s; }
     @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
     @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
@@ -214,40 +227,42 @@
       background: var(--card-bg); border: 1px solid var(--border-color);
       border-radius: var(--radius); padding: 18px 20px; color: var(--text-main);
       box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 10px;
+      transition: all 0.2s ease;
     }
+    .history-card:hover { border-color: var(--primary-border); }
     .history-row { display: flex; align-items: center; }
     .history-label { width: 85px; color: var(--text-muted); font-size: 13.5px; flex-shrink: 0; }
     .history-value { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%; }
-    .badge-service { background: var(--primary-light); color: var(--primary-hover); border: 1px solid rgba(197, 160, 89, 0.2); padding: 3px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; }
-    .badge-price { border: 1px solid var(--border-color); color: var(--text-main); padding: 3px 12px; border-radius: 16px; font-size: 13px; }
-    .copyable-box { background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 20px; padding: 4px 14px; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; transition: 0.2s; }
-    .copyable-box:hover { background: #FFF; border-color: var(--primary); }
-    .status-success { background: var(--success); color: white; padding: 4px 14px; border-radius: 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
-    .status-refund { background: #06B6D4; color: white; padding: 4px 14px; border-radius: 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
+    .badge-service { background: var(--primary-light); color: var(--primary-hover); border: 1px solid var(--primary-border); padding: 4px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; }
+    .badge-price { border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; }
+    .copyable-box { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 20px; padding: 4px 14px; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+    .copyable-box:hover { background: #FFF; border-color: var(--primary); color: var(--primary); }
+    .status-success { background: var(--success); color: white; padding: 4px 14px; border-radius: 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
+    .status-refund { background: #0284c7; color: white; padding: 4px 14px; border-radius: 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
     .history-time { color: var(--text-muted); font-size: 13px; }
 
     /* Modal Styling */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2000;
+      background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); z-index: 2000;
       display: none; justify-content: center; align-items: center; padding: 15px;
     }
     .modal-box {
       background: var(--card-bg); border: 1px solid var(--border-color);
       border-radius: var(--radius); width: 100%; max-width: 480px;
-      box-shadow: var(--shadow-md); overflow: hidden; animation: popIn 0.25s ease;
+      box-shadow: var(--shadow-lg); overflow: hidden; animation: popIn 0.25s ease;
       max-height: 90vh; display: flex; flex-direction: column;
     }
     @keyframes popIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .modal-header { background: #F8FAFC; padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+    .modal-header { background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
     .modal-body { padding: 20px; overflow-y: auto; }
-    .price-display-box { width: 100%; padding: 14px; background: var(--primary-light); border: 1px dashed var(--primary); border-radius: 10px; text-align: center; margin-top: 16px; }
+    .price-display-box { width: 100%; padding: 14px; background: var(--primary-light); border: 1.5px dashed var(--primary-border); border-radius: 12px; text-align: center; margin-top: 16px; }
     .price-amount { font-size: 22px; font-weight: 700; color: var(--primary-hover); }
 
     /* --- Responsive Mobile Optimization --- */
     @media(max-width: 600px) {
       body { padding: 10px 10px 30px 10px; }
-      .header-bar { padding: 14px; }
+      .header-bar { padding: 16px; }
       .phone-number-display { font-size: 20px; }
       .history-row { flex-direction: column; align-items: flex-start; gap: 4px; }
       .history-label { width: 100%; font-size: 12px; }
@@ -412,7 +427,7 @@
   <div id="toast">ข้อความ</div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyQ7oHwcfQbq52h02vGX-qGyyA33cRPWCnZwmOGTfmtfV7D33E7JdOTlocgC43faraILw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwQz6KOmhuPdipUnNwh4sYFT2etnvb0W_yrS00andPfKc7IeZr5HaNs8-57_P0ochFxew/exec";
 
     let currentUser = ""; 
     let currentCountryData = [];
@@ -761,7 +776,7 @@
               <div class="history-value">
                 <span class="badge-service">${currentService}</span>
                 <span class="badge-price">฿ ${parseFloat(originalPrice).toFixed(2)}</span>
-                <img src="https://flagcdn.com/w40/id.png" style="width:22px; border-radius:2px;" id="flag-${orderId}"/>
+                <img src="https://flagcdn.com/w40/id.png" style="width:22px; border-radius:3px;" id="flag-${orderId}"/>
               </div>
             </div>
             <div class="history-row">
@@ -812,11 +827,11 @@
             </div>
             <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">⚠️ ยืนยันยกเลิกและรับเงินคืนได้หลังจากผ่านไป 3 นาที</div>
             <div class="action-group">
-              <button class="btn btn-red" style="border-radius:8px; font-size:13.5px; width:100%; max-width:260px;" id="cancelBtn-${orderId}" onclick="cancelOrderClick('${orderId}', false)" disabled>⏳ รอครบ 3 นาทีเพื่อยกเลิก</button>
-              <button class="btn" id="resendBtn-${orderId}" onclick="resendOrderClick('${orderId}')" disabled style="background-color: #F59E0B; color: white; width: 100%; max-width: 260px; opacity: 0.5; cursor: not-allowed; border-radius:8px;"><i class="fa-solid fa-rotate"></i> ขอ OTP อีกครั้ง (+${resendCost} ฿)</button>
+              <button class="btn btn-red" style="border-radius:10px; font-size:13.5px; width:100%; max-width:260px;" id="cancelBtn-${orderId}" onclick="cancelOrderClick('${orderId}', false)" disabled>⏳ รอครบ 3 นาทีเพื่อยกเลิก</button>
+              <button class="btn" id="resendBtn-${orderId}" onclick="resendOrderClick('${orderId}')" disabled style="background-color: #f59e0b; color: white; width: 100%; max-width: 260px; opacity: 0.5; cursor: not-allowed; border-radius:10px;"><i class="fa-solid fa-rotate"></i> ขอ OTP อีกครั้ง (+${resendCost} ฿)</button>
             </div>
             <div class="otp-result" id="otpDisplay-${orderId}">
-              <span style="color:#F59E0B; font-size:14px; font-weight:500;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังรอ SMS อัตโนมัติ...</span>
+              <span style="color:#f59e0b; font-size:14px; font-weight:500;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังรอ SMS อัตโนมัติ...</span>
             </div>
           </div>
         `;
@@ -887,7 +902,7 @@
               document.getElementById(`otpDisplay-${orderId}`).innerHTML = `<div class="copyable-box" style="color:#A1A1A1;">—</div>`;
               document.getElementById(`statusContainer-${orderId}`).innerHTML = `<span class="status-refund"><i class="fa-solid fa-rotate-left"></i> คืนเครดิต</span>`;
             } else {
-              otpDisplay.innerHTML = '<span style="color:#EF4444; font-size:14px;">❌ คำสั่งซื้อหมดเวลา/ถูกยกเลิก</span>';
+              otpDisplay.innerHTML = '<span style="color:#ef4444; font-size:14px;">❌ คำสั่งซื้อหมดเวลา/ถูกยกเลิก</span>';
               $(`#cancelBtn-${orderId}`).prop('disabled', true).text("❌ หมดเวลา");
             }
             checkContainersEmptyState();
@@ -901,7 +916,7 @@
         clearInterval(activeOrders[orderId].autoCheckTimer);
         clearInterval(activeOrders[orderId].cancelTimer);
         if(isHistory) {
-          document.getElementById(`statusContainer-${orderId}`).innerHTML = `<span class="status-refund" style="background:#E2E8F0; color:#64748B;">⏳ กำลังยกเลิก...</span>`;
+          document.getElementById(`statusContainer-${orderId}`).innerHTML = `<span class="status-refund" style="background:#e2e8f0; color:#64748b;">⏳ กำลังยกเลิก...</span>`;
         } else {
           document.getElementById(`otpDisplay-${orderId}`).innerHTML = '<span style="color:var(--text-muted); font-size:14px;">⏳ กำลังยกเลิกระบบ...</span>';
           $(`#cancelBtn-${orderId}`).prop('disabled', true).text("⏳ กำลังยกเลิก...");
@@ -919,7 +934,7 @@
               document.getElementById(`otpDisplay-${orderId}`).innerHTML = `<div class="copyable-box" style="color:#A1A1A1;">—</div>`;
               document.getElementById(`statusContainer-${orderId}`).innerHTML = `<span class="status-refund"><i class="fa-solid fa-rotate-left"></i> คืนเครดิต</span>`;
             } else {
-              document.getElementById(`otpDisplay-${orderId}`).innerHTML = '<span style="color:#10B981; font-size:14px;">✅ คืนเงินเรียบร้อยแล้ว</span>';
+              document.getElementById(`otpDisplay-${orderId}`).innerHTML = '<span style="color:#10b981; font-size:14px;">✅ คืนเงินเรียบร้อยแล้ว</span>';
               $(`#phoneDisplay-${orderId}`).text("ยกเลิกคำสั่งซื้อแล้ว").css({'color':'var(--text-muted)', 'text-decoration':'line-through'});
               $(`#cancelBtn-${orderId}`).text("❌ ยกเลิกแล้ว");
             }
@@ -947,7 +962,7 @@
           if(response && (response.success === 1 || response.success === true)) {
             updateCreditDisplay(response.newCredit);
             showToast(`🔄 ส่งคำขอซ้ำสำเร็จ! หักเครดิต ${response.charged} ฿`);
-            document.getElementById(`otpDisplay-${orderId}`).innerHTML = '<span style="color:#F59E0B; font-size:14px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังรอ SMS ตัวใหม่...</span>';
+            document.getElementById(`otpDisplay-${orderId}`).innerHTML = '<span style="color:#f59e0b; font-size:14px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังรอ SMS ตัวใหม่...</span>';
             resendBtn.disabled = true; resendBtn.innerText = `🔄 ขอ OTP อีกครั้ง (+${resendCost} ฿)`;
             clearInterval(activeOrders[orderId].autoCheckTimer);
             startAutoPolling(orderId, false);
@@ -977,7 +992,7 @@
             document.getElementById(`statusContainer-${orderId}`).innerHTML = `<span class="status-refund"><i class="fa-solid fa-rotate-left"></i> คืนเครดิต</span>`;
           } else {
             const otpDisp = document.getElementById(`otpDisplay-${orderId}`);
-            if(otpDisp) otpDisp.innerHTML = '<span style="color:#10B981; font-size:14px;">✅ หมดเวลา คืนเงินอัตโนมัติเรียบร้อย</span>';
+            if(otpDisp) otpDisp.innerHTML = '<span style="color:#10b981; font-size:14px;">✅ หมดเวลา คืนเงินอัตโนมัติเรียบร้อย</span>';
             $(`#phoneDisplay-${orderId}`).text("หมดเวลาการใช้งาน").css({'color':'var(--text-muted)', 'text-decoration':'line-through'});
             $(`#cancelBtn-${orderId}`).prop('disabled', true).text("❌ หมดเวลา/คืนเงินแล้ว");
           }
