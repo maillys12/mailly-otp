@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จำหน่ายสูตรแอพพรีเมี่ยม - MAILLY OTP</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Kanit) -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -18,11 +21,8 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .glow-effect {
-            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.3);
-        }
         .glow-hover:hover {
-            box-shadow: 0 0 30px -2px rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 25px -2px rgba(99, 102, 241, 0.4);
             transform: translateY(-4px);
         }
         .text-gradient {
@@ -34,6 +34,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between pb-10">
 
+    <!-- Header / Navbar -->
     <header class="sticky top-0 z-40 glass-card border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-3 group">
@@ -43,10 +44,13 @@
                 <span class="font-bold text-xl tracking-wide text-white">MAILLY <span class="text-indigo-400">PREMIUM</span></span>
             </a>
 
+            <!-- User Credit Info -->
             <div class="flex items-center gap-4">
                 <div class="bg-slate-800/80 border border-slate-700/60 rounded-full px-4 py-1.5 flex items-center gap-2">
-                    <i class="fa-solid fa-wallet text-amber-400"></i>
-                    <span class="text-xs text-slate-400">เครดิต:</span>
+                    <i class="fa-solid fa-user text-indigo-400 text-xs"></i>
+                    <span id="userNameDisplay" class="text-xs text-slate-300 font-medium">admin</span>
+                    <span class="text-slate-600">|</span>
+                    <i class="fa-solid fa-wallet text-amber-400 text-xs"></i>
                     <span id="userCreditDisplay" class="font-bold text-amber-400 text-sm">0.00 ฿</span>
                 </div>
                 <a href="index.html" class="text-slate-400 hover:text-white transition-colors text-sm">
@@ -56,8 +60,10 @@
         </div>
     </header>
 
+    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex-1">
         
+        <!-- Hero Section -->
         <div class="text-center mb-10">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-3">
                 <i class="fa-solid fa-wand-magic-sparkles"></i> ศูนย์รวมเทคนิค & สูตรสมัครบริการพรีเมี่ยม
@@ -70,25 +76,29 @@
             </p>
         </div>
 
+        <!-- Category Filters -->
         <div class="flex flex-wrap items-center justify-center gap-2 mb-8">
-            <button onclick="filterCategory('all')" class="cat-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-medium bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 transition-all">
+            <button onclick="filterCategory('all', this)" class="cat-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-medium bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 transition-all">
                 <i class="fa-solid fa-border-all mr-1"></i> ทั้งหมด
             </button>
-            <button onclick="filterCategory('streaming')" class="cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">
+            <button onclick="filterCategory('streaming', this)" class="cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">
                 <i class="fa-solid fa-film mr-1"></i> สตรีมมิ่ง & ดูหนัง
             </button>
-            <button onclick="filterCategory('ai')" class="cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">
+            <button onclick="filterCategory('ai', this)" class="cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">
                 <i class="fa-solid fa-robot mr-1"></i> AI & เครื่องมือ
             </button>
-            <button onclick="filterCategory('entertainment')" class="cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">
+            <button onclick="filterCategory('entertainment', this)" class="cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">
                 <i class="fa-solid fa-music mr-1"></i> บันเทิง & ฟังเพลง
             </button>
         </div>
 
+        <!-- Product Grid -->
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            </div>
+            <!-- รายการสูตรจะถูกโหลดมาแสดงตรงนี้ -->
+        </div>
     </main>
 
+    <!-- Modal ยืนยันการสั่งซื้อ -->
     <div id="buyModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl relative">
             <button onclick="closeBuyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
@@ -103,10 +113,10 @@
                 <p class="text-xs text-slate-400 mt-1">โปรดตรวจสอบรายละเอียดก่อนทำรายการ</p>
             </div>
 
-            <div class="bg-slate-900/60 rounded-xl p-4 mb-6 space-y-3 text-sm">
+            <div class="bg-slate-900/60 rounded-xl p-4 mb-6 space-y-3 text-sm border border-slate-800">
                 <div class="flex justify-between border-b border-slate-800 pb-2">
                     <span class="text-slate-400">สูตรแอพ:</span>
-                    <span id="modalProductName" class="font-semibold text-white"></span>
+                    <span id="modalProductName" class="font-semibold text-white text-right max-w-[200px] truncate"></span>
                 </div>
                 <div class="flex justify-between border-b border-slate-800 pb-2">
                     <span class="text-slate-400">ราคาสินค้า:</span>
@@ -130,10 +140,16 @@
     </div>
 
     <script>
-        // กำหนด URL ของ Google Apps Script Web App
-        const BACKEND_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; 
+        // URL Backend Apps Script
+        const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx63IChq-UjL4-sL5m4l8R59-cK_vE-e8Qe8u0fA_m9fL42_eE/exec"; 
 
-        // ข้อมูลสินค้าสูตรแอพพรีเมี่ยม
+        // ดึงชื่อผู้ใช้จาก URL Parameter หรือ localStorage (ค่าเริ่มต้นเป็น admin)
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentUser = urlParams.get('user') || localStorage.getItem("username") || "admin"; 
+        let currentCredit = 0;
+        let selectedProduct = null;
+
+        // ข้อมูลสูตรแอพพรีเมี่ยม
         const products = [
             {
                 id: "P001",
@@ -182,7 +198,7 @@
             },
             {
                 id: "P006",
-                name: "สูตร CanVa Pro ปลดล็อกองค์กรถาวร",
+                name: "สูตร Canva Pro ปลดล็อกองค์กรถาวร",
                 category: "ai",
                 price: 99,
                 desc: "วิธีดึงเข้าทีม Pro แบบส่วนตัว ใช้งานฟีเจอร์พรีเมี่ยมได้ครบทุกอย่าง",
@@ -191,16 +207,38 @@
             }
         ];
 
-        let selectedProduct = null;
-        let currentUser = localStorage.getItem("username") || "Guest";
-        let currentCredit = 0;
-
         document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("userNameDisplay").innerText = currentUser;
+            localStorage.setItem("username", currentUser);
+            
             renderProducts(products);
             fetchUserData();
         });
 
-        // แสดงผลรายการสินค้า
+        // ดึงเครดิตจริงของผู้ใช้จาก Backend
+        function fetchUserData() {
+            if (!currentUser) return;
+
+            fetch(BACKEND_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "loginUser",
+                    payload: { username: currentUser }
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    currentCredit = parseFloat(data.credit) || 0;
+                    document.getElementById("userCreditDisplay").innerText = currentCredit.toFixed(2) + " ฿";
+                }
+            })
+            .catch(err => {
+                console.error("Error fetching credit:", err);
+            });
+        }
+
+        // แสดงผลการ์ดสูตรแอพ
         function renderProducts(items) {
             const grid = document.getElementById("productGrid");
             grid.innerHTML = "";
@@ -216,7 +254,7 @@
                 card.innerHTML = `
                     <div>
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-2xl">
+                            <div class="w-12 h-12 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-2xl">
                                 <i class="fa-solid ${prod.icon}"></i>
                             </div>
                             <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">
@@ -241,15 +279,15 @@
             });
         }
 
-        // กรองหมวดหมู่สินค้า
-        function filterCategory(cat) {
+        // กรองหมวดหมู่
+        function filterCategory(cat, btnElement) {
             document.querySelectorAll(".cat-btn").forEach(btn => {
                 btn.classList.remove("bg-indigo-600", "text-white", "shadow-lg");
                 btn.classList.add("bg-slate-800", "text-slate-300");
             });
 
-            event.currentTarget.classList.remove("bg-slate-800", "text-slate-300");
-            event.currentTarget.classList.add("bg-indigo-600", "text-white", "shadow-lg");
+            btnElement.classList.remove("bg-slate-800", "text-slate-300");
+            btnElement.classList.add("bg-indigo-600", "text-white", "shadow-lg");
 
             if (cat === "all") {
                 renderProducts(products);
@@ -259,28 +297,7 @@
             }
         }
 
-        // ดึงข้อมูลผู้ใช้จาก Backend
-        function fetchUserData() {
-            if (currentUser === "Guest") return;
-
-            fetch(BACKEND_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    action: "loginUser",
-                    payload: { username: currentUser }
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    currentCredit = parseFloat(data.credit) || 0;
-                    document.getElementById("userCreditDisplay").innerText = currentCredit.toFixed(2) + " ฿";
-                }
-            })
-            .catch(err => console.error("Error fetching credit:", err));
-        }
-
-        // เปิด Modal สั่งซื้อ
+        // เปิด Pop-up ยืนยันการสั่งซื้อ
         function openBuyModal(productId) {
             selectedProduct = products.find(p => p.id === productId);
             if (!selectedProduct) return;
@@ -297,13 +314,9 @@
             selectedProduct = null;
         }
 
-        // ส่งคำสั่งซื้อไปยัง Backend Code.gs
+        // ทำรายการซื้อสูตร
         function executePurchase() {
             if (!selectedProduct) return;
-            if (currentUser === "Guest") {
-                alert("กรุณาเข้าสู่ระบบก่อนทำการสั่งซื้อ");
-                return;
-            }
 
             const btn = document.getElementById("btnConfirmBuy");
             btn.disabled = true;
@@ -329,15 +342,15 @@
 
                 if (data.success) {
                     alert(`🎉 สั่งซื้อสูตรสำเร็จ!\nรหัสรายการ: ${data.orderId}\nเครดิตคงเหลือ: ${data.newCredit} ฿`);
-                    fetchUserData(); // อัปเดตเครดิตใหม่
+                    fetchUserData(); // อัปเดตเครดิตใหม่ทันที
                 } else {
-                    alert(`❌ การสั่งซื้อล้มเหลว: ${data.message}`);
+                    alert(`❌ ไม่สามารถซื้อสูตรได้: ${data.message}`);
                 }
             })
             .catch(err => {
                 btn.disabled = false;
                 btn.innerHTML = `<span>ยืนยันการซื้อ</span>`;
-                alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+                alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับระบบหลังบ้าน");
             });
         }
     </script>
