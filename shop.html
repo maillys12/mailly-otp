@@ -14,71 +14,71 @@
     <style>
         body {
             font-family: 'Kanit', sans-serif;
-            background: #090d16;
+            background: #0d0905;
             color: #f8fafc;
             overflow-x: hidden;
         }
 
-        /* Ambient Glow & Background Mesh */
+        /* Ambient Glow & Background Mesh (Orange & Amber Orbs) */
         .neon-bg-glow {
             position: fixed;
             width: 500px;
             height: 500px;
             border-radius: 50%;
             filter: blur(120px);
-            opacity: 0.25;
+            opacity: 0.28;
             pointer-events: none;
             z-index: 0;
             animation: pulseGlow 8s infinite alternate ease-in-out;
         }
 
         @keyframes pulseGlow {
-            0% { transform: scale(1) translate(0, 0); opacity: 0.2; }
-            100% { transform: scale(1.2) translate(30px, -20px); opacity: 0.35; }
+            0% { transform: scale(1) translate(0, 0); opacity: 0.22; }
+            100% { transform: scale(1.2) translate(30px, -20px); opacity: 0.38; }
         }
 
         /* Glassmorphism Cards */
         .glass-card {
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(22, 16, 12, 0.8);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
         }
 
-        /* Card Hover Effects */
+        /* Card Hover Effects - Orange Metallic Glow */
         .premium-card {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .premium-card:hover {
             transform: translateY(-8px) scale(1.02);
-            border-color: rgba(129, 140, 248, 0.6);
-            box-shadow: 0 15px 35px -5px rgba(99, 102, 241, 0.35), 0 0 20px 0 rgba(168, 85, 247, 0.25);
+            border-color: rgba(249, 115, 22, 0.6);
+            box-shadow: 0 15px 35px -5px rgba(249, 115, 22, 0.35), 0 0 20px 0 rgba(245, 158, 11, 0.25);
         }
 
-        /* Text & Button Gradients */
+        /* Text & Button Gradients (Modern Orange/Amber Sunset) */
         .text-gradient {
-            background: linear-gradient(135deg, #e879f9 0%, #818cf8 50%, #38bdf8 100%);
+            background: linear-gradient(135deg, #ff8c00 0%, #f97316 50%, #fbbf24 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .btn-gradient {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4);
         }
 
         .btn-gradient:hover {
-            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.6);
         }
 
         .tab-btn.active {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
             color: #ffffff;
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-            border-color: rgba(165, 180, 252, 0.4);
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+            border-color: rgba(253, 186, 116, 0.4);
         }
 
         /* Animations */
@@ -103,17 +103,17 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between pb-10 relative">
 
-    <!-- Ambient Glow Effects -->
-    <div class="neon-bg-glow bg-indigo-600 -top-20 -left-20"></div>
-    <div class="neon-bg-glow bg-purple-600 top-1/3 -right-20" style="animation-delay: -3s;"></div>
-    <div class="neon-bg-glow bg-blue-600 -bottom-20 left-1/3" style="animation-delay: -5s;"></div>
+    <!-- Ambient Glow Effects (Orange & Amber) -->
+    <div class="neon-bg-glow bg-orange-600 -top-20 -left-20"></div>
+    <div class="neon-bg-glow bg-amber-600 top-1/3 -right-20" style="animation-delay: -3s;"></div>
+    <div class="neon-bg-glow bg-red-600 -bottom-20 left-1/3" style="animation-delay: -5s;"></div>
 
     <!-- Header / Navbar -->
-    <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80">
+    <header class="sticky top-0 z-40 glass-card border-b border-orange-950/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 p-0.5 shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform">
-                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-indigo-400">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 p-0.5 shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                    <div class="w-full h-full bg-stone-950 rounded-[10px] flex items-center justify-center text-orange-400">
                         <i class="fa-solid fa-flask-vial text-lg"></i>
                     </div>
                 </div>
@@ -122,20 +122,20 @@
 
             <!-- User Credit Info & Nav Menu -->
             <div class="flex items-center gap-3 sm:gap-4">
-                <div class="bg-slate-900/90 border border-indigo-500/30 rounded-full px-4 py-1.5 flex items-center gap-2.5 shadow-lg shadow-indigo-950/50">
-                    <i class="fa-solid fa-user-astronaut text-indigo-400 text-xs"></i>
-                    <span id="userNameDisplay" class="text-xs text-slate-200 font-medium">admin</span>
-                    <span class="text-slate-700">|</span>
+                <div class="bg-stone-900/90 border border-orange-500/30 rounded-full px-4 py-1.5 flex items-center gap-2.5 shadow-lg shadow-orange-950/50">
+                    <i class="fa-solid fa-user-astronaut text-orange-400 text-xs"></i>
+                    <span id="userNameDisplay" class="text-xs text-stone-200 font-medium">admin</span>
+                    <span class="text-stone-700">|</span>
                     <i class="fa-solid fa-wallet text-amber-400 text-xs animate-pulse"></i>
                     <span id="userCreditDisplay" class="font-bold text-amber-400 text-xs sm:text-sm">0.00 ฿</span>
                 </div>
 
                 <!-- Admin Button -->
-                <button id="adminPanelBtn" onclick="openAdminModal()" class="hidden bg-purple-600/20 border border-purple-500/40 hover:bg-purple-600/40 text-purple-300 text-xs px-3.5 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95 shadow-lg shadow-purple-900/30">
+                <button id="adminPanelBtn" onclick="openAdminModal()" class="hidden bg-orange-600/20 border border-orange-500/40 hover:bg-orange-600/40 text-orange-300 text-xs px-3.5 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95 shadow-lg shadow-orange-900/30">
                     <i class="fa-solid fa-sliders"></i> <span class="hidden sm:inline">จัดการร้านค้า</span>
                 </button>
 
-                <a href="index.html" class="text-slate-400 hover:text-white transition-colors text-sm p-2 hover:scale-110">
+                <a href="index.html" class="text-stone-400 hover:text-white transition-colors text-sm p-2 hover:scale-110">
                     <i class="fa-solid fa-house"></i>
                 </a>
             </div>
@@ -147,24 +147,24 @@
         
         <!-- Hero Section -->
         <div class="text-center mb-10 animate-fade-in-up">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-4 shadow-lg shadow-indigo-500/10">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs font-semibold mb-4 shadow-lg shadow-orange-500/10">
                 <i class="fa-solid fa-sparkles text-amber-400 animate-spin" style="animation-duration: 4s;"></i> ศูนย์รวมเทคนิค & สูตรสมัครบริการพรีเมี่ยม
             </div>
             <h1 class="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight drop-shadow-md">
                 จำหน่าย<span class="text-gradient">สูตรแอพพรีเมี่ยม</span>
             </h1>
-            <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+            <p class="text-stone-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
                 เลือกซื้อสูตรและวิธีสมัครแอพพรีเมี่ยมราคาประหยัด การันตีติด 100% อัปเดตล่าสุด นำไปใช้งานหรือรับทำเป็นอาชีพเสริมได้ทันที
             </p>
         </div>
 
         <!-- Navigation Tabs -->
         <div class="flex justify-center mb-10 animate-fade-in-up" style="animation-delay: 0.1s;">
-            <div class="bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800/80 inline-flex gap-2 shadow-2xl">
+            <div class="bg-stone-900/90 p-1.5 rounded-2xl border border-stone-800/80 inline-flex gap-2 shadow-2xl">
                 <button id="tabShopBtn" onclick="switchMainTab('shop')" class="tab-btn active px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 hover:scale-105 active:scale-95">
                     <i class="fa-solid fa-store"></i> หน้าร้านค้า
                 </button>
-                <button id="tabHistoryBtn" onclick="switchMainTab('history')" class="tab-btn text-slate-400 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold hover:text-white transition-all flex items-center gap-2 hover:scale-105 active:scale-95">
+                <button id="tabHistoryBtn" onclick="switchMainTab('history')" class="tab-btn text-stone-400 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold hover:text-white transition-all flex items-center gap-2 hover:scale-105 active:scale-95">
                     <i class="fa-solid fa-receipt"></i> ประวัติการซื้อของฉัน
                 </button>
             </div>
@@ -174,17 +174,17 @@
         <div id="shopViewSection">
             <!-- Category Filters -->
             <div class="flex flex-wrap items-center justify-center gap-2.5 mb-10 animate-fade-in-up" style="animation-delay: 0.15s;">
-                <button onclick="filterCategory('all', this)" class="cat-btn active px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 transition-all hover:scale-105">
+                <button onclick="filterCategory('all', this)" class="cat-btn active px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-all hover:scale-105">
                     <i class="fa-solid fa-border-all mr-1.5"></i> ทั้งหมด
                 </button>
-                <button onclick="filterCategory('streaming', this)" class="cat-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-800/80 text-slate-300 hover:bg-slate-700 transition-all hover:scale-105 border border-slate-700/50">
+                <button onclick="filterCategory('streaming', this)" class="cat-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-stone-800/80 text-stone-300 hover:bg-stone-700 transition-all hover:scale-105 border border-stone-700/50">
                     <i class="fa-solid fa-film mr-1.5 text-red-400"></i> สตรีมมิ่ง & ดูหนัง
                 </button>
-                <button onclick="filterCategory('ai', this)" class="cat-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-800/80 text-slate-300 hover:bg-slate-700 transition-all hover:scale-105 border border-slate-700/50">
+                <button onclick="filterCategory('ai', this)" class="cat-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-stone-800/80 text-stone-300 hover:bg-stone-700 transition-all hover:scale-105 border border-stone-700/50">
                     <i class="fa-solid fa-robot mr-1.5 text-emerald-400"></i> AI & เครื่องมือ
                 </button>
-                <button onclick="filterCategory('entertainment', this)" class="cat-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-800/80 text-slate-300 hover:bg-slate-700 transition-all hover:scale-105 border border-slate-700/50">
-                    <i class="fa-solid fa-music mr-1.5 text-purple-400"></i> บันเทิง & ฟังเพลง
+                <button onclick="filterCategory('entertainment', this)" class="cat-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-stone-800/80 text-stone-300 hover:bg-stone-700 transition-all hover:scale-105 border border-stone-700/50">
+                    <i class="fa-solid fa-music mr-1.5 text-amber-400"></i> บันเทิง & ฟังเพลง
                 </button>
             </div>
 
@@ -196,15 +196,15 @@
 
         <!-- Section 2: หน้าประวัติการสั่งซื้อ (Purchase History View) -->
         <div id="historyViewSection" class="hidden max-w-4xl mx-auto animate-fade-in-up">
-            <div class="glass-card rounded-2xl p-6 border border-slate-800 shadow-2xl">
-                <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+            <div class="glass-card rounded-2xl p-6 border border-stone-800 shadow-2xl">
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-stone-800">
                     <div>
                         <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-clock-rotate-left text-indigo-400"></i> ประวัติการสั่งซื้อสินค้า
+                            <i class="fa-solid fa-clock-rotate-left text-orange-400"></i> ประวัติการสั่งซื้อสินค้า
                         </h2>
-                        <p class="text-xs text-slate-400 mt-1">รายการสูตรและเทคนิคทั้งหมดที่คุณเคยสั่งซื้อ</p>
+                        <p class="text-xs text-stone-400 mt-1">รายการสูตรและเทคนิคทั้งหมดที่คุณเคยสั่งซื้อ</p>
                     </div>
-                    <button onclick="loadPurchaseHistory()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-lg border border-slate-700 transition-all active:scale-95">
+                    <button onclick="loadPurchaseHistory()" class="text-xs bg-stone-800 hover:bg-stone-700 text-stone-300 px-3.5 py-2 rounded-lg border border-stone-700 transition-all active:scale-95">
                         <i class="fa-solid fa-rotate-right mr-1"></i> รีเฟรช
                     </button>
                 </div>
@@ -218,37 +218,37 @@
 
     <!-- Modal ยืนยันการสั่งซื้อ -->
     <div id="buyModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
-        <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-indigo-500/30 shadow-2xl relative animate-pop">
-            <button onclick="closeBuyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
+        <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-orange-500/30 shadow-2xl relative animate-pop">
+            <button onclick="closeBuyModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white transition-colors">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
             <div class="text-center mb-6">
                 <!-- App Logo / Icon Preview -->
-                <div id="modalLogoContainer" class="w-20 h-20 rounded-2xl bg-slate-900 border border-indigo-500/30 flex items-center justify-center mx-auto mb-3 shadow-xl overflow-hidden p-2">
-                    <i class="fa-solid fa-cart-shopping text-3xl text-indigo-400"></i>
+                <div id="modalLogoContainer" class="w-20 h-20 rounded-2xl bg-stone-900 border border-orange-500/30 flex items-center justify-center mx-auto mb-3 shadow-xl overflow-hidden p-2">
+                    <i class="fa-solid fa-cart-shopping text-3xl text-orange-400"></i>
                 </div>
                 <h3 class="text-xl font-extrabold text-white">ยืนยันการสั่งซื้อสูตร</h3>
-                <p class="text-xs text-slate-400 mt-1">โปรดตรวจสอบรายละเอียดก่อนทำรายการ</p>
+                <p class="text-xs text-stone-400 mt-1">โปรดตรวจสอบรายละเอียดก่อนทำรายการ</p>
             </div>
 
-            <div class="bg-slate-950/80 rounded-xl p-4 mb-6 space-y-3 text-sm border border-slate-800">
-                <div class="flex justify-between border-b border-slate-800/80 pb-2">
-                    <span class="text-slate-400">สูตรแอพ:</span>
+            <div class="bg-stone-950/80 rounded-xl p-4 mb-6 space-y-3 text-sm border border-stone-800">
+                <div class="flex justify-between border-b border-stone-800/80 pb-2">
+                    <span class="text-stone-400">สูตรแอพ:</span>
                     <span id="modalProductName" class="font-bold text-white text-right max-w-[200px] truncate"></span>
                 </div>
-                <div class="flex justify-between border-b border-slate-800/80 pb-2">
-                    <span class="text-slate-400">ราคาสินค้า:</span>
-                    <span id="modalProductPrice" class="font-black text-indigo-400 text-base"></span>
+                <div class="flex justify-between border-b border-stone-800/80 pb-2">
+                    <span class="text-stone-400">ราคาสินค้า:</span>
+                    <span id="modalProductPrice" class="font-black text-orange-400 text-base"></span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-slate-400">เครดิตของคุณ:</span>
+                    <span class="text-stone-400">เครดิตของคุณ:</span>
                     <span id="modalUserCredit" class="font-bold text-amber-400"></span>
                 </div>
             </div>
 
             <div class="flex gap-3">
-                <button onclick="closeBuyModal()" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm transition-colors active:scale-95">
+                <button onclick="closeBuyModal()" class="flex-1 py-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 font-bold text-sm transition-colors active:scale-95">
                     ยกเลิก
                 </button>
                 <button id="btnConfirmBuy" onclick="executePurchase()" class="flex-1 py-3 rounded-xl btn-gradient text-white font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2">
@@ -261,7 +261,7 @@
     <!-- Modal ดูรายละเอียดข้อมูล/สูตรที่สั่งซื้อแล้ว -->
     <div id="viewDetailModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
         <div class="glass-card rounded-2xl max-w-lg w-full p-6 border border-emerald-500/30 shadow-2xl relative animate-pop">
-            <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+            <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
@@ -270,12 +270,12 @@
                     <i class="fa-solid fa-key"></i>
                 </div>
                 <h3 id="detailTitle" class="text-lg font-bold text-white">รายละเอียดข้อมูลสินค้า</h3>
-                <p id="detailOrderId" class="text-xs text-slate-400 mt-0.5">Order ID: -</p>
+                <p id="detailOrderId" class="text-xs text-stone-400 mt-0.5">Order ID: -</p>
             </div>
 
-            <div class="bg-slate-950/90 rounded-xl p-4 border border-slate-800 mb-6">
-                <label class="block text-xs font-medium text-slate-400 mb-2">ข้อมูลสูตร / ลิงก์ / โค้ดสินค้าที่ได้:</label>
-                <div id="detailContent" class="bg-slate-900 p-3.5 rounded-lg text-emerald-400 text-xs font-mono break-all leading-relaxed max-h-48 overflow-y-auto border border-slate-800 select-all">
+            <div class="bg-stone-950/90 rounded-xl p-4 border border-stone-800 mb-6">
+                <label class="block text-xs font-medium text-stone-400 mb-2">ข้อมูลสูตร / ลิงก์ / โค้ดสินค้าที่ได้:</label>
+                <div id="detailContent" class="bg-stone-900 p-3.5 rounded-lg text-emerald-400 text-xs font-mono break-all leading-relaxed max-h-48 overflow-y-auto border border-stone-800 select-all">
                     -
                 </div>
             </div>
@@ -290,73 +290,73 @@
 
     <!-- Modal ระบบแอดมิน -->
     <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
-        <div class="glass-card rounded-2xl max-w-3xl w-full p-6 border border-purple-500/30 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-pop">
-            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <div class="glass-card rounded-2xl max-w-3xl w-full p-6 border border-orange-500/30 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-pop">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
-            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800">
-                <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-400 flex items-center justify-center text-lg">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-stone-800">
+                <div class="w-10 h-10 rounded-xl bg-orange-600/20 border border-orange-500/30 text-orange-400 flex items-center justify-center text-lg">
                     <i class="fa-solid fa-boxes-packing"></i>
                 </div>
                 <div>
                     <h3 class="text-lg font-bold text-white">ระบบจัดการสต็อคสินค้า & เพิ่มสูตร</h3>
-                    <p class="text-xs text-slate-400">สำหรับแอดมินในการเพิ่มสินค้าใหม่ เติมสต็อค และใส่โลโก้แอพ</p>
+                    <p class="text-xs text-stone-400">สำหรับแอดมินในการเพิ่มสินค้าใหม่ เติมสต็อค และใส่โลโก้แอพ</p>
                 </div>
             </div>
 
             <!-- Form เพิ่มสินค้าใหม่ -->
-            <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 mb-6 space-y-4">
-                <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+            <div class="bg-stone-950/60 p-4 rounded-xl border border-stone-800 mb-6 space-y-4">
+                <h4 class="text-xs font-bold text-orange-400 uppercase tracking-wider flex items-center gap-1.5">
                     <i class="fa-solid fa-plus-circle"></i> เพิ่มสูตรสินค้าใหม่
                 </h4>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">ชื่อสูตรแอพ</label>
-                        <input type="text" id="adminProdName" placeholder="เช่น สูตรสมัคร YouTube 1 ปี" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                        <label class="block text-xs text-stone-400 mb-1">ชื่อสูตรแอพ</label>
+                        <input type="text" id="adminProdName" placeholder="เช่น สูตรสมัคร YouTube 1 ปี" class="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">หมวดหมู่</label>
-                        <select id="adminProdCategory" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                        <label class="block text-xs text-stone-400 mb-1">หมวดหมู่</label>
+                        <select id="adminProdCategory" class="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500">
                             <option value="entertainment">บันเทิง & ฟังเพลง</option>
                             <option value="streaming">สตรีมมิ่ง & ดูหนัง</option>
                             <option value="ai">AI & เครื่องมือ</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">ราคา (บาท)</label>
-                        <input type="number" id="adminProdPrice" placeholder="150" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                        <label class="block text-xs text-stone-400 mb-1">ราคา (บาท)</label>
+                        <input type="number" id="adminProdPrice" placeholder="150" class="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">ป้ายกำกับ (Badge)</label>
-                        <input type="text" id="adminProdBadge" placeholder="เช่น ขายดี 🔥" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                        <label class="block text-xs text-stone-400 mb-1">ป้ายกำกับ (Badge)</label>
+                        <input type="text" id="adminProdBadge" placeholder="เช่น ขายดี 🔥" class="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">URL รูปภาพโลโก้แอพ</label>
-                    <input type="text" id="adminProdLogo" placeholder="https://upload.wikimedia.org/.../logo.png" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs text-stone-400 mb-1">URL รูปภาพโลโก้แอพ</label>
+                    <input type="text" id="adminProdLogo" placeholder="https://upload.wikimedia.org/.../logo.png" class="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">คำอธิบายสินค้าแบบย่อ</label>
-                    <input type="text" id="adminProdDesc" placeholder="อธิบายจุดเด่นของสูตรสั้นๆ..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs text-stone-400 mb-1">คำอธิบายสินค้าแบบย่อ</label>
+                    <input type="text" id="adminProdDesc" placeholder="อธิบายจุดเด่นของสูตรสั้นๆ..." class="w-full bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">ใส่สต็อคสินค้า (1 บรรทัด = 1 รายการ)</label>
-                    <textarea id="adminProdStock" rows="3" placeholder="วางโค้ด/ลิงก์สูตร/ข้อความที่จะให้ลูกค้าเห็นหลังซื้อ แยกบรรทัดละ 1 ชิ้น" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-3 text-xs text-white font-mono focus:outline-none focus:border-indigo-500"></textarea>
+                    <label class="block text-xs text-stone-400 mb-1">ใส่สต็อคสินค้า (1 บรรทัด = 1 รายการ)</label>
+                    <textarea id="adminProdStock" rows="3" placeholder="วางโค้ด/ลิงก์สูตร/ข้อความที่จะให้ลูกค้าเห็นหลังซื้อ แยกบรรทัดละ 1 ชิ้น" class="w-full bg-stone-900 border border-stone-800 rounded-lg p-3 text-xs text-white font-mono focus:outline-none focus:border-orange-500"></textarea>
                 </div>
 
-                <button onclick="addNewProductFromAdmin()" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-lg shadow-purple-600/30 transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                <button onclick="addNewProductFromAdmin()" class="w-full py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs shadow-lg shadow-orange-600/30 transition-all active:scale-95 flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-floppy-disk"></i> บันทึกและเพิ่มสินค้าเข้า ร้านค้า
                 </button>
             </div>
 
             <!-- รายการสินค้าที่มีในระบบ -->
             <div>
-                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">รายการสินค้าปัจจุบัน & สต็อคคงเหลือ</h4>
+                <h4 class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">รายการสินค้าปัจจุบัน & สต็อคคงเหลือ</h4>
                 <div id="adminProductTable" class="space-y-2">
                     <!-- ตารางสินค้า -->
                 </div>
@@ -372,7 +372,6 @@
         let currentCredit = 0;
         let selectedProduct = null;
 
-        // รายการสินค้าเริ่มต้น พร้อม URL รูปภาพโลโก้ที่เป็น CDN เสถียรสูง
         const defaultProducts = [
             {
                 id: "P001",
@@ -474,13 +473,12 @@
             .catch(err => console.error("Error fetching credit:", err));
         }
 
-        // ฟังก์ชันเรนเดอร์การ์ดสินค้าพร้อมระบบดักจับรูปภาพเสีย (Image Fallback)
         function renderProducts(items) {
             const grid = document.getElementById("productGrid");
             grid.innerHTML = "";
 
             if (items.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center text-slate-500 py-16 animate-fade-in-up font-medium">ไม่พบรายการสูตรในหมวดหมู่นี้</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center text-stone-500 py-16 animate-fade-in-up font-medium">ไม่พบรายการสูตรในหมวดหมู่นี้</div>`;
                 return;
             }
 
@@ -492,20 +490,19 @@
                 card.className = "glass-card rounded-2xl p-5 flex flex-col justify-between premium-card relative group animate-fade-in-up";
                 card.style.animationDelay = `${index * 0.08}s`;
 
-                // โครงสร้างรูปโลโก้ + onError fallback สลับไปใช้ไอคอน
                 const logoContainerId = `logo-box-${prod.id}`;
 
                 card.innerHTML = `
                     <div>
                         <div class="flex items-center justify-between mb-4">
-                            <div id="${logoContainerId}" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700/80 flex items-center justify-center p-2 shadow-inner group-hover:border-indigo-500/60 transition-colors">
+                            <div id="${logoContainerId}" class="w-12 h-12 rounded-xl bg-stone-900 border border-stone-700/80 flex items-center justify-center p-2 shadow-inner group-hover:border-orange-500/60 transition-colors">
                                 ${prod.logoUrl ? 
                                     `<img src="${prod.logoUrl}" alt="${prod.name}" class="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-110" onerror="handleImageError('${logoContainerId}', '${prod.icon}')">` 
-                                    : `<i class="fa-solid ${prod.icon || 'fa-box text-indigo-400'} text-xl"></i>`
+                                    : `<i class="fa-solid ${prod.icon || 'fa-box text-orange-400'} text-xl"></i>`
                                 }
                             </div>
                             <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 shadow-sm">
+                                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-orange-500/20 border border-orange-500/40 text-orange-300 shadow-sm">
                                     ${prod.badge || 'พรีเมี่ยม'}
                                 </span>
                                 <span class="text-[10px] ${isOutOfStock ? 'text-red-400' : 'text-emerald-400'} font-semibold">
@@ -513,16 +510,16 @@
                                 </span>
                             </div>
                         </div>
-                        <h3 class="font-bold text-white text-base mb-2 group-hover:text-indigo-300 transition-colors line-clamp-2">${prod.name}</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed mb-4 line-clamp-2">${prod.desc}</p>
+                        <h3 class="font-bold text-white text-base mb-2 group-hover:text-orange-300 transition-colors line-clamp-2">${prod.name}</h3>
+                        <p class="text-xs text-stone-400 leading-relaxed mb-4 line-clamp-2">${prod.desc}</p>
                     </div>
 
-                    <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="pt-4 border-t border-stone-800/80 flex items-center justify-between">
                         <div>
-                            <span class="text-[10px] text-slate-400 block font-medium">ราคาซื้อสูตร</span>
-                            <span class="text-xl font-black text-indigo-400">${prod.price} <span class="text-xs font-normal">฿</span></span>
+                            <span class="text-[10px] text-stone-400 block font-medium">ราคาซื้อสูตร</span>
+                            <span class="text-xl font-black text-orange-400">${prod.price} <span class="text-xs font-normal">฿</span></span>
                         </div>
-                        <button onclick="openBuyModal('${prod.id}')" ${isOutOfStock ? 'disabled' : ''} class="px-4 py-2 rounded-xl ${isOutOfStock ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'btn-gradient text-white active:scale-95'} text-xs font-bold transition-all flex items-center gap-1.5">
+                        <button onclick="openBuyModal('${prod.id}')" ${isOutOfStock ? 'disabled' : ''} class="px-4 py-2 rounded-xl ${isOutOfStock ? 'bg-stone-800 text-stone-500 cursor-not-allowed' : 'btn-gradient text-white active:scale-95'} text-xs font-bold transition-all flex items-center gap-1.5">
                             <i class="fa-solid ${isOutOfStock ? 'fa-ban' : 'fa-bolt'}"></i> ${isOutOfStock ? 'สินค้าหมด' : 'ซื้อสูตร'}
                         </button>
                     </div>
@@ -531,22 +528,21 @@
             });
         }
 
-        // สลับไปแสดงไอคอนอัตโนมัติถ้ารูปภาพโหลดไม่ได้
         function handleImageError(containerId, iconClass) {
             const container = document.getElementById(containerId);
             if (container) {
-                container.innerHTML = `<i class="fa-solid ${iconClass || 'fa-box text-indigo-400'} text-xl"></i>`;
+                container.innerHTML = `<i class="fa-solid ${iconClass || 'fa-box text-orange-400'} text-xl"></i>`;
             }
         }
 
         function filterCategory(cat, btnElement) {
             document.querySelectorAll(".cat-btn").forEach(btn => {
-                btn.classList.remove("bg-indigo-600", "text-white", "shadow-lg");
-                btn.classList.add("bg-slate-800/80", "text-slate-300");
+                btn.classList.remove("bg-orange-600", "text-white", "shadow-lg");
+                btn.classList.add("bg-stone-800/80", "text-stone-300");
             });
 
-            btnElement.classList.remove("bg-slate-800/80", "text-slate-300");
-            btnElement.classList.add("bg-indigo-600", "text-white", "shadow-lg");
+            btnElement.classList.remove("bg-stone-800/80", "text-stone-300");
+            btnElement.classList.add("bg-orange-600", "text-white", "shadow-lg");
 
             if (cat === "all") {
                 renderProducts(products);
@@ -566,9 +562,9 @@
             
             const logoContainer = document.getElementById("modalLogoContainer");
             if (selectedProduct.logoUrl && selectedProduct.logoUrl.trim() !== "") {
-                logoContainer.innerHTML = `<img src="${selectedProduct.logoUrl}" class="w-12 h-12 object-contain" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid ${selectedProduct.icon || 'fa-cart-shopping'} text-3xl text-indigo-400\\'></i>'">`;
+                logoContainer.innerHTML = `<img src="${selectedProduct.logoUrl}" class="w-12 h-12 object-contain" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid ${selectedProduct.icon || 'fa-cart-shopping'} text-3xl text-orange-400\\'></i>'">`;
             } else {
-                logoContainer.innerHTML = `<i class="fa-solid ${selectedProduct.icon || 'fa-cart-shopping'} text-3xl text-indigo-400"></i>`;
+                logoContainer.innerHTML = `<i class="fa-solid ${selectedProduct.icon || 'fa-cart-shopping'} text-3xl text-orange-400"></i>`;
             }
 
             document.getElementById("buyModal").classList.remove("hidden");
@@ -653,7 +649,7 @@
 
             if (history.length === 0) {
                 historyList.innerHTML = `
-                    <div class="text-center py-10 text-slate-500 text-sm animate-fade-in-up">
+                    <div class="text-center py-10 text-stone-500 text-sm animate-fade-in-up">
                         <i class="fa-solid fa-box-open text-3xl mb-2 block opacity-40"></i>
                         คุณยังไม่มีประวัติการสั่งซื้อสูตรสินค้า
                     </div>`;
@@ -662,18 +658,18 @@
 
             history.forEach((item, idx) => {
                 const el = document.createElement("div");
-                el.className = "bg-slate-950/80 rounded-xl p-4 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in-up";
+                el.className = "bg-stone-950/80 rounded-xl p-4 border border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in-up";
                 el.style.animationDelay = `${idx * 0.05}s`;
                 el.innerHTML = `
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">${item.orderId}</span>
-                            <span class="text-[10px] text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${item.date}</span>
+                            <span class="text-xs font-mono font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/20">${item.orderId}</span>
+                            <span class="text-[10px] text-stone-400"><i class="fa-regular fa-clock mr-1"></i>${item.date}</span>
                         </div>
                         <h4 class="font-bold text-white text-sm">${item.productName}</h4>
                         <span class="text-xs font-semibold text-emerald-400">${item.price} ฿</span>
                     </div>
-                    <button onclick="openDetailModal('${item.orderId}', '${encodeURIComponent(item.productName)}', '${encodeURIComponent(item.itemData)}')" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-indigo-300 font-medium border border-slate-700 transition-all flex items-center gap-1.5 self-start sm:self-auto active:scale-95">
+                    <button onclick="openDetailModal('${item.orderId}', '${encodeURIComponent(item.productName)}', '${encodeURIComponent(item.itemData)}')" class="px-3.5 py-2 rounded-lg bg-stone-800 hover:bg-stone-700 text-xs text-orange-300 font-medium border border-stone-700 transition-all flex items-center gap-1.5 self-start sm:self-auto active:scale-95">
                         <i class="fa-solid fa-key"></i> ดูข้อมูลสูตรที่ได้รับ
                     </button>
                 `;
@@ -730,7 +726,7 @@
                 price: price,
                 desc: desc,
                 logoUrl: logoUrl,
-                icon: category === 'ai' ? 'fa-robot text-emerald-400' : category === 'streaming' ? 'fa-film text-red-500' : 'fa-music text-purple-400',
+                icon: category === 'ai' ? 'fa-robot text-emerald-400' : category === 'streaming' ? 'fa-film text-red-500' : 'fa-music text-amber-400',
                 badge: badge,
                 stockList: stockList
             };
@@ -740,7 +736,6 @@
             renderProducts(products);
             renderAdminProductTable();
 
-            // Reset Form
             document.getElementById("adminProdName").value = "";
             document.getElementById("adminProdPrice").value = "";
             document.getElementById("adminProdBadge").value = "";
@@ -758,17 +753,17 @@
             products.forEach((prod, index) => {
                 const stockCount = prod.stockList ? prod.stockList.length : 0;
                 const row = document.createElement("div");
-                row.className = "bg-slate-900 p-3 rounded-lg border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs";
+                row.className = "bg-stone-900 p-3 rounded-lg border border-stone-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs";
                 row.innerHTML = `
                     <div class="flex items-center gap-2">
-                        ${prod.logoUrl ? `<img src="${prod.logoUrl}" class="w-6 h-6 object-contain">` : `<i class="fa-solid fa-box text-slate-500"></i>`}
+                        ${prod.logoUrl ? `<img src="${prod.logoUrl}" class="w-6 h-6 object-contain">` : `<i class="fa-solid fa-box text-stone-500"></i>`}
                         <div>
                             <span class="font-bold text-white">${prod.name}</span>
-                            <div class="text-[10px] text-slate-400 mt-0.5">ราคา: ${prod.price} ฿ | สต็อคคงเหลือ: <span class="text-amber-400 font-bold">${stockCount} ชิ้น</span></div>
+                            <div class="text-[10px] text-stone-400 mt-0.5">ราคา: ${prod.price} ฿ | สต็อคคงเหลือ: <span class="text-amber-400 font-bold">${stockCount} ชิ้น</span></div>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 self-end sm:self-auto">
-                        <button onclick="addMoreStockPrompt('${prod.id}')" class="px-2.5 py-1 rounded bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 transition-all active:scale-95">
+                        <button onclick="addMoreStockPrompt('${prod.id}')" class="px-2.5 py-1 rounded bg-orange-600/20 hover:bg-orange-600/40 text-orange-300 border border-orange-500/30 transition-all active:scale-95">
                             <i class="fa-solid fa-plus mr-1"></i> เติมสต็อค
                         </button>
                         <button onclick="deleteProductFromAdmin(${index})" class="px-2.5 py-1 rounded bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-500/30 transition-all active:scale-95">
