@@ -143,7 +143,7 @@
         // ⚠️ สรุป URL Backend ตัวจริงที่ดึงมาจากระบบเดิมของคุณ
         // หากคุณมี URL Deployment ล่าสุดของ Apps Script สามารถเปลี่ยนใส่ในเครื่องหมายคำพูดด้านล่างได้เลยครับ
         const urlParams = new URLSearchParams(window.location.search);
-        const BACKEND_URL = urlParams.get('script_url') || localStorage.getItem("script_url") || "https://script.google.com/macros/s/AKfycbwqaA-qZkY3E8G3s2aR_S18gS0zM19/exec"; 
+        const BACKEND_URL = urlParams.get('script_url') || localStorage.getItem("script_url") || "https://script.google.com/macros/s/AKfycbwQz6KOmhuPdipUnNwh4sYFT2etnvb0W_yrS00andPfKc7IeZr5HaNs8-57_P0ochFxew/exec"; 
 
         let currentUser = urlParams.get('user') || localStorage.getItem("username") || "admin"; 
         let currentCredit = 0;
