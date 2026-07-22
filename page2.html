@@ -4,12 +4,14 @@
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ระบบเติมเงินเครดิต</title>
+  <title>เติมเงิน - Mailly OTP</title>
   
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
   <style>
@@ -30,20 +32,24 @@
       --danger-border: #FCA5A5;
     }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Prompt', 'Inter', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       padding: 20px 15px;
-      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      box-sizing: border-box;
     }
 
-    /* --- การ์ดหลัก --- */
+    /* --- การ์ดหลัก (Topup Card) --- */
     .topup-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -52,7 +58,6 @@
       width: 100%;
       max-width: 440px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-      box-sizing: border-box;
       transition: all 0.3s ease;
     }
     
@@ -78,21 +83,19 @@
     .card-header h2 {
       font-size: 24px;
       font-weight: 600;
-      margin: 0;
       color: var(--text-main);
     }
 
     .card-header p {
       font-size: 14px;
       color: var(--text-muted);
-      margin: 6px 0 0 0;
+      margin-top: 6px;
     }
 
     /* --- ฟอร์มอินพุต --- */
     .form-group {
       margin-bottom: 20px;
       width: 100%;
-      box-sizing: border-box;
     }
 
     .form-group label {
@@ -126,11 +129,10 @@
       border: 1px solid #D1D1D1;
       color: var(--text-main);
       border-radius: 10px;
-      font-family: 'Prompt';
+      font-family: 'Prompt', sans-serif;
       font-size: 15px;
-      box-sizing: border-box;
       outline: none;
-      transition: 0.2s ease;
+      transition: all 0.2s ease;
     }
     
     .form-input:focus {
@@ -220,7 +222,6 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-sizing: border-box;
       transition: all 0.2s ease;
     }
 
@@ -258,6 +259,7 @@
       background-color: var(--success);
       color: #FFFFFF;
     }
+
     .btn-success:hover:not(:disabled) {
       background-color: #059669;
     }
@@ -277,12 +279,24 @@
       font-size: 14px;
       font-weight: 500;
       margin-top: 16px;
-      box-sizing: border-box;
       border: 1px solid transparent;
     }
-    .alert-success { background-color: var(--success-bg); color: #065F46; border-color: rgba(16, 185, 129, 0.2); }
-    .alert-error { background-color: var(--danger-bg); color: #991B1B; border-color: rgba(239, 68, 68, 0.2); }
-    .hidden { display: none !important; }
+
+    .alert-success { 
+      background-color: var(--success-bg); 
+      color: #065F46; 
+      border-color: rgba(16, 185, 129, 0.2); 
+    }
+
+    .alert-error { 
+      background-color: var(--danger-bg); 
+      color: #991B1B; 
+      border-color: rgba(239, 68, 68, 0.2); 
+    }
+
+    .hidden { 
+      display: none !important; 
+    }
 
     /* --- ออนิเมชั่นสปินเนอร์หลอดโหลด --- */
     .spinner {
@@ -298,14 +312,24 @@
 
     /* --- หน้าต่างป๊อปอัพ Modal คิวอาร์ --- */
     .modal-overlay {
-      position: fixed; inset: 0; z-index: 2000;
-      background: rgba(0, 0, 0, 0.4); backdrop-blur: 4px;
-      display: flex; justify-content: center; align-items: center;
-      padding: 15px; box-sizing: border-box;
-      opacity: 0; pointer-events: none;
+      position: fixed; 
+      inset: 0; 
+      z-index: 2000;
+      background: rgba(0, 0, 0, 0.4); 
+      backdrop-filter: blur(4px);
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      padding: 15px;
+      opacity: 0; 
+      pointer-events: none;
       transition: opacity 0.3s ease;
     }
-    .modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+    .modal-overlay.show { 
+      opacity: 1; 
+      pointer-events: auto; 
+    }
 
     .modal-box {
       background: var(--card-bg);
@@ -317,7 +341,6 @@
       box-shadow: 0 15px 50px rgba(0,0,0,0.1);
       position: relative;
       text-align: center;
-      box-sizing: border-box;
       transform: scale(0.95);
       transition: transform 0.3s ease;
       max-height: 92vh;
@@ -325,26 +348,65 @@
       flex-direction: column;
       overflow-y: auto;
     }
-    .modal-overlay.show .modal-box { transform: scale(1); }
+
+    .modal-overlay.show .modal-box { 
+      transform: scale(1); 
+    }
 
     .modal-close-btn {
-      position: absolute; top: 16px; right: 16px;
-      background: none; border: none; font-size: 22px;
-      cursor: pointer; color: var(--text-muted);
-      width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
+      position: absolute; 
+      top: 16px; 
+      right: 16px;
+      background: none; 
+      border: none; 
+      font-size: 22px;
+      cursor: pointer; 
+      color: var(--text-muted);
+      width: 32px; 
+      height: 32px; 
+      border-radius: 50%;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
       transition: 0.2s;
     }
-    .modal-close-btn:hover { background: #F1F3F5; color: var(--text-main); }
 
-    .qr-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin: 8px 0 12px 0; }
-    .qr-container {
-      background: #FFFFFF; padding: 12px; border-radius: 16px;
-      display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-      border: 1px solid var(--border-color); margin: 4px 0;
+    .modal-close-btn:hover { 
+      background: #F1F3F5; 
+      color: var(--text-main); 
     }
-    .qr-image { width: 190px; height: 190px; mx-auto; display: block; object-fit: contain;}
-    .account-holder { font-size: 13px; color: var(--text-muted); font-weight: 500; margin: 6px 0 16px 0; }
+
+    .qr-title { 
+      font-size: 15px; 
+      font-weight: 600; 
+      color: var(--text-main); 
+      margin: 8px 0 12px 0; 
+    }
+
+    .qr-container {
+      background: #FFFFFF; 
+      padding: 12px; 
+      border-radius: 16px;
+      display: inline-block; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-color); 
+      margin: 4px 0;
+    }
+
+    .qr-image { 
+      width: 190px; 
+      height: 190px; 
+      margin: 0 auto; 
+      display: block; 
+      object-fit: contain;
+    }
+
+    .account-holder { 
+      font-size: 13px; 
+      color: var(--text-muted); 
+      font-weight: 500; 
+      margin: 6px 0 16px 0; 
+    }
 
     /* --- ปรับแต่ง Input ไฟล์ให้สวยงามแนวพรีเมียม --- */
     .file-upload-box {
@@ -353,19 +415,45 @@
       padding-top: 16px;
       margin-bottom: 16px;
     }
-    .file-upload-box label { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+
+    .file-upload-box label { 
+      display: block; 
+      font-size: 13px; 
+      font-weight: 600; 
+      color: var(--text-main); 
+      margin-bottom: 8px; 
+    }
+
     .file-input-styled {
-      width: 100%; font-size: 12px; color: var(--text-muted);
-      border: 1px solid #D1D1D1; border-radius: 10px; padding: 6px;
-      background: #FFFFFF; outline: none; cursor: pointer; box-sizing: border-box;
+      width: 100%; 
+      font-size: 12px; 
+      color: var(--text-muted);
+      border: 1px solid #D1D1D1; 
+      border-radius: 10px; 
+      padding: 6px;
+      background: #FFFFFF; 
+      outline: none; 
+      cursor: pointer;
     }
+
     .file-input-styled::file-selector-button {
-      font-family: 'Prompt'; background: rgba(197, 160, 89, 0.1);
-      color: var(--primary-hover); border: 0; padding: 6px 14px;
-      border-radius: 8px; font-size: 12px; font-weight: 500;
-      margin-right: 10px; cursor: pointer; transition: 0.2s;
+      font-family: 'Prompt', sans-serif; 
+      background: rgba(197, 160, 89, 0.1);
+      color: var(--primary-hover); 
+      border: 0; 
+      padding: 6px 14px;
+      border-radius: 8px; 
+      font-size: 12px; 
+      font-weight: 500;
+      margin-right: 10px; 
+      cursor: pointer; 
+      transition: 0.2s;
     }
-    .file-input-styled::file-selector-button:hover { background: var(--primary); color: #FFFFFF; }
+
+    .file-input-styled::file-selector-button:hover { 
+      background: var(--primary); 
+      color: #FFFFFF; 
+    }
 
     /* ==========================================================
        RESPONSIVE BREAKPOINTS 
@@ -435,9 +523,9 @@
     </button>
   </div>
 
-
+  <!-- QR Code Modal -->
   <div id="qrModal" class="modal-overlay hidden">
-    <div class="absolute-blur" style="position: absolute; inset: 0;" onclick="closeModal()"></div>
+    <div style="position: absolute; inset: 0;" onclick="closeModal()"></div>
     
     <div id="modalContent" class="modal-box">
       <button onclick="closeModal()" class="modal-close-btn">
@@ -468,17 +556,12 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwQz6KOmhuPdipUnNwh4sYFT2etnvb0W_yrS00andPfKc7IeZr5HaNs8-57_P0ochFxew/exec";
-    
-    // ตัวแปรพร้อมเพย์หลักของระบบ
     const PROMPTPAY_ID = "0633390911"; 
 
-    // --- เช็คและเชื่อมดึง Username จาก LocalStorage และ URL Parameter ---
     window.addEventListener('DOMContentLoaded', () => {
-      // 1. ดึงจาก URL Parameter (เช่น page2.html?user=xxx)
       const urlParams = new URLSearchParams(window.location.search);
       const urlUser = urlParams.get('user') || urlParams.get('username');
 
-      // 2. ดึงจาก LocalStorage (รองรับทั้ง key 'username', 'mailly_remembered_user' และ 'mailly_otp_username')
       const savedUser = urlUser || 
                         localStorage.getItem('username') || 
                         localStorage.getItem('mailly_remembered_user') || 
@@ -536,10 +619,9 @@
       const cleanPromptPayId = PROMPTPAY_ID.replace(/[^0-9]/g, '');
 
       if (cleanPromptPayId === "" || PROMPTPAY_ID.includes("X")) {
-        return showResult('❌ ลืมแก้โค้ด: กรุณาแก้ไขตัวแปร PROMPTPAY_ID ให้เป็นเบอร์ของคุณก่อนครับ', 'error');
+        return showResult('❌ กรุณาแก้ไขตัวแปร PROMPTPAY_ID ให้เป็นเบอร์ของคุณก่อนครับ', 'error');
       }
 
-      // บันทึก Username ให้ซิงค์ตรงกันทุก Keys ใน LocalStorage
       const rememberMeChecked = document.getElementById('rememberMe').checked;
       if (rememberMeChecked) {
         localStorage.setItem('username', username);
