@@ -6,37 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>เติมเงิน - Mailly OTP</title>
   
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
   <style>
     :root {
-      --bg-color: #F8F9FA;        /* Off-White Bright Background */
-      --card-bg: #FFFFFF;         /* Pure White Card */
-      --border-color: #EAEAEA;    /* Soft Light Gray Border */
-      --text-main: #2D2926;       /* Deep Charcoal Text */
-      --text-muted: #7A7A7A;      /* Muted Neutral Gray */
-      --primary: #C5A059;         /* Soft Champagne Gold */
-      --primary-hover: #AA843D;   /* Deeper Elegant Gold */
+      --bg-color: #F8F9FA;
+      --card-bg: #FFFFFF;
+      --border-color: #EAEAEA;
+      --text-main: #2D2926;
+      --text-muted: #7A7A7A;
+      --primary: #C5A059;
+      --primary-hover: #AA843D;
       --success: #10B981;
       --success-bg: #E6F4EA;
-      --success-border: #A3E635;
       --danger: #EF4444;
-      --danger-hover: #DC2626;
       --danger-bg: #FEE2E2;
-      --danger-border: #FCA5A5;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Prompt', 'Inter', sans-serif;
@@ -49,7 +39,6 @@
       min-height: 100vh;
     }
 
-    /* --- การ์ดหลัก (Topup Card) --- */
     .topup-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -58,13 +47,9 @@
       width: 100%;
       max-width: 440px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-      transition: all 0.3s ease;
     }
     
-    .card-header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
+    .card-header { text-align: center; margin-bottom: 28px; }
     
     .wallet-icon-box {
       width: 64px;
@@ -80,47 +65,14 @@
       box-shadow: 0 4px 15px rgba(197, 160, 89, 0.15);
     }
 
-    .card-header h2 {
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--text-main);
-    }
+    .card-header h2 { font-size: 24px; font-weight: 600; color: var(--text-main); }
+    .card-header p { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
 
-    .card-header p {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-top: 6px;
-    }
+    .form-group { margin-bottom: 20px; width: 100%; }
+    .form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; }
 
-    /* --- ฟอร์มอินพุต --- */
-    .form-group {
-      margin-bottom: 20px;
-      width: 100%;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .input-icon {
-      position: absolute;
-      left: 14px;
-      color: #A1A1A1;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .input-wrapper { position: relative; display: flex; align-items: center; }
+    .input-icon { position: absolute; left: 14px; color: #A1A1A1; font-size: 15px; }
 
     .form-input {
       width: 100%;
@@ -141,50 +93,13 @@
       background-color: #FFFFFF;
     }
 
-    .form-input.amount-input {
-      padding-left: 32px;
-      font-weight: 600;
-      font-size: 18px;
-      color: var(--primary-hover);
-    }
+    .form-input.amount-input { padding-left: 32px; font-weight: 600; font-size: 18px; color: var(--primary-hover); }
 
-    /* --- สไตล์กล่องจดจำอุปกรณ์ --- */
-    .remember-me-box {
-      display: flex;
-      align-items: center;
-      margin-top: 8px;
-      padding-left: 2px;
-    }
-    
-    .remember-me-box input[type="checkbox"] {
-      margin: 0;
-      width: 16px;
-      height: 16px;
-      accent-color: var(--primary);
-      cursor: pointer;
-    }
-    
-    .remember-me-box label {
-      margin: 0 0 0 8px !important;
-      font-size: 13px !important;
-      color: var(--text-muted);
-      cursor: pointer;
-      user-select: none;
-      font-weight: 400 !important;
-    }
-    
-    .remember-me-box label:hover {
-      color: var(--text-main);
-    }
+    .remember-me-box { display: flex; align-items: center; margin-top: 8px; padding-left: 2px; }
+    .remember-me-box input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+    .remember-me-box label { margin: 0 0 0 8px !important; font-size: 13px !important; color: var(--text-muted); cursor: pointer; }
 
-    /* --- ปุ่มเลือกจำนวนเงินด่วน --- */
-    .amount-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 24px;
-    }
-
+    .amount-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 24px; }
     .btn-amount-choice {
       font-family: 'Prompt', sans-serif;
       padding: 10px 0;
@@ -197,18 +112,8 @@
       cursor: pointer;
       transition: all 0.15s ease;
     }
+    .btn-amount-choice:hover { background: rgba(197, 160, 89, 0.08); border-color: var(--primary); color: var(--primary-hover); }
 
-    .btn-amount-choice:hover {
-      background: rgba(197, 160, 89, 0.08);
-      border-color: var(--primary);
-      color: var(--primary-hover);
-    }
-    
-    .btn-amount-choice:active {
-      transform: scale(0.96);
-    }
-
-    /* --- ปุ่มหลักต่างๆ --- */
     .btn {
       font-family: 'Prompt', sans-serif;
       width: 100%;
@@ -225,249 +130,49 @@
       transition: all 0.2s ease;
     }
 
-    .btn-primary {
-      background-color: var(--primary);
-      color: #FFFFFF;
-      box-shadow: 0 4px 12px rgba(197, 160, 89, 0.15);
-    }
+    .btn-primary { background-color: var(--primary); color: #FFFFFF; box-shadow: 0 4px 12px rgba(197, 160, 89, 0.15); }
+    .btn-primary:hover:not(:disabled) { background-color: var(--primary-hover); box-shadow: 0 4px 16px rgba(197, 160, 89, 0.25); }
+    .btn-secondary { background-color: #F1F3F5; color: var(--text-muted); margin-top: 12px; }
+    .btn-secondary:hover { background-color: #E9ECEF; color: var(--text-main); }
+    .btn-success { background-color: var(--success); color: #FFFFFF; }
 
-    .btn-primary:hover:not(:disabled) {
-      background-color: var(--primary-hover);
-      box-shadow: 0 4px 16px rgba(197, 160, 89, 0.25);
-    }
+    .alert-message { padding: 12px; border-radius: 10px; text-align: center; font-size: 14px; margin-top: 16px; }
+    .alert-success { background-color: var(--success-bg); color: #065F46; }
+    .alert-error { background-color: var(--danger-bg); color: #991B1B; }
+    .hidden { display: none !important; }
 
-    .btn-primary:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .btn-secondary {
-      background-color: #F1F3F5;
-      color: var(--text-muted);
-      margin-top: 12px;
-    }
-
-    .btn-secondary:hover {
-      background-color: #E9ECEF;
-      color: var(--text-main);
-    }
-
-    .btn-secondary:active {
-      transform: scale(0.98);
-    }
-
-    .btn-success {
-      background-color: var(--success);
-      color: #FFFFFF;
-    }
-
-    .btn-success:hover:not(:disabled) {
-      background-color: #059669;
-    }
-
-    .btn:disabled, .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none !important;
-    }
-
-    /* --- ส่วนข้อความแจ้งเตือน --- */
-    .alert-message {
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 500;
-      margin-top: 16px;
-      border: 1px solid transparent;
-    }
-
-    .alert-success { 
-      background-color: var(--success-bg); 
-      color: #065F46; 
-      border-color: rgba(16, 185, 129, 0.2); 
-    }
-
-    .alert-error { 
-      background-color: var(--danger-bg); 
-      color: #991B1B; 
-      border-color: rgba(239, 68, 68, 0.2); 
-    }
-
-    .hidden { 
-      display: none !important; 
-    }
-
-    /* --- ออนิเมชั่นสปินเนอร์หลอดโหลด --- */
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid #FFFFFF;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      display: inline-block;
-    }
+    .spinner { width: 18px; height: 18px; border: 2px solid #FFF; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* --- หน้าต่างป๊อปอัพ Modal คิวอาร์ --- */
     .modal-overlay {
-      position: fixed; 
-      inset: 0; 
-      z-index: 2000;
-      background: rgba(0, 0, 0, 0.4); 
-      backdrop-filter: blur(4px);
-      display: flex; 
-      justify-content: center; 
-      align-items: center;
-      padding: 15px;
-      opacity: 0; 
-      pointer-events: none;
-      transition: opacity 0.3s ease;
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
+      display: flex; justify-content: center; align-items: center; padding: 15px;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
     }
-
-    .modal-overlay.show { 
-      opacity: 1; 
-      pointer-events: auto; 
-    }
-
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
     .modal-box {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      width: 100%;
-      max-width: 380px;
-      padding: 24px;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.1);
-      position: relative;
-      text-align: center;
-      transform: scale(0.95);
-      transition: transform 0.3s ease;
-      max-height: 92vh;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 20px; width: 100%; max-width: 380px; padding: 24px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.1); position: relative; text-align: center;
+      transform: scale(0.95); transition: transform 0.3s ease;
     }
+    .modal-overlay.show .modal-box { transform: scale(1); }
+    .modal-close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); }
 
-    .modal-overlay.show .modal-box { 
-      transform: scale(1); 
-    }
+    .qr-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin: 8px 0 12px 0; }
+    .qr-container { background: #FFF; padding: 12px; border-radius: 16px; display: inline-block; border: 1px solid var(--border-color); }
+    .qr-image { width: 190px; height: 190px; margin: 0 auto; display: block; object-fit: contain; }
+    .account-holder { font-size: 13px; color: var(--text-muted); font-weight: 500; margin: 6px 0 16px 0; }
 
-    .modal-close-btn {
-      position: absolute; 
-      top: 16px; 
-      right: 16px;
-      background: none; 
-      border: none; 
-      font-size: 22px;
-      cursor: pointer; 
-      color: var(--text-muted);
-      width: 32px; 
-      height: 32px; 
-      border-radius: 50%;
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      transition: 0.2s;
-    }
+    .file-upload-box { text-align: left; border-top: 1px solid var(--border-color); padding-top: 16px; margin-bottom: 16px; }
+    .file-upload-box label { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+    .file-input-styled { width: 100%; font-size: 12px; color: var(--text-muted); border: 1px solid #D1D1D1; border-radius: 10px; padding: 6px; background: #FFF; outline: none; }
+    .file-input-styled::file-selector-button { font-family: 'Prompt'; background: rgba(197, 160, 89, 0.1); color: var(--primary-hover); border: 0; padding: 6px 14px; border-radius: 8px; margin-right: 10px; cursor: pointer; }
 
-    .modal-close-btn:hover { 
-      background: #F1F3F5; 
-      color: var(--text-main); 
-    }
-
-    .qr-title { 
-      font-size: 15px; 
-      font-weight: 600; 
-      color: var(--text-main); 
-      margin: 8px 0 12px 0; 
-    }
-
-    .qr-container {
-      background: #FFFFFF; 
-      padding: 12px; 
-      border-radius: 16px;
-      display: inline-block; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-      border: 1px solid var(--border-color); 
-      margin: 4px 0;
-    }
-
-    .qr-image { 
-      width: 190px; 
-      height: 190px; 
-      margin: 0 auto; 
-      display: block; 
-      object-fit: contain;
-    }
-
-    .account-holder { 
-      font-size: 13px; 
-      color: var(--text-muted); 
-      font-weight: 500; 
-      margin: 6px 0 16px 0; 
-    }
-
-    /* --- ปรับแต่ง Input ไฟล์ให้สวยงามแนวพรีเมียม --- */
-    .file-upload-box {
-      text-align: left;
-      border-top: 1px solid var(--border-color);
-      padding-top: 16px;
-      margin-bottom: 16px;
-    }
-
-    .file-upload-box label { 
-      display: block; 
-      font-size: 13px; 
-      font-weight: 600; 
-      color: var(--text-main); 
-      margin-bottom: 8px; 
-    }
-
-    .file-input-styled {
-      width: 100%; 
-      font-size: 12px; 
-      color: var(--text-muted);
-      border: 1px solid #D1D1D1; 
-      border-radius: 10px; 
-      padding: 6px;
-      background: #FFFFFF; 
-      outline: none; 
-      cursor: pointer;
-    }
-
-    .file-input-styled::file-selector-button {
-      font-family: 'Prompt', sans-serif; 
-      background: rgba(197, 160, 89, 0.1);
-      color: var(--primary-hover); 
-      border: 0; 
-      padding: 6px 14px;
-      border-radius: 8px; 
-      font-size: 12px; 
-      font-weight: 500;
-      margin-right: 10px; 
-      cursor: pointer; 
-      transition: 0.2s;
-    }
-
-    .file-input-styled::file-selector-button:hover { 
-      background: var(--primary); 
-      color: #FFFFFF; 
-    }
-
-    /* ==========================================================
-       RESPONSIVE BREAKPOINTS 
-       ========================================================== */
     @media(max-width: 480px) {
-      body { padding: 10px; }
-      .topup-card { padding: 30px 20px; border-radius: 14px; }
+      .topup-card { padding: 30px 20px; }
       .amount-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-      .card-header h2 { font-size: 21px; }
-      .form-input { font-size: 14px; }
-    }
-    
-    @media(max-width: 360px) {
-      .amount-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -523,14 +228,10 @@
     </button>
   </div>
 
-  <!-- QR Code Modal -->
   <div id="qrModal" class="modal-overlay hidden">
     <div style="position: absolute; inset: 0;" onclick="closeModal()"></div>
-    
     <div id="modalContent" class="modal-box">
-      <button onclick="closeModal()" class="modal-close-btn">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <button onclick="closeModal()" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
 
       <div>
         <p class="qr-title"><i class="fa-solid fa-qrcode" style="color: var(--primary); margin-right: 4px;"></i> สแกนจ่ายผ่านแอปธนาคาร</p>
@@ -561,11 +262,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const urlUser = urlParams.get('user') || urlParams.get('username');
-
-      const savedUser = urlUser || 
-                        localStorage.getItem('username') || 
-                        localStorage.getItem('mailly_remembered_user') || 
-                        localStorage.getItem('mailly_otp_username');
+      const savedUser = urlUser || localStorage.getItem('username') || localStorage.getItem('mailly_remembered_user') || localStorage.getItem('mailly_otp_username');
 
       if (savedUser) {
         document.getElementById('username').value = savedUser;
@@ -573,57 +270,34 @@
       }
     });
 
-    function setAmount(value) {
-      document.getElementById('amount').value = value;
-      handleInputChange();
-    }
-
-    function handleInputChange() {
-      document.getElementById('resultMessage').classList.add('hidden');
-    }
-
+    function setAmount(value) { document.getElementById('amount').value = value; handleInputChange(); }
+    function handleInputChange() { document.getElementById('resultMessage').classList.add('hidden'); }
     function openModal() {
       const modal = document.getElementById('qrModal');
       document.getElementById('modalResultMessage').classList.add('hidden'); 
-      
       modal.classList.remove('hidden');
-      setTimeout(() => {
-        modal.classList.add('show');
-      }, 10);
+      setTimeout(() => modal.classList.add('show'), 10);
     }
-
     function closeModal() {
       const modal = document.getElementById('qrModal');
       modal.classList.remove('show');
-      
-      setTimeout(() => {
-        modal.classList.add('hidden');
-      }, 300);
+      setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
     function confirmAndGenerateQR() {
       const username = document.getElementById('username').value.trim();
       const amount = document.getElementById('amount').value.trim();
       const qrImage = document.getElementById('qrImage');
-      
       const btnGenerateQR = document.getElementById('btnGenerateQR');
       const btnQRText = document.getElementById('btnQRText');
       const qrSpinner = document.getElementById('qrSpinner');
 
       if (!username) { return showResult('กรุณากรอกชื่อผู้ใช้งานก่อนครับ', 'error'); }
-      
-      if (!amount || parseFloat(amount) < 50) { 
-        return showResult('❌ กรุณาระบุจำนวนเงินขั้นต่ำ 50 บาทครับ', 'error'); 
-      }
+      if (!amount || parseFloat(amount) < 50) { return showResult('❌ กรุณาระบุจำนวนเงินขั้นต่ำ 50 บาทครับ', 'error'); }
 
       const cleanPromptPayId = PROMPTPAY_ID.replace(/[^0-9]/g, '');
 
-      if (cleanPromptPayId === "" || PROMPTPAY_ID.includes("X")) {
-        return showResult('❌ กรุณาแก้ไขตัวแปร PROMPTPAY_ID ให้เป็นเบอร์ของคุณก่อนครับ', 'error');
-      }
-
-      const rememberMeChecked = document.getElementById('rememberMe').checked;
-      if (rememberMeChecked) {
+      if (document.getElementById('rememberMe').checked) {
         localStorage.setItem('username', username);
         localStorage.setItem('mailly_remembered_user', username);
         localStorage.setItem('mailly_otp_username', username);
@@ -634,7 +308,6 @@
       }
 
       btnGenerateQR.disabled = true;
-      btnGenerateQR.style.pointerEvents = 'none';
       btnQRText.innerText = 'กำลังสร้างคิวอาร์โค้ด...';
       qrSpinner.classList.remove('hidden');
       document.getElementById('resultMessage').classList.add('hidden');
@@ -643,7 +316,6 @@
       
       setTimeout(() => {
         btnGenerateQR.disabled = false;
-        btnGenerateQR.style.pointerEvents = 'auto';
         btnQRText.innerText = 'ยืนยันจำนวนเงิน & สร้าง QR Code';
         qrSpinner.classList.add('hidden');
         openModal();
@@ -654,7 +326,6 @@
       const username = document.getElementById('username').value.trim();
       const amount = document.getElementById('amount').value.trim();
       const fileInput = document.getElementById('slipFile');
-      
       const btnSubmit = document.getElementById('btnSubmit');
       const btnText = document.getElementById('btnText');
       const spinner = document.getElementById('spinner');
@@ -665,10 +336,8 @@
       }
 
       btnSubmit.disabled = true;
-      btnSubmit.style.pointerEvents = 'none';
       btnText.innerText = 'กำลังส่งตรวจสลิป...';
       spinner.classList.remove('hidden');
-      document.getElementById('modalResultMessage').classList.add('hidden');
 
       const file = fileInput.files[0];
       const reader = new FileReader();
@@ -677,41 +346,21 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          
-          const MAX_SIZE = 1000;
-          if (width > height) {
-            if (width > MAX_SIZE) {
-              height *= MAX_SIZE / width;
-              width = MAX_SIZE;
-            }
-          } else {
-            if (height > MAX_SIZE) {
-              width *= MAX_SIZE / height;
-              height = MAX_SIZE;
-            }
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-          
+          let width = img.width, height = img.height, MAX_SIZE = 1000;
+          if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } }
+          else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+          canvas.width = width; canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           
           const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
           const base64Data = compressedDataUrl.split(',')[1];
 
-          const imageObj = {
-            base64: base64Data,
-            mimeType: 'image/jpeg'
-          };
-
           fetch(API_URL, {
             method: "POST",
             body: JSON.stringify({
               action: "topupUserCredit",
-              payload: { username: username, amount: amount, imageObj: imageObj }
+              payload: { username: username, amount: amount, imageObj: { base64: base64Data, mimeType: 'image/jpeg' } }
             })
           })
           .then(res => res.json())
@@ -737,26 +386,15 @@
     }
 
     function resetButton() {
-      const btnSubmit = document.getElementById('btnSubmit');
-      const btnText = document.getElementById('btnText');
-      const spinner = document.getElementById('spinner');
-      
-      btnSubmit.disabled = false;
-      btnSubmit.style.pointerEvents = 'auto';
-      btnText.innerText = 'อัปโหลด & ยืนยันสลิป';
-      spinner.classList.add('hidden');
+      document.getElementById('btnSubmit').disabled = false;
+      document.getElementById('btnText').innerText = 'อัปโหลด & ยืนยันสลิป';
+      document.getElementById('spinner').classList.add('hidden');
     }
 
     function showResult(msg, type) {
       const resultMessage = document.getElementById('resultMessage');
       resultMessage.innerHTML = msg;
-      resultMessage.classList.remove('hidden', 'alert-success', 'alert-error');
-      
-      if (type === 'success') {
-        resultMessage.classList.add('alert-success');
-      } else {
-        resultMessage.classList.add('alert-error');
-      }
+      resultMessage.className = 'alert-message ' + (type === 'success' ? 'alert-success' : 'alert-error');
     }
 
     function showModalResult(msg, type) {
@@ -765,9 +403,7 @@
       modalResult.classList.remove('hidden');
     }
 
-    function backToMain() {
-      window.location.href = 'index.html';
-    }
+    function backToMain() { window.location.href = 'index.html'; }
   </script>
 </body>
 </html>
