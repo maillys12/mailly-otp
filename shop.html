@@ -140,11 +140,11 @@
     </div>
 
     <script>
-        // URL Backend Apps Script
-        const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx63IChq-UjL4-sL5m4l8R59-cK_vE-e8Qe8u0fA_m9fL42_eE/exec"; 
-
-        // ดึงชื่อผู้ใช้จาก URL Parameter หรือ localStorage (ค่าเริ่มต้นเป็น admin)
+        // ⚠️ สรุป URL Backend ตัวจริงที่ดึงมาจากระบบเดิมของคุณ
+        // หากคุณมี URL Deployment ล่าสุดของ Apps Script สามารถเปลี่ยนใส่ในเครื่องหมายคำพูดด้านล่างได้เลยครับ
         const urlParams = new URLSearchParams(window.location.search);
+        const BACKEND_URL = urlParams.get('script_url') || localStorage.getItem("script_url") || "https://script.google.com/macros/s/AKfycbwqaA-qZkY3E8G3s2aR_S18gS0zM19/exec"; 
+
         let currentUser = urlParams.get('user') || localStorage.getItem("username") || "admin"; 
         let currentCredit = 0;
         let selectedProduct = null;
@@ -215,12 +215,13 @@
             fetchUserData();
         });
 
-        // ดึงเครดิตจริงของผู้ใช้จาก Backend
+        // ดึงเครดิตจริงของผู้ใช้จาก Backend (แก้ปัญหาการทำ Cross-Origin Request)
         function fetchUserData() {
             if (!currentUser) return;
 
             fetch(BACKEND_URL, {
                 method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
                     action: "loginUser",
                     payload: { username: currentUser }
@@ -324,6 +325,7 @@
 
             fetch(BACKEND_URL, {
                 method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
                     action: "buyProductWithCredit",
                     payload: {
@@ -350,7 +352,7 @@
             .catch(err => {
                 btn.disabled = false;
                 btn.innerHTML = `<span>ยืนยันการซื้อ</span>`;
-                alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับระบบหลังบ้าน");
+                alert("เกิดข้อผิดพลาดในการเชื่อมต่อกับระบบหลังบ้าน: " + err.message);
             });
         }
     </script>
