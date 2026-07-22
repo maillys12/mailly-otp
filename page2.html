@@ -467,15 +467,23 @@
   </div>
 
   <script>
-    // ⬇️ ตรงนี้อย่าลืมเอา URL จาก Google Apps Script ของคุณมาวางทับนะครับ
     const API_URL = "https://script.google.com/macros/s/AKfycbwQz6KOmhuPdipUnNwh4sYFT2etnvb0W_yrS00andPfKc7IeZr5HaNs8-57_P0ochFxew/exec";
     
     // ตัวแปรพร้อมเพย์หลักของระบบ
     const PROMPTPAY_ID = "0633390911"; 
 
-    // --- เช็คระบบความจำตอนโหลดหน้าเว็บเข้าครั้งแรก (Auto-Fill Trigger) ---
+    // --- เช็คและเชื่อมดึง Username จาก LocalStorage และ URL Parameter ---
     window.addEventListener('DOMContentLoaded', () => {
-      const savedUser = localStorage.getItem('mailly_otp_username');
+      // 1. ดึงจาก URL Parameter (เช่น page2.html?user=xxx)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlUser = urlParams.get('user') || urlParams.get('username');
+
+      // 2. ดึงจาก LocalStorage (รองรับทั้ง key 'username', 'mailly_remembered_user' และ 'mailly_otp_username')
+      const savedUser = urlUser || 
+                        localStorage.getItem('username') || 
+                        localStorage.getItem('mailly_remembered_user') || 
+                        localStorage.getItem('mailly_otp_username');
+
       if (savedUser) {
         document.getElementById('username').value = savedUser;
         document.getElementById('rememberMe').checked = true;
@@ -531,11 +539,15 @@
         return showResult('❌ ลืมแก้โค้ด: กรุณาแก้ไขตัวแปร PROMPTPAY_ID ให้เป็นเบอร์ของคุณก่อนครับ', 'error');
       }
 
-      // ทำการบันทึก หรือ ลบ ความจำตามสถานะของปุ่มติ๊ก
+      // บันทึก Username ให้ซิงค์ตรงกันทุก Keys ใน LocalStorage
       const rememberMeChecked = document.getElementById('rememberMe').checked;
       if (rememberMeChecked) {
+        localStorage.setItem('username', username);
+        localStorage.setItem('mailly_remembered_user', username);
         localStorage.setItem('mailly_otp_username', username);
       } else {
+        localStorage.removeItem('username');
+        localStorage.removeItem('mailly_remembered_user');
         localStorage.removeItem('mailly_otp_username');
       }
 
@@ -613,7 +625,6 @@
             mimeType: 'image/jpeg'
           };
 
-          // เปลี่ยนจากการเรียก google.script.run เป็น fetch API ของ Vercel
           fetch(API_URL, {
             method: "POST",
             body: JSON.stringify({
@@ -673,7 +684,6 @@
     }
 
     function backToMain() {
-      // เปลี่ยนจากการเรียก WebAppURL ของ Google เป็นการลิงก์ไปหน้า index.html โดยตรงบน Vercel
       window.location.href = 'index.html';
     }
   </script>
