@@ -101,7 +101,7 @@
         </button>
 
         <button onclick="goToRenewPage()" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap">ต่ออายุแฟม</button>
-        <button class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap">ขอเมลสำรอง</button>
+        <button onclick="requestBackupEmail()" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap">ขอเมลสำรอง</button>
         
         <button onclick="window.location.href='index.html';" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -424,6 +424,48 @@
       } else {
         document.getElementById(pageId).style.display = 'flex';
       }
+    }
+
+    // --- ฟังก์ชันสำหรับส่งคำขอเมลสำรอง ---
+    function requestBackupEmail() {
+      const currentUsername = document.getElementById('displayUsername').textContent || localStorage.getItem('yt_family_username');
+      if (!userData || userData.length === 0) {
+        return alert('ไม่พบข้อมูลแฟมที่สามารถขอเมลสำรองได้ในขณะนี้');
+      }
+
+      let emailListStr = userData.map((item, index) => `${index + 1}. ${item.email}`).join('\n');
+      let targetEmail = prompt(`กรุณาระบุอีเมลแฟมที่คุณต้องการขอเมลสำรอง:\n\nรายการอีเมลของคุณ:\n${emailListStr}\n\n(หรือคัดลอกอีเมลที่ต้องการแล้ววางในช่องด้านล่าง)`, userData[0].email);
+
+      if (!targetEmail) return;
+
+      targetEmail = targetEmail.trim();
+      const matchedItem = userData.find(i => i.email === targetEmail);
+
+      if (!matchedItem) {
+        return alert('❌ อีเมลที่คุณระบุไม่ตรงกับรายการแฟมของคุณ กรุณาตรวจสอบอีกครั้ง');
+      }
+
+      showPage('loading');
+
+      callAPI("requestBackupEmail", {
+        username: currentUsername,
+        email: targetEmail,
+        familyId: matchedItem.familyId
+      })
+      .then(res => {
+        if (res && res.success) {
+          alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว! แอดมินจะดำเนินการจัดสรรและติดต่อกลับโดยเร็วที่สุดครับ');
+        } else if (res && res.message) {
+          alert('❌ เกิดข้อผิดพลาด: ' + res.message);
+        } else {
+          alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว! แอดมินรับเรื่องเรียบร้อยครับ');
+        }
+        showPage('dashboard-page');
+      })
+      .catch(err => {
+        alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว! แอดมินจะรีบตรวจสอบและดำเนินการให้ครับ');
+        showPage('dashboard-page');
+      });
     }
 
     // --- ฟังก์ชันควบคุม Modal สั่งซื้อแฟมใหม่ ---
