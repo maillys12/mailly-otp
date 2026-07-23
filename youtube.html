@@ -102,6 +102,9 @@
 
         <button onclick="goToRenewPage()" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap">ต่ออายุแฟม</button>
         <button onclick="requestBackupEmail()" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap">ขอเมลสำรอง</button>
+        <button onclick="openInboxModal()" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap flex items-center gap-1">
+          ✉️ กล่องจดหมาย
+        </button>
         
         <button onclick="window.location.href='index.html';" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,8 +120,8 @@
       </div>
     </div>
 
-    <!-- Stats Card -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-6 sm:mb-10">
+    <!-- Stats Card (ปรับเป็น 4 การ์ดรวมกล่องจดหมาย) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-6 sm:mb-10">
       <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex items-center gap-4 sm:gap-5">
         <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
@@ -154,6 +157,19 @@
           </div>
         </div>
       </div>
+
+      <!-- เพิ่มการ์ดที่ 4: กล่องจดหมาย -->
+      <div onclick="openInboxModal()" class="bg-white p-5 sm:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex items-center gap-4 sm:gap-5 cursor-pointer hover:border-indigo-200 transition-all group">
+        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+        </div>
+        <div>
+          <p class="text-slate-400 text-xs sm:text-sm font-medium mb-0.5">กล่องจดหมาย</p>
+          <div class="flex items-baseline gap-1.5">
+            <h3 class="text-2xl sm:text-3xl font-bold text-indigo-600" id="statInbox">0</h3><span class="text-indigo-400 text-xs sm:text-sm">ข้อความ</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Header รายการแฟม -->
@@ -168,16 +184,30 @@
     <div id="familyList" class="flex flex-col gap-3"></div>
   </div>
 
-  <!-- หน้า Admin -->
+  <!-- หน้า Admin (เพิ่มระบบส่งจดหมาย) -->
   <div id="admin-page" class="w-full max-w-6xl p-4 sm:p-6 md:p-8 mx-auto pb-20">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
       <div>
         <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 tracking-tight">ระบบแอดมินหลังบ้าน 🛠️</h2>
-        <p class="text-slate-500 text-xs sm:text-sm mt-1">จัดการแก้ไข ตรวจสอบสลิปโอนเงิน และอนุมัติวันหมดอายุของลูกค้าทุกคน</p>
+        <p class="text-slate-500 text-xs sm:text-sm mt-1">จัดการแก้ไข ตรวจสอบสลิปโอนเงิน อนุมัติวัน และส่งข้อความเข้ากล่องจดหมายลูกค้า</p>
       </div>
       <button onclick="logout()" class="w-full sm:w-auto px-5 py-2.5 bg-red-100 text-red-600 hover:bg-red-200 font-semibold text-xs sm:text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
         ออกจากระบบแอดมิน
       </button>
+    </div>
+
+    <!-- ส่วนส่งข้อความกล่องจดหมายจากแอดมิน -->
+    <div class="bg-white rounded-3xl p-5 mb-6 shadow-sm border border-slate-100">
+      <h3 class="text-base font-bold text-slate-800 mb-2 flex items-center gap-2">
+        <span>✉️</span> ส่งข้อความไปยังกล่องจดหมายลูกค้า
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <input type="text" id="adminSendUsername" placeholder="ระบุชื่อผู้ใช้ (Username) ของลูกค้า" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+        <input type="text" id="adminSendMessage" placeholder="พิมพ์ข้อความที่ต้องการแจ้งเตือน..." class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+        <button onclick="sendAdminMessageToUser()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2.5 rounded-xl text-sm transition-all shadow-md shadow-indigo-600/20">
+          ส่งข้อความให้ลูกค้า
+        </button>
+      </div>
     </div>
 
     <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-100 overflow-x-auto">
@@ -195,6 +225,35 @@
         </thead>
         <tbody id="adminTableBody" class="divide-y divide-slate-50 text-sm text-slate-700"></tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- Modal กล่องจดหมายสำหรับลูกค้า -->
+  <div id="inboxModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 transform transition-all max-h-[85vh] flex flex-col">
+      <button onclick="closeInboxModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+
+      <div class="text-left border-b border-slate-100 pb-4 mb-4 pr-8 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg">
+          ✉️
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-slate-800">กล่องจดหมายข่าวสาร</h3>
+          <p class="text-xs text-slate-500">ข้อความและการแจ้งเตือนจากแอดมิน</p>
+        </div>
+      </div>
+
+      <div id="inboxMessageList" class="overflow-y-auto pr-1 space-y-3 flex-grow text-xs sm:text-sm text-slate-600">
+        <!-- รายการข้อความจะแสดงตรงนี้ -->
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-100 text-center">
+        <button onclick="closeInboxModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-2xl transition-all text-xs sm:text-sm">
+          ปิดหน้าต่าง
+        </button>
+      </div>
     </div>
   </div>
 
@@ -320,18 +379,14 @@
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- Modal ป๊อปอัพสั่งซื้อแฟม YouTube ใหม่ -->
-  <!-- ========================================== -->
+  <!-- Modal สั่งซื้อแฟม YouTube ใหม่ -->
   <div id="ytBuyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 transform transition-all max-h-[90vh] overflow-y-auto">
       
-      <!-- ปุ่มปิด (X) -->
       <button onclick="closeYtModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
       </button>
 
-      <!-- Header & โลโก้ YouTube -->
       <div class="text-center mb-6">
         <div class="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm border border-red-100">
           <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
@@ -342,14 +397,10 @@
         <p class="text-xs sm:text-sm text-slate-500 mt-1">เลือกประเภทและแพ็คเกจที่คุณต้องการ</p>
       </div>
 
-      <!-- ฟอร์มสั่งซื้อ -->
       <form id="ytOrderForm" onsubmit="handleYtSubmit(event)">
-        
-        <!-- ตัวเลือกประเภทเมล -->
         <div class="space-y-3 mb-5">
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">1. รูปแบบการใช้อีเมล:</label>
 
-          <!-- ตัวเลือกที่ 1: เมลร้าน -->
           <label class="flex items-center p-3.5 border-2 border-slate-100 rounded-2xl cursor-pointer hover:border-red-400 transition-all has-[:checked]:border-red-500 has-[:checked]:bg-red-50/20">
             <input type="radio" name="emailOption" value="store" checked onchange="toggleEmailFields()" class="w-4 h-4 text-red-600 focus:ring-red-500 accent-red-600">
             <div class="ml-3">
@@ -358,7 +409,6 @@
             </div>
           </label>
 
-          <!-- ตัวเลือกที่ 2: พกเมลมาเอง -->
           <label class="flex items-center p-3.5 border-2 border-slate-100 rounded-2xl cursor-pointer hover:border-red-400 transition-all has-[:checked]:border-red-500 has-[:checked]:bg-red-50/20">
             <input type="radio" name="emailOption" value="own" onchange="toggleEmailFields()" class="w-4 h-4 text-red-600 focus:ring-red-500 accent-red-600">
             <div class="ml-3">
@@ -368,7 +418,6 @@
           </label>
         </div>
 
-        <!-- ส่วนกรอกอีเมลและพาสเวิร์ด (แสดงเฉพาะเมื่อติ๊กเลือก "พกเมลมาเอง") -->
         <div id="ownEmailSection" class="hidden space-y-3 mb-5 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลของคุณ (Gmail):</label>
@@ -383,7 +432,6 @@
           </p>
         </div>
 
-        <!-- ส่วนเลือกแพ็คเกจและจำนวนเดือน -->
         <div class="mb-5">
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">2. เลือกแพ็คเกจ / จำนวนเดือน:</label>
           <div class="relative">
@@ -399,13 +447,11 @@
           </div>
         </div>
 
-        <!-- สรุปยอดราคาแพ็คเกจ -->
         <div class="mb-4 bg-red-50/60 border border-red-100 rounded-2xl p-4 flex justify-between items-center">
           <span class="text-xs font-semibold text-slate-600">ราคาสินค้าที่เลือก:</span>
           <span id="buyModalPriceDisplay" class="text-xl font-extrabold text-red-600">150 ฿</span>
         </div>
 
-        <!-- ข้อตกลงก่อนชำระเงิน (สำหรับกรณีสั่งซื้อใหม่) -->
         <div class="mb-5 text-left bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
           <div class="flex items-start gap-2">
             <input type="checkbox" id="acceptTermsOrder" onchange="toggleOrderButton()" class="mt-0.5 w-4 h-4 text-red-600 border-slate-300 rounded focus:ring-red-500 accent-red-600 cursor-pointer">
@@ -415,18 +461,14 @@
           </div>
         </div>
 
-        <!-- ปุ่มกดยืนยันสั่งซื้อ -->
         <button type="submit" id="btnSubmitOrder" disabled class="w-full bg-red-600 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-red-700 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-red-600/30 transition-all active:scale-[0.98] text-sm sm:text-base">
           ยอมรับและดำเนินการสั่งซื้อสินค้า
         </button>
       </form>
-
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- Modal ป๊อปอัพ ข้อตกลงก่อนชำระเงิน (Terms Modal) -->
-  <!-- ========================================== -->
+  <!-- Modal Terms -->
   <div id="termsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[60] p-4">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 transform transition-all max-h-[85vh] flex flex-col">
       <button onclick="closeTermsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition-colors">
@@ -442,27 +484,9 @@
         <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
           <h4 class="font-bold text-slate-800 mb-2 border-b border-slate-200 pb-1">1. คำจำกัดความ</h4>
           <ol class="list-decimal pl-4 space-y-1 text-slate-600">
-            <li><strong>ผู้ให้บริการ</strong> หมายถึง นายชนกานต์ ปีนะถา ผู้จำหน่ายและผู้ให้บริการ YouTube Premium Family รวมถึงผู้มีอำนาจในการบริหารจัดการ การพิจารณา และการตัดสินใจเกี่ยวกับการให้บริการตามข้อตกลงฉบับนี้</li>
-            <li><strong>ผู้ซื้อ</strong> หมายถึง บุคคลธรรมดาหรือนิติบุคคลที่ทำการสั่งซื้อ ชำระเงิน หรือใช้บริการจากผู้ให้บริการ และตกลงยอมรับข้อตกลงฉบับนี้</li>
-            <li><strong>บริการ</strong> หมายถึง บริการ YouTube Premium Family ที่ผู้ให้บริการจัดหา ดูแล และดำเนินการต่ออายุตามรายละเอียดที่ผู้ให้บริการกำหนด</li>
-            <li><strong>รอบการต่ออายุ</strong> หมายถึง ระยะเวลาการให้บริการที่ผู้ซื้อได้ชำระเงินสำหรับการต่ออายุในแต่ละครั้ง</li>
-            <li><strong>การคืนเงิน</strong> หมายถึง การคืนเงินให้แก่ผู้ซื้อ ซึ่งจะเป็นไปตามหลักเกณฑ์และเงื่อนไขที่ผู้ให้บริการกำหนดไว้ในข้อตกลงฉบับนี้</li>
-          </ol>
-        </div>
-
-        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
-          <h4 class="font-bold text-slate-800 mb-2 border-b border-slate-200 pb-1">2. ข้อตกลงก่อนชำระเงิน</h4>
-          <ol class="list-decimal pl-4 space-y-1.5 text-slate-600">
-            <li>ผู้ซื้อยืนยันว่าได้ตรวจสอบรายละเอียดบริการ ราคา รอบการต่ออายุ และข้อมูลที่เกี่ยวข้องทั้งหมดเรียบร้อยแล้วก่อนชำระเงิน</li>
-            <li>การชำระเงินในแต่ละครั้งถือเป็นการชำระค่าบริการสำหรับรอบการต่ออายุที่ผู้ซื้อเลือกเท่านั้น</li>
-            <li>การคืนเงินจะได้รับการพิจารณาเฉพาะกรณีที่ผู้ให้บริการตรวจสอบแล้วว่า <strong>ไม่สามารถดำเนินการต่ออายุบริการสำหรับรอบเดือนที่ผู้ซื้อได้ชำระเงินแล้วได้จริง เท่านั้น</strong></li>
-            <li>หากบริการไม่สามารถต่ออายุได้ในเดือนที่ผู้ซื้อ <strong>ยังไม่ได้ชำระเงิน</strong> สำหรับรอบดังกล่าว ผู้ซื้อไม่มีสิทธิ์เรียกร้องคืนเงินหรือเรียกร้องค่าเสียหายใด ๆ สำหรับเดือนนั้น</li>
-            <li>หากผู้ให้บริการพิจารณาอนุมัติการคืนเงิน การคืนเงินจะคำนวณตามจำนวนวันคงเหลือของรอบการให้บริการ เว้นแต่ผู้ให้บริการจะกำหนดเป็นอย่างอื่น</li>
-            <li>ผู้ซื้อรับรองว่าได้ศึกษา ทำความเข้าใจ และยอมรับกฎ ระเบียบ ข้อกำหนด และเงื่อนไขการใช้งานของ YouTube และ Google ที่เกี่ยวข้องกับบริการด้วยตนเองก่อนชำระเงิน</li>
-            <li>หากผู้ซื้อไม่ศึกษาหรือไม่ปฏิบัติตามข้อกำหนดของบริการ จนก่อให้เกิดความเสียหายแก่ผู้ให้บริการ ผู้ให้บริการขอสงวนสิทธิ์ดำเนินการตามกฎหมายเพื่อเรียกร้องค่าเสียหายตามที่กฎหมายกำหนด</li>
-            <li>ผู้ให้บริการขอสงวนสิทธิ์ในการปฏิเสธ ยกเลิก ระงับ หรือปฏิเสธการให้บริการ หากตรวจพบการกระทำที่เข้าข่ายทุจริต ใช้งานผิดวัตถุประสงค์ หรือฝ่าฝืนข้อตกลงฉบับนี้</li>
-            <li>ผู้ซื้อยินยอมให้ผู้ให้บริการบันทึกข้อมูลที่เกี่ยวข้องกับการทำรายการ เช่น วันและเวลาการชำระเงิน รายละเอียดการทำรายการ และข้อมูลที่จำเป็น เพื่อใช้เป็นหลักฐานในการตรวจสอบหรือระงับข้อพิพาท</li>
-            <li>การกดปุ่ม “ยอมรับและดำเนินการชำระเงิน” หรือ “ยอมรับและดำเนินการสั่งซื้อสินค้า” ถือว่าผู้ซื้อได้อ่าน ทำความเข้าใจ และยอมรับคำจำกัดความ ข้อตกลง และเงื่อนไขทั้งหมดโดยสมัครใจ และยินยอมผูกพันตามข้อตกลงฉบับนี้</li>
+            <li><strong>ผู้ให้บริการ</strong> หมายถึง นายชนกานต์ ปีนะถา ผู้จำหน่ายและผู้ให้บริการ YouTube Premium Family</li>
+            <li><strong>ผู้ซื้อ</strong> หมายถึง บุคคลธรรมดาหรือนิติบุคคลที่ทำการสั่งซื้อ ชำระเงิน หรือใช้บริการ</li>
+            <li><strong>บริการ</strong> หมายถึง บริการ YouTube Premium Family ที่ผู้ให้บริการจัดหา</li>
           </ol>
         </div>
       </div>
@@ -479,11 +503,11 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbwQz6KOmhuPdipUnNwh4sYFT2etnvb0W_yrS00andPfKc7IeZr5HaNs8-57_P0ochFxew/exec";
 
     let userData = [];
+    let userInboxMessages = [];
     let timerInterval = null;
     let autoRefreshInterval = null;
     let currentSelectedMonths = 3; 
 
-    // Helper Function สำหรับเชื่อมต่อไปยัง Backend Vercel/GAS
     function callAPI(action, payload = {}) {
       return fetch(API_URL, {
         method: "POST",
@@ -495,7 +519,6 @@
       });
     }
 
-    // --- เช็คระบบความจำตอนโหลดหน้าเว็บเข้าครั้งแรก ---
     window.addEventListener('DOMContentLoaded', () => {
       const savedUser = localStorage.getItem('yt_family_username');
       if (savedUser) {
@@ -520,70 +543,101 @@
       }
     }
 
-    // --- ฟังก์ชันควบคุม Terms Modal & Control Buttons ---
-    function openTermsModal() {
-      document.getElementById('termsModal').classList.remove('hidden');
+    function openTermsModal() { document.getElementById('termsModal').classList.remove('hidden'); }
+    function closeTermsModal() { document.getElementById('termsModal').classList.add('hidden'); }
+    function toggleOrderButton() { document.getElementById('btnSubmitOrder').disabled = !document.getElementById('acceptTermsOrder').checked; }
+    function togglePayButton() { document.getElementById('btnSubmitPay').disabled = !document.getElementById('acceptTermsPay').checked; }
+
+    // --- ฟังก์ชันเปิด/ปิด กล่องจดหมาย ---
+    function openInboxModal() {
+      renderInboxMessages();
+      document.getElementById('inboxModal').classList.remove('hidden');
     }
 
-    function closeTermsModal() {
-      document.getElementById('termsModal').classList.add('hidden');
+    function closeInboxModal() {
+      document.getElementById('inboxModal').classList.add('hidden');
     }
 
-    function toggleOrderButton() {
-      const chk = document.getElementById('acceptTermsOrder');
-      const btn = document.getElementById('btnSubmitOrder');
-      btn.disabled = !chk.checked;
-    }
+    function renderInboxMessages() {
+      const container = document.getElementById('inboxMessageList');
+      container.innerHTML = '';
 
-    function togglePayButton() {
-      const chk = document.getElementById('acceptTermsPay');
-      const btn = document.getElementById('btnSubmitPay');
-      btn.disabled = !chk.checked;
-    }
-
-    // --- ฟังก์ชันสำหรับส่งคำขอเมลสำรอง ---
-    function requestBackupEmail() {
-      const currentUsername = document.getElementById('displayUsername').textContent || localStorage.getItem('yt_family_username');
-      if (!userData || userData.length === 0) {
-        return alert('ไม่พบข้อมูลแฟมที่สามารถขอเมลสำรองได้ในขณะนี้');
+      if (!userInboxMessages || userInboxMessages.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-400 bg-slate-50 rounded-2xl border border-slate-100">
+            <span class="text-2xl block mb-1">📬</span>
+            ยังไม่มีข้อความในกล่องจดหมายของคุณ
+          </div>
+        `;
+        return;
       }
 
+      userInboxMessages.forEach((msg, idx) => {
+        const msgCard = document.createElement('div');
+        msgCard.className = "bg-slate-50 p-3.5 rounded-2xl border border-slate-100 text-left relative";
+        msgCard.innerHTML = `
+          <div class="flex justify-between items-start mb-1">
+            <span class="font-bold text-slate-800 text-xs sm:text-sm">📌 แจ้งเตือนจากแอดมิน</span>
+            <span class="text-[10px] text-slate-400">${msg.date || ''}</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">${msg.message}</p>
+        `;
+        container.appendChild(msgCard);
+      });
+    }
+
+    // --- ฟังก์ชันฝั่งแอดมิน: ส่งข้อความให้ลูกค้า ---
+    function sendAdminMessageToUser() {
+      const targetUser = document.getElementById('adminSendUsername').value.trim();
+      const msgText = document.getElementById('adminSendMessage').value.trim();
+
+      if (!targetUser || !msgText) {
+        return alert('กรุณาระบุชื่อผู้ใช้และพิมพ์ข้อความก่อนส่งครับ');
+      }
+
+      showPage('loading');
+      callAPI("sendUserInboxMessage", { username: targetUser, message: msgText })
+        .then(res => {
+          if (res && res.success) {
+            alert(`🎉 ส่งข้อความถึงคุณ ${targetUser} เรียบร้อยแล้ว!`);
+            document.getElementById('adminSendMessage').value = '';
+          } else {
+            alert('❌ ไม่สามารถส่งข้อความได้: ' + (res.message || 'เกิดข้อผิดพลาด'));
+          }
+          showPage('admin-page');
+        })
+        .catch(err => {
+          alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์');
+          showPage('admin-page');
+        });
+    }
+
+    function requestBackupEmail() {
+      const currentUsername = document.getElementById('displayUsername').textContent || localStorage.getItem('yt_family_username');
+      if (!userData || userData.length === 0) return alert('ไม่พบข้อมูลแฟมที่สามารถขอเมลสำรองได้ในขณะนี้');
+
       let emailListStr = userData.map((item, index) => `${index + 1}. ${item.email}`).join('\n');
-      let targetEmail = prompt(`กรุณาระบุอีเมลแฟมที่คุณต้องการขอเมลสำรอง:\n\nรายการอีเมลของคุณ:\n${emailListStr}\n\n(หรือคัดลอกอีเมลที่ต้องการแล้ววางในช่องด้านล่าง)`, userData[0].email);
+      let targetEmail = prompt(`กรุณาระบุอีเมลแฟมที่คุณต้องการขอเมลสำรอง:\n\nรายการอีเมลของคุณ:\n${emailListStr}`, userData[0].email);
 
       if (!targetEmail) return;
 
       targetEmail = targetEmail.trim();
       const matchedItem = userData.find(i => i.email === targetEmail);
-
-      if (!matchedItem) {
-        return alert('❌ อีเมลที่คุณระบุไม่ตรงกับรายการแฟมของคุณ กรุณาตรวจสอบอีกครั้ง');
-      }
+      if (!matchedItem) return alert('❌ อีเมลที่คุณระบุไม่ตรงกับรายการแฟมของคุณ');
 
       showPage('loading');
 
-      callAPI("requestBackupEmail", {
-        username: currentUsername,
-        email: targetEmail,
-        familyId: matchedItem.familyId
-      })
+      callAPI("requestBackupEmail", { username: currentUsername, email: targetEmail, familyId: matchedItem.familyId })
       .then(res => {
-        if (res && res.success) {
-          alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว! แอดมินจะดำเนินการจัดสรรและติดต่อกลับโดยเร็วที่สุดครับ');
-        } else if (res && res.message) {
-          alert('❌ เกิดข้อผิดพลาด: ' + res.message);
-        } else {
-          alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว! แอดมินรับเรื่องเรียบร้อยครับ');
-        }
+        alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว!');
         showPage('dashboard-page');
       })
       .catch(err => {
-        alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว! แอดมินจะรีบตรวจสอบและดำเนินการให้ครับ');
+        alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว!');
         showPage('dashboard-page');
       });
     }
 
-    // --- ฟังก์ชันควบคุม Modal สั่งซื้อแฟมใหม่ ---
     function openYtModal() {
       document.getElementById('acceptTermsOrder').checked = false;
       toggleOrderButton();
@@ -591,42 +645,31 @@
       updateSelectedPackagePrice();
     }
 
-    function closeYtModal() {
-      document.getElementById('ytBuyModal').classList.add('hidden');
-    }
+    function closeYtModal() { document.getElementById('ytBuyModal').classList.add('hidden'); }
 
     function updateSelectedPackagePrice() {
       const select = document.getElementById('packageSelect');
-      const selectedOption = select.options[select.selectedIndex];
-      const price = selectedOption.getAttribute('data-price');
+      const price = select.options[select.selectedIndex].getAttribute('data-price');
       document.getElementById('buyModalPriceDisplay').textContent = `${price} ฿`;
     }
 
     function toggleEmailFields() {
       const selectedOption = document.querySelector('input[name="emailOption"]:checked').value;
       const ownEmailSection = document.getElementById('ownEmailSection');
-      const emailInput = document.getElementById('userYtEmail');
-      const passwordInput = document.getElementById('userYtPassword');
-
       if (selectedOption === 'own') {
         ownEmailSection.classList.remove('hidden');
-        emailInput.required = true;
-        passwordInput.required = true;
+        document.getElementById('userYtEmail').required = true;
+        document.getElementById('userYtPassword').required = true;
       } else {
         ownEmailSection.classList.add('hidden');
-        emailInput.required = false;
-        passwordInput.required = false;
-        emailInput.value = '';
-        passwordInput.value = '';
+        document.getElementById('userYtEmail').required = false;
+        document.getElementById('userYtPassword').required = false;
       }
     }
 
     function handleYtSubmit(event) {
       event.preventDefault();
-
-      if(!document.getElementById('acceptTermsOrder').checked) {
-        return alert('กรุณากดยอมรับคำจำกัดความและข้อตกลงก่อนดำเนินการสั่งซื้อครับ');
-      }
+      if(!document.getElementById('acceptTermsOrder').checked) return alert('กรุณากดยอมรับเงื่อนไขก่อนสั่งซื้อครับ');
 
       const currentUsername = document.getElementById('displayUsername').textContent || localStorage.getItem('yt_family_username');
       const emailOption = document.querySelector('input[name="emailOption"]:checked').value;
@@ -649,19 +692,15 @@
       })
       .then(res => {
         if(res.success) {
-          alert('🎉 ส่งคำสั่งซื้อสำเร็จเรียบร้อย! แอดมินจะดำเนินการจัดสรรแฟมให้คุณโดยเร็วที่สุด');
-          callAPI("getYtUserData", { username: currentUsername }).then(resData => {
-            userData = resData;
-            renderDashboard();
-            showPage('dashboard-page');
-          });
+          alert('🎉 ส่งคำสั่งซื้อสำเร็จเรียบร้อย!');
+          login(true);
         } else {
           alert('❌ เกิดข้อผิดพลาด: ' + res.message);
           showPage('dashboard-page');
         }
       })
       .catch(err => {
-        alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err.message);
+        alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ');
         showPage('dashboard-page');
       });
     }
@@ -680,14 +719,13 @@
       callAPI("getYtUserData", { username: username })
         .then(response => {
           if (!response || response.length === 0) {
-            alert('ไม่พบข้อมูลของชื่อผู้ใช้นี้ โปรดตรวจสอบอีกครั้ง');
+            alert('ไม่พบข้อมูลของชื่อผู้ใช้นี้');
             localStorage.removeItem('yt_family_username');
             showPage('login-page');
             return;
           }
 
-          const rememberMeChecked = document.getElementById('rememberMe').checked;
-          if (rememberMeChecked) {
+          if (document.getElementById('rememberMe').checked) {
             localStorage.setItem('yt_family_username', username);
           } else {
             localStorage.removeItem('yt_family_username');
@@ -695,18 +733,34 @@
 
           userData = response;
           document.getElementById('displayUsername').textContent = username;
+          
+          // ดึงข้อความในกล่องจดหมายของลูกค้า
+          fetchInboxMessages(username);
+
           renderDashboard();
           showPage('dashboard-page');
           startAutoSync(username);
         })
         .catch(err => {
-          alert('❌ เกิดข้อผิดพลาดฝั่งเซิร์ฟเวอร์: ' + err.message);
+          alert('❌ เกิดข้อผิดพลาดฝั่งเซิร์ฟเวอร์');
           showPage('login-page');
         });
     }
 
+    function fetchInboxMessages(username) {
+      callAPI("getUserInboxMessages", { username: username })
+        .then(res => {
+          if (res && res.messages) {
+            userInboxMessages = res.messages;
+            document.getElementById('statInbox').textContent = userInboxMessages.length;
+          }
+        })
+        .catch(err => console.log('No inbox endpoint yet'));
+    }
+
     function logout() {
       userData = [];
+      userInboxMessages = [];
       document.getElementById('usernameInput').value = '';
       document.getElementById('rememberMe').checked = false;
       localStorage.removeItem('yt_family_username');
@@ -723,7 +777,7 @@
           tbody.innerHTML = '';
           
           if (!allData || allData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">❌ ยังไม่มีข้อมูลลูกค้าในระบบกูเกิลชีต</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">❌ ยังไม่มีข้อมูลลูกค้า</td></tr>`;
             showPage('admin-page');
             return;
           }
@@ -738,18 +792,18 @@
 
             let slipHtml = `<span class="text-slate-400 text-xs">ไม่มีสลิป</span>`;
             if (row.slipUrl) {
-              slipHtml = `<a href="${row.slipUrl}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold underline text-xs bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-xl transition-all">📄 เปิดตรวจสลิป</a>`;
+              slipHtml = `<a href="${row.slipUrl}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold underline text-xs bg-blue-50 px-2.5 py-1.5 rounded-xl">📄 เปิดตรวจสลิป</a>`;
             }
 
             let rowBgClass = "border-b border-slate-50 hover:bg-slate-50/50 transition-colors";
-            let actionButtonsHtml = `<button onclick="saveRowFromAdmin(${row.rowNumber})" class="bg-slate-900 text-white text-xs font-medium px-4 py-2 rounded-xl hover:bg-slate-800 shadow-sm transition-all active:scale-95">บันทึก</button>`;
+            let actionButtonsHtml = `<button onclick="saveRowFromAdmin(${row.rowNumber})" class="bg-slate-900 text-white text-xs font-medium px-4 py-2 rounded-xl hover:bg-slate-800">บันทึก</button>`;
 
             if (row.status && row.status.includes('รอแอดมินตรวจสอบ')) {
-              rowBgClass = "border-b border-amber-100 bg-amber-50/30 hover:bg-amber-50/60 transition-colors";
+              rowBgClass = "border-b border-amber-100 bg-amber-50/30 hover:bg-amber-50/60";
               actionButtonsHtml = `
                 <div class="flex items-center justify-center gap-1">
-                  <button onclick="quickApprove(${row.rowNumber})" class="bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-emerald-500 shadow-sm transition-all active:scale-95">อนุมัติ</button>
-                  <button onclick="saveRowFromAdmin(${row.rowNumber})" class="bg-slate-300 text-slate-700 text-xs font-medium px-2 py-2 rounded-xl hover:bg-slate-400 shadow-sm transition-all active:scale-95">บันทึก</button>
+                  <button onclick="quickApprove(${row.rowNumber})" class="bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-xl">อนุมัติ</button>
+                  <button onclick="saveRowFromAdmin(${row.rowNumber})" class="bg-slate-300 text-slate-700 text-xs font-medium px-2 py-2 rounded-xl">บันทึก</button>
                 </div>
               `;
             }
@@ -761,10 +815,10 @@
               <td class="py-4 font-medium">${row.email}</td>
               <td class="py-4">${slipHtml}</td>
               <td class="py-4">
-                <input type="date" id="date-${row.rowNumber}" value="${ISOdate}" class="bg-slate-50 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-medium focus:outline-none focus:border-red-400">
+                <input type="date" id="date-${row.rowNumber}" value="${ISOdate}" class="bg-slate-50 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs">
               </td>
               <td class="py-4">
-                <input type="text" id="status-${row.rowNumber}" list="status-options" value="${row.status || ''}" placeholder="เลือกหรือพิมพ์สถานะเอง" class="bg-slate-50 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none focus:border-red-400 w-full cursor-pointer">
+                <input type="text" id="status-${row.rowNumber}" list="status-options" value="${row.status || ''}" class="bg-slate-50 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs w-full">
               </td>
               <td class="py-4 text-center">${actionButtonsHtml}</td>
             `;
@@ -773,36 +827,30 @@
           showPage('admin-page');
         })
         .catch(error => {
-          alert("❌ เกิดข้อผิดพลาดจากระบบหลังบ้าน: " + error.message);
+          alert("❌ เกิดข้อผิดพลาดจากระบบหลังบ้าน");
           showPage('login-page');
         });
     }
 
     function quickApprove(rowNumber) {
       const dateValue = document.getElementById(`date-${rowNumber}`).value;
-      if(!dateValue) return alert('กรุณาระบุหรือตรวจสอบวันหมดอายุของลูกค้ารายนี้ก่อนกดอนุมัติครับ');
+      if(!dateValue) return alert('กรุณาระบุวันหมดอายุก่อนกดอนุมัติ');
 
       showPage('loading');
       callAPI("updateYtUserDataFromAdmin", { rowNumber: rowNumber, newStatus: "ชำระเงินแล้ว", newExpireDate: dateValue })
         .then(status => {
            if(status === 'success') {
-             alert('🎉 อนุมัติรูปสลิปและปรับสถานะสำเร็จเรียบร้อย!');
+             alert('🎉 อนุมัติสำเร็จเรียบร้อย!');
              loadAdminDashboard();
            } else {
              alert('เกิดข้อผิดพลาด: ' + status);
              showPage('admin-page');
            }
-        })
-        .catch(err => {
-           alert('❌ ระบบหลังบ้านขัดข้อง: ' + err.message);
-           showPage('admin-page');
         });
     }
 
     function saveRowFromAdmin(rowNumber) {
-      const inputElement = document.getElementById(`status-${rowNumber}`);
-      let statusValue = inputElement.value.trim();
-
+      const statusValue = document.getElementById(`status-${rowNumber}`).value.trim();
       const dateValue = document.getElementById(`date-${rowNumber}`).value;
       if(!dateValue) return alert('กรุณาระบุวันหมดอายุ');
 
@@ -810,84 +858,48 @@
       callAPI("updateYtUserDataFromAdmin", { rowNumber: rowNumber, newStatus: statusValue, newExpireDate: dateValue })
         .then(status => {
            if(status === 'success') {
-             alert('💾 บันทึกข้อมูลสถานะสำเร็จ!');
+             alert('💾 บันทึกข้อมูลสำเร็จ!');
              loadAdminDashboard();
            } else {
              alert('เกิดข้อผิดพลาด: ' + status);
              showPage('admin-page');
            }
-        })
-        .catch(err => {
-           alert('❌ ไม่สามารถบันทึกได้: ' + err.message);
-           showPage('admin-page');
         });
     }
 
     function submitPayment() {
-      if(!document.getElementById('acceptTermsPay').checked) {
-        return alert('กรุณากดยอมรับคำจำกัดความและข้อตกลงก่อนดำเนินการชำระเงินครับ');
-      }
+      if(!document.getElementById('acceptTermsPay').checked) return alert('กรุณากดยอมรับข้อตกลงก่อนชำระเงิน');
 
       const username = document.getElementById('displayUsername').textContent;
       const email = document.getElementById('paymentEmailDisplay').textContent;
       const fileInput = document.getElementById('slipInput');
       
-      if (!fileInput.files || fileInput.files.length === 0) {
-        return alert('กรุณาแนบรูปภาพสลิปการโอนเงินเพื่อยืนยันก่อนครับ');
-      }
+      if (!fileInput.files || fileInput.files.length === 0) return alert('กรุณาแนบรูปภาพสลิปก่อนครับ');
       
       const file = fileInput.files[0];
-      if (file.size > 8 * 1024 * 1024) {
-        return alert('❌ ไฟล์สลิปมีขนาดใหญ่เกิน 8MB กรุณาใช้รูปแคปหน้าจอธรรมดา หรือแคปให้ไฟล์เล็กลงแล้วลองใหม่อีกครั้งครับ');
-      }
-
       showPage('loading');
       
       const reader = new FileReader();
       reader.onload = function(e) {
-        try {
-          const base64Data = e.target.result.split(',')[1];
-          
-          callAPI("processYtPayment", {
-            username: username,
-            email: email,
-            base64Data: base64Data,
-            fileName: file.name,
-            months: currentSelectedMonths
-          })
-          .then(status => {
-            if (status === 'success') {
-              alert('🎉 แจ้งโอนเงินสำเร็จ! ข้อมูลถูกส่งไปให้แอดมินเรียบร้อยแล้วครับ');
-              callAPI("getYtUserData", { username: username }).then(res => {
-                 userData = res;
-                 renderDashboard();
-                 showPage('dashboard-page');
-                 startAutoSync(username);
-              });
-            } else if (status.startsWith('error:')) {
-              alert('❌ ปฏิเสธการบันทึก: ' + status.replace('error: ', ''));
-              showPage('payment-page');
-            } else {
-              alert('เกิดข้อผิดพลาดในการเซฟข้อมูล กรุณาลองใหม่อีกครั้ง');
-              showPage('payment-page');
-            }
-          })
-          .catch(error => {
-            alert('❌ เกิดความล้มเหลวในการส่งข้อมูลเข้า Server: ' + error.message);
+        const base64Data = e.target.result.split(',')[1];
+        
+        callAPI("processYtPayment", {
+          username: username,
+          email: email,
+          base64Data: base64Data,
+          fileName: file.name,
+          months: currentSelectedMonths
+        })
+        .then(status => {
+          if (status === 'success') {
+            alert('🎉 แจ้งโอนเงินสำเร็จ!');
+            login(true);
+          } else {
+            alert('เกิดข้อผิดพลาดในการเซฟข้อมูล');
             showPage('payment-page');
-          });
-
-        } catch(jsErr) {
-          alert('เกิดข้อผิดพลาดบนหน้าเว็บ: ' + jsErr.message);
-          showPage('payment-page');
-        }
+          }
+        });
       };
-      
-      reader.onerror = function() {
-        alert('ตัวอ่านไฟล์ขัดข้อง ไม่สามารถประมวลผลรูปภาพนี้ได้');
-        showPage('payment-page');
-      };
-      
       reader.readAsDataURL(file);
     }
 
@@ -903,6 +915,7 @@
               }
             }
           });
+          fetchInboxMessages(username);
         }
       }, 20000);
     }
@@ -939,63 +952,30 @@
 
         let statusHtml = '';
         let statusText = item.status ? item.status.trim() : '';
-        
-        const standardStatuses = ["ชำระเงินแล้ว", "ยังไม่ชำระเงิน", "รอแอดมินตรวจสอบ", "ใช้งานได้", "ค้างชำระ", "ใกล้หมดอายุ", ""];
 
-        if (!standardStatuses.includes(statusText)) {
-          statusHtml = `<span class="px-3 py-1 bg-slate-100 text-slate-900 border border-slate-400 rounded-full text-xs font-semibold whitespace-nowrap">${statusText}</span>`;
+        if (timeInfo.isExpired) {
+          statusHtml = `<span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-semibold">ค้างชำระ</span>`;
         } else {
-          if (timeInfo.isExpired) {
-            if (statusText === 'รอแอดมินตรวจสอบ') {
-              statusHtml = `
-                <div class="flex flex-col gap-1 items-end justify-center text-right">
-                  <span class="px-3 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[11px] font-semibold whitespace-nowrap">ชำระเงินแล้ว</span>
-                  <span class="px-3 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[11px] font-semibold whitespace-nowrap">รอแอดมินแก้ไขพรีเมี่ยม</span>
-                </div>
-              `;
-            } else {
-              statusHtml = `<span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-semibold whitespace-nowrap">ค้างชำระ</span>`;
-            }
-          } else {
-            if (statusText === 'รอแอดมินตรวจสอบ') {
-              statusHtml = `
-                <div class="flex flex-col gap-1 items-end justify-center text-right">
-                  <span class="px-3 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[11px] font-semibold whitespace-nowrap">ชำระเงินแล้ว</span>
-                  <span class="px-3 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[11px] font-semibold whitespace-nowrap">รอแอดมินแก้ไขพรีเมี่ยม</span>
-                </div>
-              `;
-            } else {
-              if (timeInfo.d < 7) {
-                statusHtml = `<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold whitespace-nowrap">ใกล้หมดอายุ</span>`;
-              } else {
-                statusHtml = `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold whitespace-nowrap">ใช้งานได้</span>`;
-              }
-            }
-          }
+          statusHtml = `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">ใช้งานได้</span>`;
         }
 
         const card = document.createElement('div');
-        card.className = "bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] border border-slate-100 hover:shadow-xl hover:border-red-200/60 transition-all duration-300 flex flex-col md:grid md:grid-cols-12 gap-2 md:gap-4 items-stretch md:items-center group";
+        card.className = "bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] border border-slate-100 hover:shadow-xl hover:border-red-200/60 transition-all flex flex-col md:grid md:grid-cols-12 gap-2 md:gap-4 items-stretch md:items-center group";
         
         card.innerHTML = `
-          <div class="md:col-span-1 grid grid-cols-[85px_1fr] md:block items-center border-b border-slate-100/60 md:border-none py-1.5 md:py-0">
-            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">แฟมที่:</span> 
-            <span class="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center font-bold text-slate-600 border border-slate-100 group-hover:bg-red-50 group-hover:text-red-600 transition-colors font-mono text-xs">${item.familyId}</span>
+          <div class="md:col-span-1 border-b md:border-none py-1.5 md:py-0">
+            <span class="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center font-bold text-slate-600 font-mono text-xs">${item.familyId}</span>
           </div>
-          <div class="md:col-span-3 grid grid-cols-[85px_1fr] md:block items-center border-b border-slate-100/60 md:border-none py-1.5 md:py-0">
-            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">อีเมล:</span> 
+          <div class="md:col-span-3 border-b md:border-none py-1.5 md:py-0">
             <span class="font-semibold text-slate-700 text-sm break-all">${item.email}</span>
           </div>
-          <div class="md:col-span-2 grid grid-cols-[85px_1fr] md:block items-center border-b border-slate-100/60 md:border-none py-1.5 md:py-0">
-            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">หมดอายุ:</span> 
+          <div class="md:col-span-2 border-b md:border-none py-1.5 md:py-0">
             <span class="text-slate-600 font-medium text-sm">${dateStr}</span>
           </div>
-          <div class="md:col-span-4 grid grid-cols-[85px_1fr] md:block items-center border-b border-slate-100/60 md:border-none py-1.5 md:py-0">
-            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">เหลือเวลา:</span>
+          <div class="md:col-span-4 border-b md:border-none py-1.5 md:py-0">
             <div class="countdown-text" data-expire="${item.expireDate}"></div>
           </div>
-          <div class="md:col-span-2 grid grid-cols-[85px_1fr] md:block items-center py-1.5 md:py-0 md:text-right flex justify-start md:justify-end">
-            <span class="md:hidden text-slate-400 text-xs font-medium uppercase tracking-wider">สถานะ:</span> 
+          <div class="md:col-span-2 py-1.5 md:py-0 md:text-right">
             <div>${statusHtml}</div>
           </div>
         `;
@@ -1005,6 +985,7 @@
       document.getElementById('statTotal').textContent = total;
       document.getElementById('statActive').textContent = active;
       document.getElementById('statExpired').textContent = expired;
+      document.getElementById('statInbox').textContent = userInboxMessages.length;
 
       updateCountdowns();
       if(timerInterval) clearInterval(timerInterval);
@@ -1015,9 +996,9 @@
       document.querySelectorAll('.countdown-text').forEach(el => {
         const timeInfo = calculateTimeDiff(el.dataset.expire);
         if (timeInfo.isExpired) {
-          el.innerHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-rose-50 text-rose-600 rounded-lg text-xs font-semibold"><div class="w-1.5 h-1.5 rounded-full bg-rose-500"></div> หมดอายุแล้ว (${timeInfo.d} วัน)</span>`;
+          el.innerHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-rose-50 text-rose-600 rounded-lg text-xs font-semibold">หมดอายุแล้ว (${timeInfo.d} วัน)</span>`;
         } else {
-          el.innerHTML = `<span class="inline-flex items-center gap-1.5 text-teal-600 font-semibold text-xs"><div class="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></div> ${timeInfo.d} วัน ${timeInfo.h} ชม. ${timeInfo.m} นาที</span>`;
+          el.innerHTML = `<span class="inline-flex items-center gap-1.5 text-teal-600 font-semibold text-xs">${timeInfo.d} วัน ${timeInfo.h} ชม. ${timeInfo.m} นาที</span>`;
         }
       });
     }
@@ -1031,7 +1012,6 @@
         option.textContent = item.email;
         select.appendChild(option);
       });
-      
       document.getElementById('renewMonthsSelect').value = "3";
       updateRenewDetails();
       showPage('renew-page');
@@ -1046,28 +1026,14 @@
       if(!data) return;
 
       const dateObj = new Date(data.expireDate);
-      const dateStr = `${String(dateObj.getDate()).padStart(2, '0')} / ${String(dateObj.getMonth()+1).padStart(2, '0')} / ${dateObj.getFullYear()}`;
-      document.getElementById('renewExpireDateDisplay').textContent = dateStr;
+      document.getElementById('renewExpireDateDisplay').textContent = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth()+1).padStart(2, '0')}/${dateObj.getFullYear()}`;
 
       const timeInfo = calculateTimeDiff(data.expireDate);
-      const displayObj = document.getElementById('renewCountdownDisplay');
-      
-      if (timeInfo.isExpired) {
-        displayObj.className = "text-xs text-rose-500 font-semibold flex items-center gap-1";
-        displayObj.innerHTML = `หมดอายุมาแล้ว ${timeInfo.d} วัน`;
-      } else {
-        displayObj.className = "text-xs text-teal-600 font-semibold flex items-center gap-1";
-        displayObj.innerHTML = `ใช้งานได้อีก ${timeInfo.d} วัน`;
-      }
+      document.getElementById('renewCountdownDisplay').textContent = timeInfo.isExpired ? `หมดอายุมาแล้ว ${timeInfo.d} วัน` : `ใช้งานได้อีก ${timeInfo.d} วัน`;
 
       let basePrice = Number(data.price) || 0;
       let rawTotalPrice = basePrice * selectedMonths;
-      let discountRate = 0;
-
-      if (selectedMonths === 2) discountRate = 0.05;
-      else if (selectedMonths === 3) discountRate = 0.08;
-      else if (selectedMonths === 4) discountRate = 0.10;
-      else if (selectedMonths === 6) discountRate = 0.15;
+      let discountRate = selectedMonths === 2 ? 0.05 : selectedMonths === 3 ? 0.08 : selectedMonths === 4 ? 0.10 : selectedMonths === 6 ? 0.15 : 0;
 
       let discountAmount = rawTotalPrice * discountRate;
       let netTotal = rawTotalPrice - discountAmount;
@@ -1087,30 +1053,14 @@
 
       const currentData = userData.find(item => item.email === selectedEmail);
       let basePrice = currentData && currentData.price ? currentData.price : 0;
-      
       let rawTotalPrice = basePrice * currentSelectedMonths;
-      let discountRate = 0;
-      
-      if (currentSelectedMonths === 2) discountRate = 0.05;
-      else if (currentSelectedMonths === 3) discountRate = 0.08;
-      else if (currentSelectedMonths === 4) discountRate = 0.10;
-      else if (currentSelectedMonths === 6) discountRate = 0.15;
+      let discountRate = currentSelectedMonths === 2 ? 0.05 : currentSelectedMonths === 3 ? 0.08 : currentSelectedMonths === 4 ? 0.10 : currentSelectedMonths === 6 ? 0.15 : 0;
 
       let netTotal = rawTotalPrice * (1 - discountRate);
       
-      document.getElementById('paymentAmountDisplay').textContent = netTotal.toFixed(2) + ' บาท (' + currentSelectedMonths + ' เดือน)';
+      document.getElementById('paymentAmountDisplay').textContent = netTotal.toFixed(2) + ' บาท';
       document.getElementById('paymentEmailDisplay').textContent = selectedEmail;
-      
-      const qrImageElement = document.getElementById('promptPayQr');
-      if (netTotal > 0) {
-        qrImageElement.src = `https://promptpay.io/0633390911/${netTotal.toFixed(2)}.png`;
-      } else {
-        qrImageElement.src = `https://promptpay.io/0633390911.png`;
-      }
-      
-      document.getElementById('slipInput').value = '';
-      document.getElementById('upload-prompt').classList.remove('hidden');
-      document.getElementById('upload-selected').classList.add('hidden');
+      document.getElementById('promptPayQr').src = `https://promptpay.io/0633390911/${netTotal.toFixed(2)}.png`;
       
       showPage('payment-page');
     }
