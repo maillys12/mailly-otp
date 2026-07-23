@@ -38,6 +38,7 @@
     <option value="ระงับบริการชั่วคราว">
   </datalist>
 
+  <!-- หน้า Login -->
   <div id="login-page" class="w-full flex-grow flex items-center justify-center p-4 sm:p-6">
     <div class="glass-card w-full max-w-md p-6 sm:p-10 rounded-3xl sm:rounded-[2rem] shadow-[0_20px_50px_rgb(0,0,0,0.05)] text-center relative overflow-hidden">
       <div class="absolute -top-10 -right-10 w-32 h-32 bg-red-500/10 rounded-full blur-2xl"></div>
@@ -68,11 +69,13 @@
     </div>
   </div>
 
+  <!-- หน้า Loading -->
   <div id="loading" class="w-full flex-grow flex flex-col items-center justify-center gap-4 p-4">
     <div class="animate-spin rounded-full h-10 w-10 border-[3px] border-slate-200 border-t-red-500"></div>
     <p class="text-slate-400 text-sm font-medium animate-pulse">กำลังดำเนินการ...</p>
   </div>
 
+  <!-- หน้า Dashboard -->
   <div id="dashboard-page" class="w-full max-w-6xl p-4 sm:p-6 md:p-8 mx-auto pb-20">
     <div class="flex flex-col xl:flex-row justify-between items-center mb-6 sm:mb-10 gap-4 sm:gap-6">
       <div class="flex items-center gap-4 w-full xl:w-auto justify-center xl:justify-start">
@@ -88,8 +91,15 @@
         </div>
       </div>
       
-      <div class="flex p-1.5 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto w-full xl:w-auto max-w-full justify-start sm:justify-center xl:justify-start">
+      <div class="flex p-1.5 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto w-full xl:w-auto max-w-full justify-start sm:justify-center xl:justify-start gap-1">
         <button onclick="showPage('dashboard-page')" class="px-4 sm:px-5 py-2 bg-slate-50 text-slate-800 font-semibold text-xs sm:text-sm rounded-xl transition whitespace-nowrap">แดชบอร์ด</button>
+        
+        <!-- ปุ่มเปิด Modal สั่งซื้อแฟมใหม่ -->
+        <button onclick="openYtModal()" class="px-4 sm:px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm rounded-xl transition whitespace-nowrap shadow-md shadow-red-600/20 flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          สั่งซื้อแฟมใหม่
+        </button>
+
         <button onclick="goToRenewPage()" class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap">ต่ออายุแฟม</button>
         <button class="px-4 sm:px-5 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-medium text-xs sm:text-sm rounded-xl transition whitespace-nowrap">ขอเมลสำรอง</button>
         
@@ -107,6 +117,7 @@
       </div>
     </div>
 
+    <!-- Stats Card -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-6 sm:mb-10">
       <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex items-center gap-4 sm:gap-5">
         <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
@@ -145,6 +156,7 @@
       </div>
     </div>
 
+    <!-- Header รายการแฟม -->
     <div class="hidden md:grid grid-cols-12 gap-4 px-6 text-slate-400 text-xs font-semibold uppercase tracking-wider mb-3">
       <div class="col-span-1">แฟมที่</div>
       <div class="col-span-3">อีเมล</div>
@@ -156,6 +168,7 @@
     <div id="familyList" class="flex flex-col gap-3"></div>
   </div>
 
+  <!-- หน้า Admin -->
   <div id="admin-page" class="w-full max-w-6xl p-4 sm:p-6 md:p-8 mx-auto pb-20">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
       <div>
@@ -185,6 +198,7 @@
     </div>
   </div>
 
+  <!-- หน้า ต่ออายุแฟม -->
   <div id="renew-page" class="w-full flex-grow flex items-center justify-center p-4 sm:p-6">
     <div class="bg-white w-full max-w-lg p-5 sm:p-10 rounded-3xl sm:rounded-[2.5rem] shadow-[0_20px_60px_rgb(0,0,0,0.08)] border border-slate-100 text-center relative mt-4">
       <button onclick="showPage('dashboard-page')" class="absolute top-4 left-4 sm:top-8 sm:left-8 text-slate-400 hover:text-slate-800 transition-colors bg-slate-50 p-2 rounded-full">
@@ -252,6 +266,7 @@
     </div>
   </div>
 
+  <!-- หน้า ชำระเงิน -->
   <div id="payment-page" class="w-full flex-grow flex items-center justify-center p-4 sm:p-6">
     <div class="glass-card w-full max-w-md p-5 sm:p-8 rounded-3xl sm:rounded-[2.5rem] shadow-[0_20px_60px_rgb(0,0,0,0.08)] text-center relative mt-4">
       <button onclick="showPage('renew-page')" class="absolute top-4 left-4 sm:top-8 sm:left-8 text-slate-400 hover:text-slate-800 transition-colors bg-slate-50 p-2 rounded-full">
@@ -294,8 +309,79 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- Modal ป๊อปอัพสั่งซื้อแฟม YouTube ใหม่ -->
+  <!-- ========================================== -->
+  <div id="ytBuyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 transform transition-all">
+      
+      <!-- ปุ่มปิด (X) -->
+      <button onclick="closeYtModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+
+      <!-- Header & โลโก้ YouTube -->
+      <div class="text-center mb-6">
+        <div class="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm border border-red-100">
+          <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800">สั่งซื้อแฟม YouTube ใหม่</h3>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">เลือกประเภทการใช้งานอีเมลที่คุณสะดวก</p>
+      </div>
+
+      <!-- ฟอร์มสั่งซื้อ -->
+      <form id="ytOrderForm" onsubmit="handleYtSubmit(event)">
+        
+        <!-- ตัวเลือกประเภทเมล -->
+        <div class="space-y-3 mb-5">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">รูปแบบการใช้อีเมล:</label>
+
+          <!-- ตัวเลือกที่ 1: เมลร้าน -->
+          <label class="flex items-center p-3.5 border-2 border-slate-100 rounded-2xl cursor-pointer hover:border-red-400 transition-all has-[:checked]:border-red-500 has-[:checked]:bg-red-50/20">
+            <input type="radio" name="emailOption" value="store" checked onchange="toggleEmailFields()" class="w-4 h-4 text-red-600 focus:ring-red-500 accent-red-600">
+            <div class="ml-3">
+              <span class="block text-sm font-bold text-slate-800">ใช้อีเมลของทางร้าน</span>
+              <span class="block text-xs text-slate-500">ทางร้านจัดเตรียมอีเมลสำเร็จพร้อมใช้งานให้ทันที</span>
+            </div>
+          </label>
+
+          <!-- ตัวเลือกที่ 2: พกเมลมาเอง -->
+          <label class="flex items-center p-3.5 border-2 border-slate-100 rounded-2xl cursor-pointer hover:border-red-400 transition-all has-[:checked]:border-red-500 has-[:checked]:bg-red-50/20">
+            <input type="radio" name="emailOption" value="own" onchange="toggleEmailFields()" class="w-4 h-4 text-red-600 focus:ring-red-500 accent-red-600">
+            <div class="ml-3">
+              <span class="block text-sm font-bold text-slate-800">พกเมลมาเอง</span>
+              <span class="block text-xs text-slate-500">ใช้อีเมลส่วนตัวของคุณในการเข้าร่วมแฟม</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- ส่วนกรอกอีเมลและพาสเวิร์ด (แสดงเฉพาะเมื่อติ๊กเลือก "พกเมลมาเอง") -->
+        <div id="ownEmailSection" class="hidden space-y-3 mb-5 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลของคุณ (Gmail):</label>
+            <input type="email" id="userYtEmail" placeholder="example@gmail.com" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 font-medium">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านอีเมล (Password):</label>
+            <input type="password" id="userYtPassword" placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 font-medium">
+          </div>
+          <p class="text-[11px] text-amber-700 bg-amber-50 p-2.5 rounded-xl border border-amber-200/60">
+            ⚠️ ข้อมูลนี้จะถูกนำไปใช้ดึงอีเมลของคุณเข้าครอบครัว YouTube Premium เท่านั้น
+          </p>
+        </div>
+
+        <!-- ปุ่มกดยืนยันสั่งซื้อ -->
+        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-red-600/30 transition-all active:scale-[0.98] text-sm sm:text-base">
+          ยืนยันสั่งซื้อสินค้า
+        </button>
+      </form>
+
+    </div>
+  </div>
+
   <script>
-    // ⬇️ ตรงนี้อย่าลืมเอา URL จาก Google Apps Script ของคุณมาวางทับนะครับ
     const API_URL = "https://script.google.com/macros/s/AKfycbwQz6KOmhuPdipUnNwh4sYFT2etnvb0W_yrS00andPfKc7IeZr5HaNs8-57_P0ochFxew/exec";
 
     let userData = [];
@@ -303,7 +389,7 @@
     let autoRefreshInterval = null;
     let currentSelectedMonths = 3; 
 
-    // Helper Function สำหรับเชื่อมต่อไปยัง Backend Vercel
+    // Helper Function สำหรับเชื่อมต่อไปยัง Backend Vercel/GAS
     function callAPI(action, payload = {}) {
       return fetch(API_URL, {
         method: "POST",
@@ -315,13 +401,12 @@
       });
     }
 
-    // --- เช็คระบบความจำตอนโหลดหน้าเว็บเข้าครั้งแรก (Auto-Login Trigger) ---
+    // --- เช็คระบบความจำตอนโหลดหน้าเว็บเข้าครั้งแรก ---
     window.addEventListener('DOMContentLoaded', () => {
       const savedUser = localStorage.getItem('yt_family_username');
       if (savedUser) {
         document.getElementById('usernameInput').value = savedUser;
         document.getElementById('rememberMe').checked = true;
-        // ทำการล็อกอินให้ทันทีโดยที่ผู้ใช้ไม่ต้องกดอะไรเลย
         login(true);
       }
     });
@@ -341,7 +426,70 @@
       }
     }
 
-    // ปรับฟังก์ชัน login ให้รองรับการทำงานผ่าน API
+    // --- ฟังก์ชันควบคุม Modal สั่งซื้อแฟมใหม่ ---
+    function openYtModal() {
+      document.getElementById('ytBuyModal').classList.remove('hidden');
+    }
+
+    function closeYtModal() {
+      document.getElementById('ytBuyModal').classList.add('hidden');
+    }
+
+    function toggleEmailFields() {
+      const selectedOption = document.querySelector('input[name="emailOption"]:checked').value;
+      const ownEmailSection = document.getElementById('ownEmailSection');
+      const emailInput = document.getElementById('userYtEmail');
+      const passwordInput = document.getElementById('userYtPassword');
+
+      if (selectedOption === 'own') {
+        ownEmailSection.classList.remove('hidden');
+        emailInput.required = true;
+        passwordInput.required = true;
+      } else {
+        ownEmailSection.classList.add('hidden');
+        emailInput.required = false;
+        passwordInput.required = false;
+        emailInput.value = '';
+        passwordInput.value = '';
+      }
+    }
+
+    function handleYtSubmit(event) {
+      event.preventDefault();
+      const currentUsername = document.getElementById('displayUsername').textContent || localStorage.getItem('yt_family_username');
+      const emailOption = document.querySelector('input[name="emailOption"]:checked').value;
+      const userEmail = emailOption === 'own' ? document.getElementById('userYtEmail').value.trim() : "เมลร้าน";
+      const userPassword = emailOption === 'own' ? document.getElementById('userYtPassword').value.trim() : "-";
+
+      showPage('loading');
+      closeYtModal();
+
+      callAPI("buyProductWithCredit", {
+        username: currentUsername,
+        productId: "YT_FAMILY",
+        productName: "YouTube Family " + (emailOption === 'own' ? "(พกเมลมาเอง)" : "(เมลร้าน)"),
+        price: 0, 
+        itemData: `รูปแบบ: ${emailOption === 'own' ? 'พกเมลมาเอง' : 'ใช้อีเมลร้าน'} | Email: ${userEmail} | Pass: ${userPassword}`
+      })
+      .then(res => {
+        if(res.success) {
+          alert('🎉 ส่งคำสั่งซื้อสำเร็จเรียบร้อย! แอดมินจะดำเนินการจัดสรรแฟมให้คุณโดยเร็วที่สุด');
+          callAPI("getYtUserData", { username: currentUsername }).then(resData => {
+            userData = resData;
+            renderDashboard();
+            showPage('dashboard-page');
+          });
+        } else {
+          alert('❌ เกิดข้อผิดพลาด: ' + res.message);
+          showPage('dashboard-page');
+        }
+      })
+      .catch(err => {
+        alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err.message);
+        showPage('dashboard-page');
+      });
+    }
+
     function login(isAutoLogin = false) {
       const username = document.getElementById('usernameInput').value.trim();
       if (!username) return alert('กรุณากรอกชื่อผู้ใช้');
@@ -357,12 +505,11 @@
         .then(response => {
           if (!response || response.length === 0) {
             alert('ไม่พบข้อมูลของชื่อผู้ใช้นี้ โปรดตรวจสอบอีกครั้ง');
-            localStorage.removeItem('yt_family_username'); // ล้างความจำหากใส่ Username ผิด
+            localStorage.removeItem('yt_family_username');
             showPage('login-page');
             return;
           }
 
-          // ตรวจสอบสถานะปุ่มติ๊กจดจำอุปกรณ์
           const rememberMeChecked = document.getElementById('rememberMe').checked;
           if (rememberMeChecked) {
             localStorage.setItem('yt_family_username', username);
@@ -386,8 +533,6 @@
       userData = [];
       document.getElementById('usernameInput').value = '';
       document.getElementById('rememberMe').checked = false;
-      
-      // ลบข้อมูลที่จดจำออกจากเครื่องเมื่อกดยืนยันออกจากระบบอย่างตั้งใจ
       localStorage.removeItem('yt_family_username');
       
       if(timerInterval) clearInterval(timerInterval);
