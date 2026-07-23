@@ -222,10 +222,10 @@
       <div class="relative inline-block w-full mb-6 text-left group">
         <select id="renewMonthsSelect" onchange="updateRenewDetails()" class="block w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-3.5 sm:py-4 px-4 sm:px-5 pr-10 rounded-2xl leading-tight focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-400 font-bold transition-all cursor-pointer hover:bg-slate-100 text-sm sm:text-base">
           <option value="1">1 เดือน (ราคาปกติ)</option>
-          <option value="2">2 เดือน (รับส่วนลดพิเศษ **5%**) 🌟</option>
-          <option value="3" selected>3 เดือน (รับส่วนลดคุ้มๆ **8%**) 👍 [การันตีไม่มีหลุด]</option>
-          <option value="4">4 เดือน (รับส่วนลดจุใจ **10%**) ✨</option>
-          <option value="6">6 เดือน (รับส่วนลดสูงสุด **15%**) 🚀 [คุ้มค่าที่สุด]</option>
+          <option value="2">2 เดือน (รับส่วนลดพิเศษ 5%) 🌟</option>
+          <option value="3" selected>3 เดือน (รับส่วนลดคุ้มๆ 8%) 👍 [การันตีไม่มีหลุด]</option>
+          <option value="4">4 เดือน (รับส่วนลดจุใจ 10%) ✨</option>
+          <option value="6">6 เดือน (รับส่วนลดสูงสุด 15%) 🚀 [คุ้มค่าที่สุด]</option>
         </select>
         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 sm:px-5 text-slate-400 group-hover:text-slate-600 transition-colors">
           <svg class="fill-current h-5 w-5" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -313,7 +313,7 @@
   <!-- Modal ป๊อปอัพสั่งซื้อแฟม YouTube ใหม่ -->
   <!-- ========================================== -->
   <div id="ytBuyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 transform transition-all">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 transform transition-all max-h-[90vh] overflow-y-auto">
       
       <!-- ปุ่มปิด (X) -->
       <button onclick="closeYtModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition-colors">
@@ -328,7 +328,7 @@
           </svg>
         </div>
         <h3 class="text-xl font-bold text-slate-800">สั่งซื้อแฟม YouTube ใหม่</h3>
-        <p class="text-xs sm:text-sm text-slate-500 mt-1">เลือกประเภทการใช้งานอีเมลที่คุณสะดวก</p>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">เลือกประเภทและแพ็คเกจที่คุณต้องการ</p>
       </div>
 
       <!-- ฟอร์มสั่งซื้อ -->
@@ -336,7 +336,7 @@
         
         <!-- ตัวเลือกประเภทเมล -->
         <div class="space-y-3 mb-5">
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">รูปแบบการใช้อีเมล:</label>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">1. รูปแบบการใช้อีเมล:</label>
 
           <!-- ตัวเลือกที่ 1: เมลร้าน -->
           <label class="flex items-center p-3.5 border-2 border-slate-100 rounded-2xl cursor-pointer hover:border-red-400 transition-all has-[:checked]:border-red-500 has-[:checked]:bg-red-50/20">
@@ -370,6 +370,28 @@
           <p class="text-[11px] text-amber-700 bg-amber-50 p-2.5 rounded-xl border border-amber-200/60">
             ⚠️ ข้อมูลนี้จะถูกนำไปใช้ดึงอีเมลของคุณเข้าครอบครัว YouTube Premium เท่านั้น
           </p>
+        </div>
+
+        <!-- ส่วนเลือกแพ็คเกจและจำนวนเดือน -->
+        <div class="mb-5">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">2. เลือกแพ็คเกจ / จำนวนเดือน:</label>
+          <div class="relative">
+            <select id="packageSelect" onchange="updateSelectedPackagePrice()" class="block w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-3.5 px-4 pr-10 rounded-2xl leading-tight focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-400 font-semibold transition-all cursor-pointer hover:bg-slate-100 text-sm">
+              <option value="pkg_individual" data-price="150">แพ็กเกจรายบุคคล (เดือนแรก 150฿ / เดือนถัดไป 110฿)</option>
+              <option value="pkg_monthly" data-price="250">แพ็กเกจรายเดือน (เดือนแรก 250฿ / เดือนถัดไป 200฿)</option>
+              <option value="pkg_transfer_india" data-price="375">ย้ายแฟมไทยไปแฟมนอก (อินเดีย) (375฿)</option>
+              <option value="pkg_new_1year" data-price="1440">แพ็คเกจนอกใหม่ ต่อยาว 1 ปี ไม่มีหลุด (1,440฿)</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+              <svg class="fill-current h-5 w-5" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- สรุปยอดราคาแพ็คเกจ -->
+        <div class="mb-5 bg-red-50/60 border border-red-100 rounded-2xl p-4 flex justify-between items-center">
+          <span class="text-xs font-semibold text-slate-600">ราคาสินค้าที่เลือก:</span>
+          <span id="buyModalPriceDisplay" class="text-xl font-extrabold text-red-600">150 ฿</span>
         </div>
 
         <!-- ปุ่มกดยืนยันสั่งซื้อ -->
@@ -471,10 +493,18 @@
     // --- ฟังก์ชันควบคุม Modal สั่งซื้อแฟมใหม่ ---
     function openYtModal() {
       document.getElementById('ytBuyModal').classList.remove('hidden');
+      updateSelectedPackagePrice();
     }
 
     function closeYtModal() {
       document.getElementById('ytBuyModal').classList.add('hidden');
+    }
+
+    function updateSelectedPackagePrice() {
+      const select = document.getElementById('packageSelect');
+      const selectedOption = select.options[select.selectedIndex];
+      const price = selectedOption.getAttribute('data-price');
+      document.getElementById('buyModalPriceDisplay').textContent = `${price} ฿`;
     }
 
     function toggleEmailFields() {
@@ -503,6 +533,10 @@
       const userEmail = emailOption === 'own' ? document.getElementById('userYtEmail').value.trim() : "เมลร้าน";
       const userPassword = emailOption === 'own' ? document.getElementById('userYtPassword').value.trim() : "-";
 
+      const select = document.getElementById('packageSelect');
+      const selectedPackageText = select.options[select.selectedIndex].text;
+      const packagePrice = select.options[select.selectedIndex].getAttribute('data-price');
+
       showPage('loading');
       closeYtModal();
 
@@ -510,8 +544,8 @@
         username: currentUsername,
         productId: "YT_FAMILY",
         productName: "YouTube Family " + (emailOption === 'own' ? "(พกเมลมาเอง)" : "(เมลร้าน)"),
-        price: 0, 
-        itemData: `รูปแบบ: ${emailOption === 'own' ? 'พกเมลมาเอง' : 'ใช้อีเมลร้าน'} | Email: ${userEmail} | Pass: ${userPassword}`
+        price: Number(packagePrice), 
+        itemData: `รูปแบบ: ${emailOption === 'own' ? 'พกเมลมาเอง' : 'ใช้อีเมลร้าน'} | แพ็คเกจ: ${selectedPackageText} | Email: ${userEmail} | Pass: ${userPassword}`
       })
       .then(res => {
         if(res.success) {
