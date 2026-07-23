@@ -120,7 +120,7 @@
       </div>
     </div>
 
-    <!-- Stats Card (ปรับเป็น 4 การ์ดรวมกล่องจดหมาย) -->
+    <!-- Stats Card -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-6 sm:mb-10">
       <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex items-center gap-4 sm:gap-5">
         <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
@@ -158,7 +158,6 @@
         </div>
       </div>
 
-      <!-- เพิ่มการ์ดที่ 4: กล่องจดหมาย -->
       <div onclick="openInboxModal()" class="bg-white p-5 sm:p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex items-center gap-4 sm:gap-5 cursor-pointer hover:border-indigo-200 transition-all group">
         <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
           <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -184,7 +183,7 @@
     <div id="familyList" class="flex flex-col gap-3"></div>
   </div>
 
-  <!-- หน้า Admin (เพิ่มระบบส่งจดหมาย) -->
+  <!-- หน้า Admin -->
   <div id="admin-page" class="w-full max-w-6xl p-4 sm:p-6 md:p-8 mx-auto pb-20">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
       <div>
@@ -346,7 +345,6 @@
         <p class="text-[11px] sm:text-xs text-red-500 mt-1 font-medium truncate">ต่ออายุสำหรับเมล: <span id="paymentEmailDisplay" class="font-bold text-slate-700"></span></p>
       </div>
 
-      <!-- ข้อตกลงก่อนชำระเงิน (สำหรับกรณีต่ออายุ) -->
       <div class="mb-4 text-left bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
         <div class="flex items-start gap-2">
           <input type="checkbox" id="acceptTermsPay" onchange="togglePayButton()" class="mt-0.5 w-4 h-4 text-red-600 border-slate-300 rounded focus:ring-red-500 accent-red-600 cursor-pointer">
@@ -548,7 +546,6 @@
     function toggleOrderButton() { document.getElementById('btnSubmitOrder').disabled = !document.getElementById('acceptTermsOrder').checked; }
     function togglePayButton() { document.getElementById('btnSubmitPay').disabled = !document.getElementById('acceptTermsPay').checked; }
 
-    // --- ฟังก์ชันเปิด/ปิด กล่องจดหมาย ---
     function openInboxModal() {
       renderInboxMessages();
       document.getElementById('inboxModal').classList.remove('hidden');
@@ -572,7 +569,7 @@
         return;
       }
 
-      userInboxMessages.forEach((msg, idx) => {
+      userInboxMessages.forEach((msg) => {
         const msgCard = document.createElement('div');
         msgCard.className = "bg-slate-50 p-3.5 rounded-2xl border border-slate-100 text-left relative";
         msgCard.innerHTML = `
@@ -586,7 +583,6 @@
       });
     }
 
-    // --- ฟังก์ชันฝั่งแอดมิน: ส่งข้อความให้ลูกค้า ---
     function sendAdminMessageToUser() {
       const targetUser = document.getElementById('adminSendUsername').value.trim();
       const msgText = document.getElementById('adminSendMessage').value.trim();
@@ -606,7 +602,7 @@
           }
           showPage('admin-page');
         })
-        .catch(err => {
+        .catch(() => {
           alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์');
           showPage('admin-page');
         });
@@ -628,11 +624,11 @@
       showPage('loading');
 
       callAPI("requestBackupEmail", { username: currentUsername, email: targetEmail, familyId: matchedItem.familyId })
-      .then(res => {
+      .then(() => {
         alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว!');
         showPage('dashboard-page');
       })
-      .catch(err => {
+      .catch(() => {
         alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว!');
         showPage('dashboard-page');
       });
@@ -699,7 +695,7 @@
           showPage('dashboard-page');
         }
       })
-      .catch(err => {
+      .catch(() => {
         alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ');
         showPage('dashboard-page');
       });
@@ -734,14 +730,13 @@
           userData = response;
           document.getElementById('displayUsername').textContent = username;
           
-          // ดึงข้อความในกล่องจดหมายของลูกค้า
           fetchInboxMessages(username);
 
           renderDashboard();
           showPage('dashboard-page');
           startAutoSync(username);
         })
-        .catch(err => {
+        .catch(() => {
           alert('❌ เกิดข้อผิดพลาดฝั่งเซิร์ฟเวอร์');
           showPage('login-page');
         });
@@ -755,7 +750,7 @@
             document.getElementById('statInbox').textContent = userInboxMessages.length;
           }
         })
-        .catch(err => console.log('No inbox endpoint yet'));
+        .catch(err => console.log('No inbox endpoint yet', err));
     }
 
     function logout() {
@@ -826,7 +821,7 @@
           });
           showPage('admin-page');
         })
-        .catch(error => {
+        .catch(() => {
           alert("❌ เกิดข้อผิดพลาดจากระบบหลังบ้าน");
           showPage('login-page');
         });
@@ -951,7 +946,6 @@
         const dateStr = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth()+1).padStart(2, '0')}/${dateObj.getFullYear()}`;
 
         let statusHtml = '';
-        let statusText = item.status ? item.status.trim() : '';
 
         if (timeInfo.isExpired) {
           statusHtml = `<span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-semibold">ค้างชำระ</span>`;
