@@ -498,7 +498,8 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/a/macros/mail.wu.ac.th/s/AKfycbxArcYqQlWyu4PUohUwkmBecci5KXVrCarxFnx8g10TzxbstTSuTFjVUfcDnI_swKlr/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec";
+    const STORAGE_TOKEN = "mailly_session_token";
 
     let userData = [];
     let userInboxMessages = [];
@@ -507,9 +508,10 @@
     let currentSelectedMonths = 3; 
 
     function callAPI(action, payload = {}) {
+      const token = localStorage.getItem(STORAGE_TOKEN) || '';
       return fetch(API_URL, {
         method: "POST",
-        body: JSON.stringify({ action: action, payload: payload })
+        body: JSON.stringify({ action: action, payload: Object.assign({}, payload, { token: token }) })
       }).then(res => res.json())
       .catch(err => {
         console.error("API Error:", err);
@@ -629,7 +631,7 @@
         showPage('dashboard-page');
       })
       .catch(() => {
-        alert('✉️ ส่งคำขอเมลสำรองเรียบร้อยแล้ว!');
+        alert('❌ ไม่สามารถส่งคำขอเมลสำรองได้');
         showPage('dashboard-page');
       });
     }
@@ -704,6 +706,12 @@
     function login(isAutoLogin = false) {
       const username = document.getElementById('usernameInput').value.trim();
       if (!username) return alert('กรุณากรอกชื่อผู้ใช้');
+
+      if (!localStorage.getItem(STORAGE_TOKEN)) {
+        alert('กรุณาเข้าสู่ระบบจากหน้าหลักก่อนใช้งาน YouTube Family');
+        showPage('login-page');
+        return;
+      }
 
       showPage('loading');
       

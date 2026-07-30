@@ -258,6 +258,7 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec";
     const PROMPTPAY_ID = "0633390911"; 
+    const STORAGE_TOKEN = "mailly_session_token";
 
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -323,6 +324,12 @@
     }
 
     function submitTopup() {
+      const sessionToken = localStorage.getItem(STORAGE_TOKEN) || '';
+      if (!sessionToken) {
+        showModalResult('กรุณาเข้าสู่ระบบจากหน้าหลักก่อนเติมเงินครับ', 'error');
+        return;
+      }
+
       const username = document.getElementById('username').value.trim();
       const amount = document.getElementById('amount').value.trim();
       const fileInput = document.getElementById('slipFile');
@@ -360,7 +367,7 @@
             method: "POST",
             body: JSON.stringify({
               action: "topupUserCredit",
-              payload: { username: username, amount: amount, imageObj: { base64: base64Data, mimeType: 'image/jpeg' } }
+              payload: { token: sessionToken, amount: amount, imageObj: { base64: base64Data, mimeType: 'image/jpeg' } }
             })
           })
           .then(res => res.json())

@@ -269,7 +269,7 @@ function dispatch_(action, p) {
       return getYtUserData_(p);
 
     case 'getAllYtDataForAdmin':
-      return getAllYtDataForAdmin_();
+      return getAllYtDataForAdmin_(p);
 
     case 'updateYtUserDataFromAdmin':
       return updateYtUserDataFromAdmin_(p);
@@ -2707,11 +2707,13 @@ function buyProduct_(p) {
 ===================================================== */
 
 function getYtUserData_(p) {
+  const u = requireAuth_(p);
+
   return rows_('YTData')
     .filter(function(r) {
       return (
         key_(r.username) ===
-        key_(p.username)
+        key_(u.username)
       );
     })
     .map(function(r) {
@@ -2737,7 +2739,19 @@ function getYtUserData_(p) {
     });
 }
 
-function getAllYtDataForAdmin_() {
+function requireAdmin_(p) {
+  const u = requireAuth_(p);
+
+  if (key_(u.username) !== key_(CONFIG.ADMIN_USERNAME)) {
+    throw new Error('ไม่มีสิทธิ์สำหรับการดำเนินการนี้');
+  }
+
+  return u;
+}
+
+function getAllYtDataForAdmin_(p) {
+  requireAdmin_(p);
+
   return rows_('YTData').map(
     function(r) {
       return {
@@ -2760,6 +2774,8 @@ function getAllYtDataForAdmin_() {
 }
 
 function updateYtUserDataFromAdmin_(p) {
+  requireAdmin_(p);
+
   if (
     String(
       p.rowNumber
@@ -2789,6 +2805,12 @@ function updateYtUserDataFromAdmin_(p) {
 }
 
 function processYtPayment_(p) {
+  const u = requireAuth_(p);
+
+  if (key_(p.username) !== key_(u.username)) {
+    throw new Error('บัญชีผู้ชำระเงินไม่ตรงกับ Session');
+  }
+
   const image =
     p.base64Data;
 
@@ -2875,13 +2897,15 @@ function processYtPayment_(p) {
 }
 
 function getInbox_(p) {
+  const u = requireAuth_(p);
+
   return {
     messages:
       rows_('Inbox')
         .filter(function(r) {
           return (
             key_(r.username) ===
-            key_(p.username)
+            key_(u.username)
           );
         })
         .map(function(r) {
@@ -2897,17 +2921,18 @@ function getInbox_(p) {
 }
 
 function sendInbox_(p) {
-  user_(
-    p.username,
-    false
-  );
+  requireAdmin_(p);
+
+  const target = String(p.username || '').trim();
+  if (!target) throw new Error('กรุณาระบุชื่อผู้ใช้');
+  user_(target, false);
 
   append_('Inbox', {
     message_id:
       newId_('MSG'),
 
     username:
-      p.username,
+      target,
 
     message:
       String(
@@ -2924,6 +2949,12 @@ function sendInbox_(p) {
 }
 
 function requestBackupEmail_(p) {
+  const u = requireAuth_(p);
+
+  if (key_(p.username) !== key_(u.username)) {
+    throw new Error('บัญชีผู้ใช้ไม่ตรงกับ Session');
+  }
+
   append_('Inbox', {
     message_id:
       newId_('REQ'),
@@ -2933,7 +2964,7 @@ function requestBackupEmail_(p) {
 
     message:
       'คำขอเมลสำรองจาก ' +
-      p.username +
+      u.username +
       ' | email: ' +
       p.email +
       ' | family: ' +

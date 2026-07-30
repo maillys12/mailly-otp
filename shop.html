@@ -367,8 +367,9 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const BACKEND_URL = urlParams.get('script_url') || localStorage.getItem("script_url") || "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec"; 
+        const STORAGE_TOKEN = "mailly_session_token";
 
-        let currentUser = urlParams.get('user') || localStorage.getItem("username") || "admin"; 
+        let currentUser = urlParams.get('user') || localStorage.getItem("username") || ""; 
         let currentCredit = 0;
         let selectedProduct = null;
 
@@ -422,8 +423,12 @@
         let products = JSON.parse(localStorage.getItem("mailly_shop_products")) || defaultProducts;
 
         document.addEventListener("DOMContentLoaded", function() {
+            if (!localStorage.getItem(STORAGE_TOKEN)) {
+                alert("กรุณาเข้าสู่ระบบจากหน้าหลักก่อนใช้งานร้านค้า");
+            }
+
             document.getElementById("userNameDisplay").innerText = currentUser;
-            localStorage.setItem("username", currentUser);
+            if (currentUser) localStorage.setItem("username", currentUser);
             
             if (currentUser.toLowerCase() === "admin") {
                 document.getElementById("adminPanelBtn").classList.remove("hidden");
@@ -453,20 +458,23 @@
         }
 
         function fetchUserData() {
-            if (!currentUser) return;
+            const token = localStorage.getItem(STORAGE_TOKEN) || '';
+            if (!token) return;
 
             fetch(BACKEND_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    action: "loginUser",
-                    payload: { username: currentUser }
+                    action: "getSessionUser",
+                    payload: { token: token }
                 })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    currentCredit = parseFloat(data.credit) || 0;
+                    currentUser = data.user.username;
+                    document.getElementById("userNameDisplay").innerText = currentUser;
+                    currentCredit = parseFloat(data.user.credit) || 0;
                     document.getElementById("userCreditDisplay").innerText = currentCredit.toFixed(2) + " ฿";
                 }
             })
@@ -578,6 +586,13 @@
         function executePurchase() {
             if (!selectedProduct) return;
 
+            const token = localStorage.getItem(STORAGE_TOKEN) || '';
+            if (!token) {
+                alert("กรุณาเข้าสู่ระบบจากหน้าหลักก่อนซื้อสินค้า");
+                closeBuyModal();
+                return;
+            }
+
             if (!selectedProduct.stockList || selectedProduct.stockList.length === 0) {
                 alert("❌ สินค้านี้หมดสต็อคชั่วคราว ไม่สามารถทำรายการได้");
                 closeBuyModal();
@@ -594,11 +609,9 @@
                 body: JSON.stringify({
                     action: "buyProductWithCredit",
                     payload: {
+                        token: token,
                         username: currentUser,
                         productId: selectedProduct.id,
-                        productName: selectedProduct.name,
-                        price: selectedProduct.price,
-                        itemData: selectedProduct.stockList[0] || "-"
                     }
                 })
             })
