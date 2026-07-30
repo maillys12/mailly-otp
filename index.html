@@ -185,21 +185,31 @@
         <div class="status-pill"><span class="dot"></span> ระบบพร้อมให้บริการ</div>
       </div>
 
-      <div class="grid">
-        <article class="card">
-          <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-mobile-screen-button"></i></span> ซื้อหมายเลข OTP</h2><p>เลือกบริการและประเทศที่ต้องการใช้งาน</p></div>
+      <div class="purchase-layout">
+        <article class="card picker-card">
+          <div class="card-head picker-heading"><div><p class="section-kicker">STEP 01</p><h2><span class="icon-box"><i class="fa-solid fa-shapes"></i></span> เลือกบริการ</h2><p>เลือกแอปหรือบริการที่ต้องการรับ OTP</p></div><span id="serviceCount" class="item-count">กำลังโหลด</span></div>
           <div class="card-body">
-            <div id="purchaseAlert" class="alert"></div>
-            <div class="form-grid">
-              <div class="field"><label for="serviceSelect">บริการ</label><select id="serviceSelect" class="select"><option value="">กำลังโหลดบริการ...</option></select></div>
-              <div class="field"><label for="countrySelect">ประเทศ</label><select id="countrySelect" class="select" disabled><option value="">เลือกบริการก่อน</option></select></div>
-            </div>
-            <div class="quote"><span>ราคาที่ต้องชำระ</span><strong><span id="quotePrice">—</span> ฿</strong></div>
-            <button id="buyButton" class="primary buy" disabled><i class="fa-solid fa-bolt"></i> ซื้อหมายเลข</button>
+            <label class="card-search" for="serviceSearch"><i class="fa-solid fa-magnifying-glass"></i><input id="serviceSearch" type="search" placeholder="ค้นหาบริการ เช่น Google, Telegram, TikTok"></label>
+            <div id="serviceGrid" class="choice-grid" aria-live="polite"><div class="choice-empty"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังโหลดบริการ...</div></div>
           </div>
         </article>
 
-        <aside class="card">
+        <article class="card picker-card">
+          <div class="card-head picker-heading"><div><p class="section-kicker">STEP 02</p><h2><span class="icon-box"><i class="fa-solid fa-earth-asia"></i></span> เลือกประเทศ</h2><p id="countryHint">เลือกบริการก่อนเพื่อดูประเทศที่รองรับ</p></div><span id="countryCount" class="item-count">—</span></div>
+          <div class="card-body">
+            <label class="card-search" for="countrySearch"><i class="fa-solid fa-magnifying-glass"></i><input id="countrySearch" type="search" placeholder="ค้นหาประเทศ เช่น ไทย, USA, Vietnam" disabled></label>
+            <div id="countryGrid" class="choice-grid country-grid" aria-live="polite"><div class="choice-empty"><i class="fa-solid fa-arrow-left"></i> เลือกบริการก่อน</div></div>
+          </div>
+        </article>
+
+        <article class="card selection-summary">
+          <select id="serviceSelect" class="selection-native" aria-hidden="true" tabindex="-1"><option value="">กำลังโหลดบริการ...</option></select>
+          <select id="countrySelect" class="selection-native" aria-hidden="true" tabindex="-1" disabled><option value="">เลือกบริการก่อน</option></select>
+          <div class="selection-copy"><span class="summary-icon"><i class="fa-solid fa-bag-shopping"></i></span><div><p class="section-kicker">STEP 03</p><h2>ตรวจสอบก่อนสั่งซื้อ</h2><p id="selectionText">เลือกบริการและประเทศเพื่อดูราคา</p></div></div>
+          <div class="selection-action"><div class="summary-price"><span>ราคาเริ่มต้น</span><strong><span id="quotePrice">—</span> <small>฿</small></strong></div><button id="buyButton" class="primary buy" disabled><i class="fa-solid fa-arrow-right"></i> ดูสรุปรายการ</button></div>
+        </article>
+
+        <aside class="card service-menu">
           <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-grid-2"></i></span> เมนูบริการ</h2><p>เข้าถึงบริการอื่นของ Mailly</p></div>
           <div class="card-body mini-links">
             <a class="mini-link" href="page2.html"><i class="fa-solid fa-wallet"></i><strong>เติมเครดิต</strong><span>PromptPay และสลิป</span></a>
@@ -218,6 +228,16 @@
   </section>
 
   <div id="toast" class="toast"></div>
+  <div id="purchaseModal" class="purchase-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="confirm-card">
+      <button class="modal-close" type="button" data-close-modal aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button>
+      <div class="confirm-icon"><i class="fa-solid fa-circle-check"></i></div>
+      <p class="section-kicker">READY TO PURCHASE</p><h2 id="confirmTitle">ยืนยันการสั่งซื้อ</h2><p class="confirm-subtitle">ตรวจสอบรายละเอียดและยอดเครดิตก่อนดำเนินการ</p>
+      <div class="confirm-details"><div><span>บริการ</span><strong id="confirmService">—</strong></div><div><span>ประเทศ</span><strong id="confirmCountry">—</strong></div><div class="confirm-total"><span>ยอดที่ต้องชำระ</span><strong><span id="confirmPrice">—</span> ฿</strong></div></div>
+      <div class="confirm-actions"><button id="modalCancel" class="secondary-button" type="button" data-close-modal>กลับไปแก้ไข</button><button id="confirmBuyButton" class="primary" type="button"><i class="fa-solid fa-bolt"></i> ยืนยันและซื้อเบอร์</button></div>
+    </div>
+  </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
@@ -226,6 +246,10 @@
     let currentUser = null;
     let currentQuote = null;
     let orderPoller = null;
+    let services = [];
+    let countries = [];
+    let showAllServices = false;
+    let showAllCountries = false;
 
     const $ = id => document.getElementById(id);
     async function api(action, payload = {}) {
@@ -329,19 +353,68 @@
       const select = $("serviceSelect");
       try {
         const data = await api("getServices");
-        const items = Array.isArray(data) ? data : Object.values(data || {}).filter(x => x && typeof x === "object");
-        select.innerHTML = `<option value="">เลือกบริการ</option>` + items.filter(x => x.ID && x.name).sort((a,b) => a.name.localeCompare(b.name)).map(x => `<option value="${escapeHtml(x.ID)}">${escapeHtml(x.name)}</option>`).join("");
-      } catch (_) { select.innerHTML = `<option value="">โหลดบริการไม่สำเร็จ</option>`; }
+        services = (Array.isArray(data) ? data : Object.values(data || {}).filter(x => x && typeof x === "object"))
+          .filter(x => x.ID && x.name).sort((a,b) => a.name.localeCompare(b.name));
+        select.innerHTML = `<option value="">เลือกบริการ</option>` + services.map(x => `<option value="${escapeHtml(x.ID)}">${escapeHtml(x.name)}</option>`).join("");
+        $("serviceCount").textContent = `${services.length.toLocaleString("th-TH")} บริการ`;
+        renderServiceCards();
+      } catch (_) { select.innerHTML = `<option value="">โหลดบริการไม่สำเร็จ</option>`; $("serviceGrid").innerHTML = `<div class="choice-empty">ไม่สามารถโหลดบริการได้</div>`; }
+    }
+
+    function normalized(value) { return String(value || "").toLowerCase(); }
+    function serviceIcon(name) {
+      const value = normalized(name);
+      if (value.includes("telegram")) return "fa-brands fa-telegram";
+      if (value.includes("whatsapp")) return "fa-brands fa-whatsapp";
+      if (value.includes("instagram")) return "fa-brands fa-instagram";
+      if (value.includes("facebook")) return "fa-brands fa-facebook-f";
+      if (value.includes("tiktok")) return "fa-brands fa-tiktok";
+      if (value.includes("discord")) return "fa-brands fa-discord";
+      if (value.includes("google") || value.includes("gmail")) return "fa-brands fa-google";
+      if (value.includes("apple")) return "fa-brands fa-apple";
+      if (value.includes("microsoft")) return "fa-brands fa-microsoft";
+      if (value.includes("amazon")) return "fa-brands fa-amazon";
+      if (value.includes("twitter") || value === "x") return "fa-brands fa-x-twitter";
+      if (value.includes("line")) return "fa-brands fa-line";
+      if (value.includes("uber")) return "fa-solid fa-car";
+      if (value.includes("netflix")) return "fa-solid fa-play";
+      if (value.includes("lazada") || value.includes("shopee")) return "fa-solid fa-bag-shopping";
+      return "fa-solid fa-mobile-screen-button";
+    }
+    function countryFlag(country) {
+      const value = normalized(`${country.name || ""} ${country.code || ""}`);
+      const flags = [["thailand| thai|ไทย","🇹🇭"],["united states|usa|america","🇺🇸"],["united kingdom|britain|uk","🇬🇧"],["vietnam","🇻🇳"],["indonesia","🇮🇩"],["philippines","🇵🇭"],["china","🇨🇳"],["ukraine","🇺🇦"],["myanmar","🇲🇲"],["singapore","🇸🇬"],["lao","🇱🇦"],["india","🇮🇳"],["canada","🇨🇦"],["germany","🇩🇪"],["france","🇫🇷"],["japan","🇯🇵"],["korea","🇰🇷"],["malaysia","🇲🇾"],["brazil","🇧🇷"],["turkey","🇹🇷"]];
+      const found = flags.find(([terms]) => new RegExp(terms).test(value)); return found ? found[1] : "🌐";
+    }
+    function selectedService() { return services.find(x => String(x.ID) === $("serviceSelect").value); }
+    function selectedCountry() { return countries.find(x => String(x.country_id || x.id) === $("countrySelect").value); }
+    function renderServiceCards() {
+      const query = normalized($("serviceSearch").value);
+      const matches = services.filter(x => normalized(x.name).includes(query));
+      const visible = (query || showAllServices) ? matches : matches.slice(0, 24);
+      $("serviceGrid").innerHTML = visible.length ? visible.map(item => `<button type="button" class="choice-card ${String(item.ID) === $("serviceSelect").value ? "selected" : ""}" data-service-id="${escapeHtml(item.ID)}"><span class="service-icon"><i class="${serviceIcon(item.name)}"></i></span><span>${escapeHtml(item.name)}</span><i class="fa-solid fa-check card-check"></i></button>`).join("") + (!query && matches.length > 24 ? `<button type="button" class="show-more" data-show-services>${showAllServices ? "แสดงน้อยลง" : `แสดงทั้งหมด ${matches.length.toLocaleString("th-TH")} บริการ`} <i class="fa-solid fa-chevron-down"></i></button>` : "") : `<div class="choice-empty">ไม่พบบริการที่ค้นหา</div>`;
+      document.querySelectorAll("[data-service-id]").forEach(button => button.addEventListener("click", () => { $("serviceSelect").value = button.dataset.serviceId; $("serviceSelect").dispatchEvent(new Event("change")); }));
+      document.querySelector("[data-show-services]")?.addEventListener("click", () => { showAllServices = !showAllServices; renderServiceCards(); });
+    }
+    function renderCountryCards() {
+      const query = normalized($("countrySearch").value);
+      const matches = countries.filter(x => normalized(`${x.name || ""} ${x.code || ""}`).includes(query));
+      const visible = (query || showAllCountries) ? matches : matches.slice(0, 24);
+      $("countryGrid").innerHTML = visible.length ? visible.map(item => { const id = item.country_id || item.id, name = item.name || item.code || id; return `<button type="button" class="choice-card country-card ${String(id) === $("countrySelect").value ? "selected" : ""}" data-country-id="${escapeHtml(id)}"><span class="country-flag">${countryFlag(item)}</span><span>${escapeHtml(name)}</span><i class="fa-solid fa-check card-check"></i></button>`; }).join("") + (!query && matches.length > 24 ? `<button type="button" class="show-more" data-show-countries>${showAllCountries ? "แสดงน้อยลง" : `แสดงทั้งหมด ${matches.length.toLocaleString("th-TH")} ประเทศ`} <i class="fa-solid fa-chevron-down"></i></button>` : "") : `<div class="choice-empty">ไม่พบประเทศที่ค้นหา</div>`;
+      document.querySelectorAll("[data-country-id]").forEach(button => button.addEventListener("click", () => { $("countrySelect").value = button.dataset.countryId; $("countrySelect").dispatchEvent(new Event("change")); }));
+      document.querySelector("[data-show-countries]")?.addEventListener("click", () => { showAllCountries = !showAllCountries; renderCountryCards(); });
     }
 
     $("serviceSelect").addEventListener("change", async event => {
       currentQuote = null; $("quotePrice").textContent = "—"; $("buyButton").disabled = true;
       const country = $("countrySelect"); country.disabled = true; country.innerHTML = `<option value="">กำลังโหลดประเทศ...</option>`;
+      countries = []; showAllCountries = false; $("countrySearch").value = ""; $("countrySearch").disabled = true; $("countryGrid").innerHTML = `<div class="choice-empty"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังโหลดประเทศ...</div>`; $("countryHint").textContent = "กำลังค้นหาประเทศที่รองรับ"; $("selectionText").textContent = "เลือกประเทศเพื่อดูราคา"; renderServiceCards();
       if (!event.target.value) return;
       const data = await api("getCountryDataForService", { serviceId: event.target.value });
       const items = Array.isArray(data) ? data : Object.keys(data || {}).map(id => ({ id, ...data[id] }));
-      country.innerHTML = `<option value="">เลือกประเทศ</option>` + items.filter(x => x.country_id || x.id).sort((a,b) => String(a.name).localeCompare(String(b.name))).map(x => `<option value="${escapeHtml(x.country_id || x.id)}">${escapeHtml(x.name || x.code || x.country_id || x.id)}</option>`).join("");
-      country.disabled = false;
+      countries = items.filter(x => x.country_id || x.id).sort((a,b) => String(a.name).localeCompare(String(b.name)));
+      country.innerHTML = `<option value="">เลือกประเทศ</option>` + countries.map(x => `<option value="${escapeHtml(x.country_id || x.id)}">${escapeHtml(x.name || x.code || x.country_id || x.id)}</option>`).join("");
+      country.disabled = false; $("countrySearch").disabled = false; $("countryCount").textContent = `${countries.length.toLocaleString("th-TH")} ประเทศ`; $("countryHint").textContent = `ประเทศที่รองรับสำหรับ ${selectedService()?.name || "บริการนี้"}`; renderCountryCards();
     });
 
     $("countrySelect").addEventListener("change", async event => {
@@ -349,21 +422,30 @@
       if (!event.target.value) return;
       const result = await api("getPriceQuote", { serviceId: $("serviceSelect").value, countryId: event.target.value });
       if (!result.success) return alertBox("purchaseAlert", result.message);
-      currentQuote = result.price; $("quotePrice").textContent = Number(result.price).toFixed(2); $("buyButton").disabled = false;
+      currentQuote = result.price; $("quotePrice").textContent = Number(result.price).toFixed(2); $("buyButton").disabled = false; $("selectionText").textContent = `${selectedService()?.name || "บริการ"} · ${selectedCountry()?.name || selectedCountry()?.code || "ประเทศ"}`; renderCountryCards();
     });
 
-    $("buyButton").addEventListener("click", async () => {
-      if (!currentQuote) return;
+    function openPurchaseModal() {
+      if (currentQuote === null) return;
+      $("confirmService").textContent = selectedService()?.name || "—"; $("confirmCountry").textContent = selectedCountry()?.name || selectedCountry()?.code || "—"; $("confirmPrice").textContent = Number(currentQuote).toFixed(2); $("purchaseModal").classList.remove("hidden"); document.body.classList.add("modal-open");
+    }
+    function closePurchaseModal() { $("purchaseModal").classList.add("hidden"); document.body.classList.remove("modal-open"); }
+    $("buyButton").addEventListener("click", openPurchaseModal);
+    document.querySelectorAll("[data-close-modal]").forEach(button => button.addEventListener("click", closePurchaseModal));
+    $("confirmBuyButton").addEventListener("click", async () => {
+      if (currentQuote === null) return;
       alertBox("purchaseAlert", "");
-      const button = $("buyButton"); setBusy(button, true, "กำลังซื้อหมายเลข...");
+      const button = $("confirmBuyButton"); setBusy(button, true, "กำลังซื้อหมายเลข...");
       try {
         const result = await api("buyNumberWithCredit", { serviceId: $("serviceSelect").value, countryId: $("countrySelect").value });
         if (!result.success) throw new Error(result.message || "ซื้อหมายเลขไม่สำเร็จ");
         currentUser.balance = result.newCredit; $("balance").textContent = Number(result.newCredit).toFixed(2) + " ฿";
-        toast("ซื้อหมายเลขสำเร็จ"); await loadOrders();
+        closePurchaseModal(); toast("ซื้อหมายเลขสำเร็จ"); await loadOrders();
       } catch (error) { alertBox("purchaseAlert", error.message); }
       finally { setBusy(button, false); }
     });
+    $("serviceSearch").addEventListener("input", renderServiceCards);
+    $("countrySearch").addEventListener("input", renderCountryCards);
 
     async function loadOrders() {
       if (!sessionToken) return;
