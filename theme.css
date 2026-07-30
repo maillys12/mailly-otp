@@ -1,0 +1,97 @@
+/* Mailly OTP — shared visual system
+   UI-only layer. No application logic or API behavior is changed. */
+:root {
+  --mailly-ink: #172033;
+  --mailly-muted: #667085;
+  --mailly-line: #e6eaf0;
+  --mailly-surface: #ffffff;
+  --mailly-bg: #f6f8fb;
+  --mailly-accent: #f47b20;
+  --mailly-accent-dark: #d9630d;
+  --mailly-accent-soft: #fff3e8;
+  --mailly-navy: #172033;
+  --mailly-success: #159a68;
+  --mailly-radius-lg: 20px;
+  --mailly-radius-md: 14px;
+  --mailly-shadow: 0 12px 34px rgba(23, 32, 51, .07);
+}
+
+/* Shared focus and motion behavior */
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button, a, input, select, textarea { transition: border-color .18s ease, background-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease; }
+:focus-visible { outline: 3px solid rgba(244, 123, 32, .28); outline-offset: 2px; }
+
+/* page2.html */
+body:has(.topup-card) {
+  background: var(--mailly-bg) !important;
+  background-image: radial-gradient(circle at 10% 0%, rgba(244,123,32,.08), transparent 30%), radial-gradient(circle at 90% 100%, rgba(23,32,51,.05), transparent 34%) !important;
+}
+body:has(.topup-card) .topup-card {
+  max-width: 480px;
+  padding: 34px 32px;
+  border: 1px solid var(--mailly-line);
+  border-radius: var(--mailly-radius-lg);
+  box-shadow: var(--mailly-shadow);
+}
+body:has(.topup-card) .wallet-icon-box { width: 56px; height: 56px; border-radius: 16px; background: var(--mailly-accent-soft); color: var(--mailly-accent-dark); box-shadow: none; font-size: 22px; }
+body:has(.topup-card) .card-header { margin-bottom: 30px; }
+body:has(.topup-card) .card-header h2 { font-size: 22px; letter-spacing: -.3px; }
+body:has(.topup-card) .card-header p { font-size: 13px; }
+body:has(.topup-card) .form-group { margin-bottom: 18px; }
+body:has(.topup-card) .form-group label { color: #475467; font-size: 13px; }
+body:has(.topup-card) .form-input { min-height: 48px; border-color: #d9dee7; border-radius: var(--mailly-radius-md); background: #fff; }
+body:has(.topup-card) .form-input:focus { border-color: var(--mailly-accent); box-shadow: 0 0 0 4px var(--mailly-accent-soft); }
+body:has(.topup-card) .btn-amount-choice { min-height: 42px; border-radius: 11px; background: #fff; }
+body:has(.topup-card) .btn-primary { background: var(--mailly-accent); box-shadow: 0 8px 18px rgba(244,123,32,.18); }
+body:has(.topup-card) .btn-primary:hover:not(:disabled) { background: var(--mailly-accent-dark); }
+body:has(.topup-card) .btn-secondary { border: 1px solid var(--mailly-line); background: #f8fafc; }
+body:has(.topup-card) .modal-box { border-radius: var(--mailly-radius-lg); box-shadow: 0 24px 60px rgba(23,32,51,.16); }
+
+/* shop.html — replace the previous neon/glass treatment with the shared product theme */
+body:has(#productGrid) {
+  background: var(--mailly-bg) !important;
+  color: var(--mailly-ink) !important;
+  font-family: Prompt, Inter, sans-serif !important;
+}
+body:has(#productGrid) .neon-bg-glow { display: none !important; }
+body:has(#productGrid) .glass-card { background: rgba(255,255,255,.94) !important; backdrop-filter: none !important; border: 1px solid var(--mailly-line) !important; box-shadow: 0 8px 24px rgba(23,32,51,.05) !important; }
+body:has(#productGrid) header { background: rgba(255,255,255,.94) !important; border-color: var(--mailly-line) !important; }
+body:has(#productGrid) header .bg-gradient-to-tr { background: var(--mailly-accent) !important; box-shadow: none !important; }
+body:has(#productGrid) header .bg-stone-950 { background: var(--mailly-navy) !important; }
+body:has(#productGrid) header .text-orange-400, body:has(#productGrid) header .text-amber-400 { color: var(--mailly-accent) !important; }
+body:has(#productGrid) header .text-white, body:has(#productGrid) header .font-black { color: var(--mailly-ink) !important; }
+body:has(#productGrid) .text-gradient { background: none !important; color: var(--mailly-accent) !important; -webkit-text-fill-color: currentColor !important; }
+body:has(#productGrid) main { max-width: 1180px !important; margin-top: 42px !important; }
+body:has(#productGrid) main h1 { color: var(--mailly-ink) !important; font-size: clamp(2rem, 4vw, 3.15rem) !important; line-height: 1.12 !important; letter-spacing: -.04em !important; }
+body:has(#productGrid) main p { color: var(--mailly-muted) !important; }
+body:has(#productGrid) .premium-card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important; }
+body:has(#productGrid) .premium-card:hover { transform: translateY(-4px) !important; border-color: #f7bf91 !important; box-shadow: 0 16px 34px rgba(23,32,51,.10) !important; }
+body:has(#productGrid) .btn-gradient, body:has(#productGrid) .tab-btn.active { background: var(--mailly-accent) !important; box-shadow: 0 8px 18px rgba(244,123,32,.18) !important; }
+body:has(#productGrid) .btn-gradient:hover, body:has(#productGrid) .tab-btn.active:hover { background: var(--mailly-accent-dark) !important; }
+body:has(#productGrid) .cat-btn { border-radius: 11px !important; }
+body:has(#productGrid) #productGrid { gap: 20px !important; }
+body:has(#productGrid) #productGrid > * { min-width: 0; }
+body:has(#productGrid) .rounded-3xl, body:has(#productGrid) .rounded-2xl { border-radius: var(--mailly-radius-lg) !important; }
+body:has(#productGrid) input, body:has(#productGrid) select, body:has(#productGrid) textarea { border-radius: 11px !important; }
+
+/* youtube.html — normalize the red dashboard into Mailly's accent system */
+body:has(#login-page) { background: var(--mailly-bg) !important; background-image: radial-gradient(circle at 0 0, rgba(244,123,32,.08), transparent 32%), radial-gradient(circle at 100% 100%, rgba(23,32,51,.05), transparent 36%) !important; }
+body:has(#login-page) .glass-card { background: rgba(255,255,255,.96) !important; backdrop-filter: none !important; border: 1px solid var(--mailly-line) !important; box-shadow: var(--mailly-shadow) !important; }
+body:has(#login-page) #login-page > .glass-card { max-width: 430px !important; padding: 34px !important; border-radius: var(--mailly-radius-lg) !important; }
+body:has(#login-page) #login-page .bg-gradient-to-tr { background: var(--mailly-accent) !important; box-shadow: 0 10px 22px rgba(244,123,32,.18) !important; }
+body:has(#login-page) #login-page h1, body:has(#login-page) #dashboard-page h2, body:has(#login-page) #admin-page h2 { color: var(--mailly-ink) !important; }
+body:has(#login-page) #login-page button.bg-slate-900, body:has(#login-page) button.bg-red-600 { background: var(--mailly-accent) !important; box-shadow: 0 8px 18px rgba(244,123,32,.16) !important; }
+body:has(#login-page) #login-page button.bg-slate-900:hover, body:has(#login-page) button.bg-red-600:hover { background: var(--mailly-accent-dark) !important; }
+body:has(#login-page) #dashboard-page, body:has(#login-page) #admin-page { max-width: 1180px !important; }
+body:has(#login-page) #dashboard-page .bg-white, body:has(#login-page) #admin-page .bg-white { border-color: var(--mailly-line) !important; box-shadow: 0 8px 24px rgba(23,32,51,.05) !important; }
+body:has(#login-page) #dashboard-page .rounded-3xl, body:has(#login-page) #admin-page .rounded-3xl { border-radius: var(--mailly-radius-lg) !important; }
+body:has(#login-page) #dashboard-page .text-red-600, body:has(#login-page) #admin-page .text-red-600 { color: var(--mailly-accent-dark) !important; }
+body:has(#login-page) #dashboard-page .bg-red-600 { background: var(--mailly-accent) !important; }
+body:has(#login-page) input, body:has(#login-page) select, body:has(#login-page) textarea { border-radius: 11px !important; }
+
+@media (max-width: 640px) {
+  body:has(.topup-card) { padding: 12px; }
+  body:has(.topup-card) .topup-card { padding: 26px 20px; }
+  body:has(#productGrid) main { margin-top: 28px !important; }
+  body:has(#login-page) #login-page > .glass-card { padding: 26px 20px !important; }
+}
