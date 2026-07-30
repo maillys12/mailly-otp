@@ -4,7 +4,6 @@
 
 const CONFIG = {
   SHEET_ID: '14vKp2IjcYMUH93vztapNx87nuTM39BdesEuZFGPL5HY',
-  SMSPOOL_KEY: 'XmvgjLTvWIPuXBA3NjxiGk0jaP8OOJzR',
   PROMPTPAY_ID: '0633390911',
   SLIP_FOLDER_ID: '',
   ADMIN_USERNAME: 'admin',
@@ -15,7 +14,8 @@ const CONFIG = {
   MIN_TOPUP: 50,
   DEFAULT_MARKUP: 2,
   DEFAULT_MIN_PRICE_THB: 7,
-  CANCEL_UNLOCK_SECONDS: 180,
+  // OTP-sms permits a refunded cancellation after five minutes.
+  CANCEL_UNLOCK_SECONDS: 300,
 
   SELLING_PRICE_RULES: [
     { maxUsd: 0.09, thb: 7 },
@@ -26,14 +26,14 @@ const CONFIG = {
     { maxUsd: Infinity, thb: 45 }
   ],
 
-  SMSPOOL: {
-    base: 'https://api.smspool.net',
-    services: '/request/services',
-    countries: '/request/countries',
-    successRate: '/request/success_rate',
-    purchase: '/purchase/sms',
-    check: '/sms/check',
-    cancel: '/sms/cancel'
+  OTP_SMS: {
+    base: 'https://otp-sms.com/api/v1/',
+    services: 'getServices.php',
+    countries: 'getCountries.php',
+    prices: 'getPrices.php',
+    purchase: 'getNumber.php',
+    status: 'getStatus.php',
+    setStatus: 'setStatus.php'
   }
 };
 
@@ -75,7 +75,9 @@ const SCHEMAS = {
     'cost_usd',
     'sms',
     'cancel_unlock_at',
-    'refunded_at'
+    'refunded_at',
+    'provider',
+    'provider_id'
   ],
 
   Transactions: [
@@ -237,6 +239,9 @@ function dispatch_(action, p) {
 
     case 'getPriceQuote':
       return getPriceQuote_(p);
+
+    case 'getProviderOptions':
+      return getProviderOptions_(p);
 
     case 'getServices':
       return getServices_();
@@ -1615,7 +1620,7 @@ function constantTimeEqual_(a, b) {
 }
 
 /* =====================================================
-   SMSPOOL
+   OTP-SMS PROVIDER
 ===================================================== */
 
 function orderView_(o) {
@@ -1648,36 +1653,44 @@ function orderView_(o) {
   };
 }
 
-function smspool_(
-  path,
-  params,
-  method
-) {
-  if (
-    !CONFIG.SMSPOOL_KEY ||
-    CONFIG.SMSPOOL_KEY.indexOf(
-      'ใส่_'
-    ) === 0
-  ) {
+function otpSmsApiKey_() {
+  const key = PropertiesService
+    .getScriptProperties()
+    .getProperty('OTP_SMS_API_KEY');
+
+  if (!key) {
     throw new Error(
-      'กรุณาใส่ SMSPOOL_KEY ใน CONFIG'
+      'ยังไม่ได้ตั้งค่า OTP_SMS_API_KEY ใน Script Properties'
     );
   }
 
+  return key;
+}
+
+function otpSms_(
+  path,
+  params
+) {
   params = params || {};
-  params.key =
-    CONFIG.SMSPOOL_KEY;
+  params.api_key = otpSmsApiKey_();
 
   const options = {
-    method:
-      method || 'post',
-    payload: params,
+    method: 'get',
     muteHttpExceptions: true
   };
 
   const response =
     UrlFetchApp.fetch(
-      CONFIG.SMSPOOL.base + path,
+      CONFIG.OTP_SMS.base +
+        path +
+        '?' +
+        Object.keys(params)
+          .map(function(key) {
+            return encodeURIComponent(key) +
+              '=' +
+              encodeURIComponent(params[key]);
+          })
+          .join('&'),
       options
     );
 
@@ -1687,19 +1700,25 @@ function smspool_(
   const text =
     response.getContentText();
 
-  if (code >= 400) {
+  let body;
+
+  try {
+    body = JSON.parse(text);
+  } catch (e) {
     throw new Error(
-      'SMSPool HTTP ' + code
+      'OTP-sms ส่งข้อมูลไม่ใช่ JSON'
     );
   }
 
-  try {
-    return JSON.parse(text);
-  } catch (e) {
+  if (code >= 400 || !body.success) {
     throw new Error(
-      'SMSPool ส่งข้อมูลไม่ใช่ JSON'
+      body.message ||
+      body.error ||
+      'OTP-sms HTTP ' + code
     );
   }
+
+  return body;
 }
 
 function getServices_() {
@@ -1716,18 +1735,20 @@ function getServices_() {
     );
   }
 
-  const data = smspool_(
-    CONFIG.SMSPOOL.services,
+  const response = otpSms_(
+    CONFIG.OTP_SMS.services,
     {}
   );
 
-  return Array.isArray(data)
-    ? data
-    : (
-        data.services ||
-        data.data ||
-        data
-      );
+  return (response.data.services || [])
+    .map(function(service) {
+      return {
+        ID: service.code,
+        name: service.name_th || service.name || service.code,
+        name_en: service.name || '',
+        popular: Boolean(service.popular)
+      };
+    });
 }
 
 function getCountries_(p) {
@@ -1740,50 +1761,32 @@ function getCountries_(p) {
     );
   }
 
-  let data = smspool_(
-    CONFIG.SMSPOOL.successRate,
-    {
-      service: serviceId
-    }
-  );
-
-  if (
-    Array.isArray(data) ||
-    typeof data === 'object'
-  ) {
-    const list =
-      Array.isArray(data)
-        ? data
-        : (
-            data.data ||
-            data.countries ||
-            data
-          );
-
-    if (
-      Array.isArray(list) &&
-      list.length
-    ) {
-      return list;
-    }
-  }
-
-  data = smspool_(
-    CONFIG.SMSPOOL.countries,
+  const response = otpSms_(
+    CONFIG.OTP_SMS.countries,
     {}
   );
 
-  return Array.isArray(data)
-    ? data
-    : (
-        data.countries ||
-        data.data ||
-        data
-      );
+  // OTP-sms returns a global country catalogue. Availability and price are
+  // checked server-side by getPriceQuote_ before the user can buy.
+  return (response.data.countries || [])
+    .map(function(country) {
+      return {
+        country_id: country.id,
+        name: country.name_th || country.name || String(country.id),
+        name_en: country.name || '',
+        code: country.flag || '',
+        flag: country.flag || '',
+        popular: Boolean(country.popular)
+      };
+    });
 }
 
-function priceFromUsd_(usd) {
-  const n = Number(usd);
+function priceFromThb_(thb) {
+  const base = Number(thb);
+
+  if (isNaN(base) || base < 0) {
+    throw new Error('OTP-sms ส่งราคาที่ไม่ถูกต้อง');
+  }
 
   const markup =
     Number(
@@ -1791,8 +1794,7 @@ function priceFromUsd_(usd) {
         'markup',
         CONFIG.DEFAULT_MARKUP
       )
-    ) ||
-    CONFIG.DEFAULT_MARKUP;
+    ) || CONFIG.DEFAULT_MARKUP;
 
   const minimum =
     Number(
@@ -1800,87 +1802,89 @@ function priceFromUsd_(usd) {
         'min_price_thb',
         CONFIG.DEFAULT_MIN_PRICE_THB
       )
-    ) ||
-    CONFIG.DEFAULT_MIN_PRICE_THB;
+    ) || CONFIG.DEFAULT_MIN_PRICE_THB;
 
-  if (
-    !isNaN(n) &&
-    n >= 0
-  ) {
-    return Math.max(
-      minimum,
-      money_(
-        n *
-        markup *
-        35
-      )
-    );
-  }
+  return Math.max(
+    minimum,
+    money_(base * markup)
+  );
+}
 
-  for (
-    let i = 0;
-    i <
-    CONFIG
-      .SELLING_PRICE_RULES
-      .length;
-    i++
-  ) {
-    if (
-      n <=
-      CONFIG
-        .SELLING_PRICE_RULES[i]
-        .maxUsd
-    ) {
-      return CONFIG
-        .SELLING_PRICE_RULES[i]
-        .thb;
+function priceOptions_(service, country) {
+  const response = otpSms_(
+    CONFIG.OTP_SMS.prices,
+    {
+      service: service,
+      country: country
     }
+  );
+
+  const options =
+    response.data &&
+    Array.isArray(response.data.options)
+      ? response.data.options
+      : [];
+
+  const available = options
+    .filter(function(option) {
+      return Number(option.count) > 0 &&
+        option.provider_id !== undefined;
+    })
+    .sort(function(a, b) {
+      return Number(a.price) - Number(b.price);
+    });
+
+  if (!available.length) {
+    throw new Error('ไม่มีหมายเลขว่างสำหรับบริการและประเทศที่เลือก');
   }
 
-  return 45;
+  return available;
 }
 
 function getPriceQuote_(p) {
   requireAuth_(p);
-
-  const countries =
-    getCountries_({
-      serviceId: p.serviceId
-    });
-
-  const info =
-    (
-      Array.isArray(countries)
-        ? countries
-        : []
-    ).find(function(c) {
-      return (
-        String(
-          c.country_id ||
-          c.id
-        ) ===
-        String(p.countryId)
-      );
-    });
-
-  if (
-    !info ||
-    info.price === undefined
-  ) {
-    throw new Error(
-      'ไม่พบราคาสำหรับประเทศนี้'
-    );
-  }
+  const options = priceOptions_(
+    String(p.serviceId || ''),
+    String(p.countryId || '')
+  );
+  const selected = options[0];
 
   return {
     success: true,
-    price:
-      priceFromUsd_(
-        info.price
-      ),
+    price: priceFromThb_(selected.price),
+    providerPriceThb: Number(selected.price),
+    available: Number(selected.count)
+  };
+}
 
-    providerPriceUsd:
-      Number(info.price) || 0
+// Returns every currently available OTP-sms provider for the selected route.
+// The browser receives display data only; price and provider are checked again
+// in buyNumber_ immediately before an order is created.
+function getProviderOptions_(p) {
+  requireAuth_(p);
+
+  const options = priceOptions_(
+    String(p.serviceId || ''),
+    String(p.countryId || '')
+  );
+
+  return {
+    success: true,
+    providers: options.map(function(option) {
+      const providerId = String(option.provider_id);
+      return {
+        providerId: providerId,
+        providerName: String(
+          option.provider_name ||
+          option.provider ||
+          option.name ||
+          ('Provider #' + providerId)
+        ),
+        price: priceFromThb_(option.price),
+        providerPriceThb: Number(option.price),
+        available: Number(option.count)
+      };
+    })
   };
 }
 
@@ -1973,38 +1977,32 @@ function buyNumber_(p) {
     );
   }
 
-  const countries =
-    getCountries_({
-      serviceId: service
-    });
+  const countries = getCountries_({
+    serviceId: service
+  });
+  const countryInfo = countries.find(function(item) {
+    return String(item.country_id) === country;
+  });
 
-  const info =
-    (
-      Array.isArray(countries)
-        ? countries
-        : []
-    ).find(function(c) {
-      return (
-        String(
-          c.country_id ||
-          c.id
-        ) === country
-      );
-    });
-
-  if (
-    !info ||
-    info.price === undefined
-  ) {
-    throw new Error(
-      'ไม่พบราคาหรือประเทศที่เลือก'
-    );
+  if (!countryInfo) {
+    throw new Error('ไม่พบประเทศที่เลือก');
   }
 
-  const sellPrice =
-    priceFromUsd_(
-      info.price
-    );
+  // Fetch current choices again at the point of purchase. The browser may
+  // request a provider id, but it can never set the price or bypass stock.
+  const requestedProviderId = String(p.providerId || '');
+  if (!requestedProviderId) {
+    throw new Error('กรุณาเลือก Provider ก่อนสั่งซื้อ');
+  }
+
+  const selectedOption = priceOptions_(service, country).find(function(option) {
+    return String(option.provider_id) === requestedProviderId;
+  });
+
+  if (!selectedOption) {
+    throw new Error('Provider ที่เลือกไม่มีหมายเลขว่างแล้ว กรุณาเลือกใหม่');
+  }
+  const sellPrice = priceFromThb_(selectedOption.price);
 
   if (
     money_(u.credit) <
@@ -2017,29 +2015,20 @@ function buyNumber_(p) {
     );
   }
 
-  const provider = smspool_(
-    CONFIG.SMSPOOL.purchase,
+  const response = otpSms_(
+    CONFIG.OTP_SMS.purchase,
     {
       country: country,
-      service: service
+      service: service,
+      provider_id: selectedOption.provider_id,
+      max_price: selectedOption.price
     }
   );
+  const provider = response.data || {};
 
-  if (
-    !provider ||
-    Number(
-      provider.success
-    ) !== 1
-  ) {
+  if (!provider.activation_id || !provider.phone_number) {
     throw new Error(
-      (
-        provider &&
-        (
-          provider.message ||
-          provider.type
-        )
-      ) ||
-      'SMSPool ไม่มีเบอร์ว่าง'
+      'OTP-sms ไม่สามารถออกหมายเลขได้'
     );
   }
 
@@ -2060,38 +2049,39 @@ function buyNumber_(p) {
     username: u.username,
 
     smspoolOrderId:
-      provider.order_id,
+      provider.activation_id,
 
     provider_order_id:
-      provider.order_id,
+      provider.activation_id,
+
+    provider: 'otp-sms',
+    provider_id: selectedOption.provider_id,
 
     service:
       provider.service ||
-      info.name ||
       service,
 
     service_id: service,
 
     country:
-      provider.country ||
-      info.name ||
+      countryInfo.name ||
       country,
 
     country_id: country,
 
     phone:
-      provider.phonenumber,
+      provider.phone_number,
 
     phonenumber:
-      provider.phonenumber,
+      provider.phone_number,
 
-    cc: provider.cc,
+    cc: '',
 
     price: sellPrice,
     price_thb: sellPrice,
 
     cost_usd:
-      provider.cost,
+      Number(provider.price) || Number(selectedOption.price),
 
     status: 'pending',
     sms: '',
@@ -2114,9 +2104,9 @@ function buyNumber_(p) {
   return {
     success: true,
     order_id: orderId,
-    cc: provider.cc,
+    cc: '',
     phonenumber:
-      provider.phonenumber,
+      provider.phone_number,
     newCredit: newCredit
   };
 }
@@ -2153,6 +2143,23 @@ function orderForUser_(
   return o;
 }
 
+function requireOtpSmsOrder_(order) {
+  const activationId = String(
+    order.smspoolOrderId ||
+    order.provider_order_id ||
+    ''
+  );
+
+  if (
+    String(order.provider || '').toLowerCase() !== 'otp-sms' &&
+    activationId.charAt(0) !== 'X'
+  ) {
+    throw new Error(
+      'รายการเดิมมาจากผู้ให้บริการก่อนหน้า จึงจัดการผ่าน OTP-sms ไม่ได้'
+    );
+  }
+}
+
 function checkOtp_(p) {
   const u = requireAuth_(p);
 
@@ -2179,46 +2186,57 @@ function checkOtp_(p) {
     );
   }
 
-  const result = smspool_(
-    CONFIG.SMSPOOL.check,
+  requireOtpSmsOrder_(o);
+
+  const response = otpSms_(
+    CONFIG.OTP_SMS.status,
     {
-      orderid:
+      activation_id:
         o.smspoolOrderId ||
         o.provider_order_id
     }
   );
+  const result = response.data || {};
 
-  const status =
-    Number(result.status);
-
-  if (
-    status === 3 &&
-    result.sms
-  ) {
+  if (result.sms_code) {
     updateRow_(
       'Orders',
       o._row,
       {
         status: 'completed',
-        sms: result.sms
+        sms: result.sms_code,
+        updatedAt: now_()
       }
     );
+
+    // Close a received activation. Failure here must not hide the OTP that
+    // has already been safely stored for the customer.
+    try {
+      otpSms_(CONFIG.OTP_SMS.setStatus, {
+        activation_id: result.activation_id,
+        action: 'complete'
+      });
+    } catch (e) {}
   } else if (
-    [2, 6].indexOf(status) >= 0
+    ['expired', 'cancelled', 'refunded']
+      .indexOf(String(result.status).toLowerCase()) >= 0
   ) {
     updateRow_(
       'Orders',
       o._row,
       {
-        status:
-          status === 6
-            ? 'refunded'
-            : 'expired'
+        status: String(result.status).toLowerCase(),
+        updatedAt: now_()
       }
     );
   }
 
-  return result;
+  return {
+    success: true,
+    status: result.status,
+    sms: result.sms_code || '',
+    smsText: result.sms_text || ''
+  };
 }
 
 function cancelOrder_(p) {
@@ -2228,6 +2246,7 @@ function cancelOrder_(p) {
     u.username,
     p.orderId
   );
+  requireOtpSmsOrder_(o);
 
   if (
     [
@@ -2250,30 +2269,19 @@ function cancelOrder_(p) {
     ).getTime() > Date.now()
   ) {
     throw new Error(
-      'ยังยกเลิกไม่ได้ กรุณารอให้ครบ 3 นาที'
+      'ยังยกเลิกไม่ได้ กรุณารอให้ครบ 5 นาที'
     );
   }
 
-  const provider = smspool_(
-    CONFIG.SMSPOOL.cancel,
+  const response = otpSms_(
+    CONFIG.OTP_SMS.setStatus,
     {
-      orderid:
+      activation_id:
         o.smspoolOrderId ||
-        o.provider_order_id
+        o.provider_order_id,
+      action: 'cancel'
     }
   );
-
-  if (
-    Number(
-      provider.success
-    ) !== 1
-  ) {
-    throw new Error(
-      provider.message ||
-      'SMSPool ปฏิเสธการยกเลิก'
-    );
-  }
-
   const newCredit =
     changeCredit_(
       o.userId ||
@@ -2309,57 +2317,23 @@ function resendSms_(p) {
     u.username,
     p.orderId
   );
+  requireOtpSmsOrder_(o);
 
-  const originalPrice =
-    Number(
-      o.price !== undefined
-        ? o.price
-        : o.price_thb
-    );
-
-  const charge =
-    originalPrice <= 25
-      ? 25
-      : 50;
-
-  if (
-    money_(u.credit) <
-    charge
-  ) {
-    throw new Error(
-      'เครดิตไม่เพียงพอ'
-    );
-  }
-
-  const result = smspool_(
-    CONFIG.SMSPOOL.check,
+  otpSms_(
+    CONFIG.OTP_SMS.setStatus,
     {
-      orderid:
+      activation_id:
         o.smspoolOrderId ||
-        o.provider_order_id
+        o.provider_order_id,
+      action: 'retry'
     }
   );
-
-  if (
-    Number(result.status) !== 3 &&
-    Number(result.resend) !== 1
-  ) {
-    throw new Error(
-      'รายการนี้ยังไม่พร้อมขอ OTP ซ้ำ'
-    );
-  }
-
-  const newCredit =
-    changeCredit_(
-      o.username,
-      -charge
-    );
 
   updateRow_(
     'Orders',
     o._row,
     {
-      status: 'resend',
+      status: 'waiting',
       sms: '',
       updatedAt: now_()
     }
@@ -2367,14 +2341,13 @@ function resendSms_(p) {
 
   return {
     success: true,
-    charged: charge,
-    newCredit: newCredit
+    message: 'ส่งคำขอ OTP รอบใหม่แล้ว'
   };
 }
 
 function buyKeepNumber_(p) {
   throw new Error(
-    'ฟังก์ชันเช่าเบอร์ระยะยาวยังต้องระบุ endpoint rental ของ SMSPool ก่อน'
+      'OTP-sms API ไม่มี endpoint สำหรับเช่าเบอร์ระยะยาว'
   );
 }
 

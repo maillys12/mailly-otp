@@ -38,6 +38,16 @@ button, a, input, select, textarea { transition: border-color .18s ease, backgro
 #appScreen .purchase-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 22px; align-items: start; }
 #appScreen .card { border: 1px solid #e1e6f3; border-radius: 24px; box-shadow: 0 12px 30px rgba(34,42,82,.06); overflow: hidden; }
 #appScreen .picker-card { min-height: 620px; }
+#appScreen .provider-card { grid-column: 1/-1; }
+.provider-grid { display: grid; gap: 10px; }
+.provider-option { display: grid; grid-template-columns: 42px minmax(0,1fr) auto auto; align-items: center; gap: 16px; min-height: 82px; padding: 13px 15px; border: 1px solid #e5e9f4; border-radius: 16px; background: #fff; transition: .18s ease; }
+.provider-option:hover { border-color: #ffb087; box-shadow: 0 8px 18px rgba(34,42,82,.07); }
+.provider-option.selected { border: 2px solid #ff7d42; background: #fff9f5; }
+.provider-rank { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 12px; background: #f0f3fb; color: #65708d; font: 800 12px Inter,Prompt,sans-serif; }
+.provider-option.selected .provider-rank { background: #ffeadf; color: #dc5e2b; }
+.provider-copy strong { display: block; color: #1d2746; font-size: 13px; }.provider-copy span { display: block; margin-top: 4px; color: #7d879c; font-size: 11px; }.provider-copy i { color: #f2763d; }
+.provider-price { text-align: right; }.provider-price small { display: block; color: #8992a7; font-size: 10px; }.provider-price strong { color: #e9612e; font: 800 19px Inter,Prompt,sans-serif; }.provider-price em { font-size: 12px; font-style: normal; }
+.provider-buy { min-width: 112px; height: 40px; padding: 0 13px; border: 0; border-radius: 11px; background: #182247; color: #fff; font: 700 11px Prompt,Inter,sans-serif; }.provider-buy:hover { background: #f16b34; transform: translateY(-1px); }.provider-option.selected .provider-buy { background: #f16b34; }
 #appScreen .card-head { padding: 22px 24px 18px; background: linear-gradient(110deg,#fff 0%,#fafbff 100%); border-bottom-color: #edf0f7; }
 #appScreen .picker-heading { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
 #appScreen .card-head h2 { color: #151b3a; font-size: 20px; }
@@ -56,9 +66,14 @@ button, a, input, select, textarea { transition: border-color .18s ease, backgro
 .choice-card { position: relative; display: flex; min-height: 112px; flex-direction: column; align-items: center; justify-content: center; gap: 9px; padding: 11px 7px; color: #333c59; border: 1px solid #e5e9f4; border-radius: 17px; background: #fff; font: 700 12px Prompt,Inter,sans-serif; line-height: 1.25; text-align: center; overflow: hidden; }
 .choice-card:hover { transform: translateY(-2px); border-color: #ffb087; box-shadow: 0 10px 22px rgba(34,42,82,.09); }
 .choice-card.selected { color: #c55324; background: linear-gradient(145deg,#fff8f3,#fff); border: 2px solid #ff7d42; box-shadow: 0 8px 18px rgba(255,112,55,.13); }
-.service-icon, .country-flag { display: grid; width: 40px; height: 40px; place-items: center; border-radius: 13px; background: #f0f3fb; color: #475171; font-size: 19px; }
-.choice-card.selected .service-icon { color: #f26632; background: #ffebe0; }
-.country-flag { background: #f7f8fc; font-size: 26px; }
+.app-logo, .service-icon, .country-flag { display: grid; width: 44px; height: 44px; flex: 0 0 44px; place-items: center; border-radius: 14px; background: #f5f7fb; color: #475171; font-size: 19px; }
+.app-logo { padding: 7px; background: #fff; border: 1px solid #eef0f5; box-shadow: 0 3px 9px rgba(38,47,76,.05); }
+.app-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.app-logo-initial { background: linear-gradient(135deg,#394f84,#1d294d); color: #fff; font: 800 17px Inter,sans-serif; }
+.app-logo-initial:empty::after { content: attr(data-fallback); }
+.choice-card.selected .app-logo, .choice-card.selected .service-icon { border-color: #ffd5bf; background: #fff; }
+.choice-name { display: -webkit-box; overflow: hidden; max-width: 100%; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.country-flag { background: #f7f8fc; font-size: 29px; }
 .card-check { position: absolute; top: 8px; right: 8px; display: none; width: 18px; height: 18px; padding-top: 3px; border-radius: 50%; background: #f46e33; color: #fff; font-size: 10px; }
 .choice-card.selected .card-check { display: block; }
 .choice-empty { grid-column: 1/-1; display: grid; min-height: 230px; place-items: center; align-content: center; gap: 10px; color: #8a93a8; font-size: 13px; }
@@ -145,7 +160,8 @@ body:has(#login-page) #dashboard-page .bg-red-600 { background: var(--mailly-acc
 body:has(#login-page) input, body:has(#login-page) select, body:has(#login-page) textarea { border-radius: 11px !important; }
 
 @media (max-width: 640px) {
-  #appScreen .main { width: min(100% - 24px,1380px); margin-top: 24px; } #appScreen .purchase-layout { grid-template-columns: 1fr; } #appScreen .picker-card { min-height: 0; } #appScreen .card-head,#appScreen .card-body { padding-left: 17px; padding-right: 17px; } .choice-grid { grid-template-columns: repeat(3,minmax(0,1fr)); max-height: 390px; gap: 9px; }.choice-card { min-height: 96px; font-size: 11px; }.service-icon,.country-flag { width: 35px; height: 35px; }.country-flag { font-size: 22px; } #appScreen .selection-summary { grid-column: auto; align-items: stretch; flex-direction: column; padding: 19px; }.selection-action { justify-content: space-between; }.summary-price strong { font-size: 24px; } #appScreen .buy { min-width: 166px; padding: 0 13px; font-size: 12px; }.service-menu { grid-column: auto !important; }.service-menu .card-body { grid-template-columns: 1fr 1fr; }.confirm-card { padding: 30px 20px 20px; }.confirm-actions { grid-template-columns: 1fr; }
+  #appScreen .main { width: min(100% - 24px,1380px); margin-top: 24px; } #appScreen .purchase-layout { grid-template-columns: 1fr; } #appScreen .picker-card { min-height: 0; } #appScreen .card-head,#appScreen .card-body { padding-left: 17px; padding-right: 17px; } .choice-grid { grid-template-columns: repeat(3,minmax(0,1fr)); max-height: 390px; gap: 9px; }.choice-card { min-height: 104px; font-size: 11px; }.app-logo,.service-icon,.country-flag { width: 38px; height: 38px; flex-basis: 38px; }.country-flag { font-size: 25px; } #appScreen .selection-summary { grid-column: auto; align-items: stretch; flex-direction: column; padding: 19px; }.selection-action { justify-content: space-between; }.summary-price strong { font-size: 24px; } #appScreen .buy { min-width: 166px; padding: 0 13px; font-size: 12px; }.service-menu { grid-column: auto !important; }.service-menu .card-body { grid-template-columns: 1fr 1fr; }.confirm-card { padding: 30px 20px 20px; }.confirm-actions { grid-template-columns: 1fr; }
+  .provider-option { grid-template-columns: 38px minmax(0,1fr) auto; gap: 10px; padding: 12px; }.provider-price { grid-column: 2; text-align: left; }.provider-buy { grid-column: 3; grid-row: 1 / span 2; min-width: 94px; font-size: 10px; }
   body:has(.topup-card) { padding: 12px; }
   body:has(.topup-card) .topup-card { padding: 26px 20px; }
   body:has(#productGrid) main { margin-top: 28px !important; }
