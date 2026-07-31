@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const CURRENT_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzNUlEwZRBSKYENgJYS3xFv42hLx0gitbpsmLlvhMaPSvgxshInBU-gunx-dKEi2hJU/exec';
+  const CURRENT_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzwoe6zqsIXnMhBjU5wg_yGTxD4kM1cLLl1q3qz7RSjPR6-bSPyGMwYvvN2q9h7uuIE/exec';
   const query = new URLSearchParams(window.location.search);
   const BACKEND_URL = query.get('script_url') || CURRENT_BACKEND_URL;
   const STORAGE_TOKEN = 'mailly_session_token';
