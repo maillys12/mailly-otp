@@ -1,6 +1,12 @@
 MAILLY OTP - Store performance and privacy update
 
-Files to update:
+App logo restore:
+- Product cards and category buttons now select a familiar app logo from the product/category name.
+- Logos use the website's existing icon set; no supplier image URL or supplier branding is exposed.
+- Unknown products keep the generic product icon, so no broken image is shown.
+- For this logo-only update, upload store.js. Code.gs and Web App deployment do not need to change.
+
+Files included in the complete package:
 1. Code.gs
 2. shop.html
 3. store.js (new customer-facing store script)

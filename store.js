@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const CURRENT_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzwoe6zqsIXnMhBjU5wg_yGTxD4kM1cLLl1q3qz7RSjPR6-bSPyGMwYvvN2q9h7uuIE/exec';
+  const CURRENT_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzNUlEwZRBSKYENgJYS3xFv42hLx0gitbpsmLlvhMaPSvgxshInBU-gunx-dKEi2hJU/exec';
   const query = new URLSearchParams(window.location.search);
   const BACKEND_URL = query.get('script_url') || CURRENT_BACKEND_URL;
   const STORAGE_TOKEN = 'mailly_session_token';
@@ -35,6 +35,53 @@
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     })} ฿`;
+  }
+
+  const STORE_BRANDS = [
+    { match: /google\s*play|play\s*store|กูเกิล\s*เพลย์/i, icon: 'fa-brands fa-google-play', color: '#34a853', background: '#f8fafc' },
+    { match: /gmail|google\s*mail|จีเมล/i, icon: 'fa-brands fa-google', color: '#4285f4', background: '#f8fafc' },
+    { match: /outlook|hotmail|microsoft|office\s*365/i, icon: 'fa-brands fa-microsoft', color: '#00a4ef', background: '#f0f9ff' },
+    { match: /tiktok|ติ๊กต็อก/i, icon: 'fa-brands fa-tiktok', color: '#ffffff', background: '#111111' },
+    { match: /(^|[^a-z])x\s*[-–]?\s*twitter|twitter|ทวิตเตอร์/i, icon: 'fa-brands fa-x-twitter', color: '#ffffff', background: '#111111' },
+    { match: /(^|[^a-z])line([^a-z]|$)|ไลน์/i, icon: 'fa-brands fa-line', color: '#06c755', background: '#f0fdf4' },
+    { match: /facebook|เฟซบุ๊ก|เฟสบุ๊ค/i, icon: 'fa-brands fa-facebook-f', color: '#1877f2', background: '#eff6ff' },
+    { match: /instagram|อินสตาแกรม/i, icon: 'fa-brands fa-instagram', color: '#e4405f', background: '#fff1f2' },
+    { match: /telegram|เทเลแกรม/i, icon: 'fa-brands fa-telegram', color: '#26a5e4', background: '#f0f9ff' },
+    { match: /whatsapp|วอตส์แอป|วอทส์แอป/i, icon: 'fa-brands fa-whatsapp', color: '#25d366', background: '#f0fdf4' },
+    { match: /discord|ดิสคอร์ด/i, icon: 'fa-brands fa-discord', color: '#5865f2', background: '#eef2ff' },
+    { match: /youtube|ยูทูบ|ยูทูป/i, icon: 'fa-brands fa-youtube', color: '#ff0000', background: '#fff1f2' },
+    { match: /apple|icloud|app\s*store|แอปเปิล/i, icon: 'fa-brands fa-apple', color: '#111827', background: '#f8fafc' },
+    { match: /amazon|อเมซอน/i, icon: 'fa-brands fa-amazon', color: '#ff9900', background: '#111827' },
+    { match: /spotify|สปอติฟาย/i, icon: 'fa-brands fa-spotify', color: '#1ed760', background: '#111827' },
+    { match: /steam|สตีม/i, icon: 'fa-brands fa-steam', color: '#ffffff', background: '#171a21' },
+    { match: /playstation|psn|เพลย์สเตชัน/i, icon: 'fa-brands fa-playstation', color: '#006fcd', background: '#eff6ff' },
+    { match: /xbox|เอกซ์บอกซ์/i, icon: 'fa-brands fa-xbox', color: '#107c10', background: '#f0fdf4' },
+    { match: /netflix|เน็ตฟลิกซ์/i, mark: 'N', color: '#e50914', background: '#111111' },
+    { match: /roblox|โรบล็อกซ์/i, mark: 'R', color: '#ffffff', background: '#e2231a' },
+    { match: /shopee|ช้อปปี้/i, mark: 'S', color: '#ee4d2d', background: '#fff7ed' },
+    { match: /lazada|ลาซาด้า/i, mark: 'L', color: '#0f146d', background: '#fff7ed' }
+  ];
+
+  function storeBrand(value) {
+    const text = String(value || '').replace(/[_#\[\]]/g, ' ');
+    return STORE_BRANDS.find(brand => brand.match.test(text)) || null;
+  }
+
+  function storeLogoMarkup(value, compact = false) {
+    const brand = storeBrand(value);
+    const size = compact ? 20 : 48;
+    const iconSize = compact ? 14 : 23;
+    const radius = compact ? 6 : 12;
+    const border = brand?.background === '#111111' || brand?.background === '#171a21'
+      ? 'rgba(255,255,255,.13)'
+      : 'rgba(120,130,150,.22)';
+    const style = `width:${size}px;height:${size}px;min-width:${size}px;border-radius:${radius}px;background:${brand?.background || '#1c1917'};color:${brand?.color || '#fb923c'};border:1px solid ${border};display:inline-flex;align-items:center;justify-content:center;font-size:${iconSize}px;box-shadow:${compact ? 'none' : 'inset 0 1px 0 rgba(255,255,255,.06)'}`;
+    const content = brand?.icon
+      ? `<i class="${brand.icon}" aria-hidden="true"></i>`
+      : brand?.mark
+        ? `<strong aria-hidden="true" style="font:900 ${compact ? 13 : 22}px/1 Inter,Arial,sans-serif">${brand.mark}</strong>`
+        : '<i class="fa-solid fa-box" aria-hidden="true"></i>';
+    return `<span style="${style}" role="img" aria-label="${brand ? 'โลโก้แอป' : 'สินค้า'}">${content}</span>`;
   }
 
   function showToast(message, type = 'info') {
@@ -157,7 +204,7 @@
     const container = $('categoryFilters');
     const allButton = '<button data-category="all" onclick="filterCategory(\'all\', this)" class="cat-btn shrink-0 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all"><i class="fa-solid fa-border-all mr-1.5"></i>ทั้งหมด</button>';
     const buttons = categories.map(category => {
-      return `<button data-category="${escapeHtml(category.id)}" onclick="filterCategory('${escapeHtml(category.id)}', this)" class="cat-btn shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2"><i class="fa-solid fa-folder text-orange-400"></i><span>${escapeHtml(category.name)}</span></button>`;
+      return `<button data-category="${escapeHtml(category.id)}" onclick="filterCategory('${escapeHtml(category.id)}', this)" class="cat-btn shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2">${storeLogoMarkup(category.name, true)}<span>${escapeHtml(category.name)}</span></button>`;
     }).join('');
     container.innerHTML = allButton + buttons;
     updateCategoryButtonStyles();
@@ -200,10 +247,11 @@
       const stock = Math.max(0, Number(product.amount) || 0);
       const out = stock < Math.max(1, Number(product.min) || 1);
       const flag = String(product.flag || '').trim();
+      const logoSearchText = `${product.name || ''} ${product.categoryName || ''}`;
       return `<article class="glass-card rounded-2xl p-5 flex flex-col justify-between premium-card relative group animate-fade-in-up" style="animation-delay:${Math.min(index, 12) * 0.03}s">
         <div>
           <div class="flex items-center justify-between gap-3 mb-4">
-            <div class="w-12 h-12 shrink-0 rounded-xl bg-stone-900 border border-stone-700/80 flex items-center justify-center p-2 shadow-inner overflow-hidden"><i class="fa-solid fa-box text-orange-400"></i></div>
+            ${storeLogoMarkup(logoSearchText)}
             <div class="min-w-0 text-right"><span class="inline-block max-w-full truncate text-[10px] font-bold px-2.5 py-1 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-300">${escapeHtml(flag || product.categoryName)}</span><span class="block mt-1 text-[10px] ${out ? 'text-red-400' : 'text-emerald-400'} font-semibold"><i class="fa-solid fa-boxes-stacked mr-1"></i>สต็อก ${stock.toLocaleString('th-TH')}</span></div>
           </div>
           <h3 class="font-bold text-white text-base mb-2 group-hover:text-orange-300 transition-colors line-clamp-2">${escapeHtml(product.name)}</h3>
