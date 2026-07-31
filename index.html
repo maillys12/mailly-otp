@@ -223,7 +223,7 @@
           <div class="card-head picker-heading"><div><p class="section-kicker">STEP 01</p><h2><span class="icon-box"><i class="fa-solid fa-shapes"></i></span> เลือกบริการ</h2><p>เลือกแอปหรือบริการที่ต้องการรับ OTP</p></div><span id="serviceCount" class="item-count">กำลังโหลด</span></div>
           <div class="card-body">
             <label class="card-search" for="serviceSearch"><i class="fa-solid fa-magnifying-glass"></i><input id="serviceSearch" type="search" placeholder="ค้นหาบริการ เช่น Google, Telegram, TikTok"></label>
-            <div id="serviceGrid" class="choice-grid" aria-live="polite"><div class="choice-empty"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังโหลดบริการ...</div></div>
+            <div id="serviceGrid" class="choice-grid" aria-live="polite"><div class="choice-empty"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังเตรียมบริการ...</div></div>
           </div>
         </article>
 
@@ -231,7 +231,7 @@
           <div class="card-head picker-heading"><div><p class="section-kicker">STEP 02</p><h2><span class="icon-box"><i class="fa-solid fa-earth-asia"></i></span> เลือกประเทศ</h2><p id="countryHint">เลือกบริการก่อนเพื่อดูประเทศที่รองรับ</p></div><span id="countryCount" class="item-count">—</span></div>
           <div class="card-body">
             <label class="card-search" for="countrySearch"><i class="fa-solid fa-magnifying-glass"></i><input id="countrySearch" type="search" placeholder="ค้นหาประเทศ เช่น ไทย, USA, Vietnam" disabled></label>
-            <div id="countryGrid" class="choice-grid country-grid" aria-live="polite"><div class="choice-empty"><i class="fa-solid fa-arrow-left"></i> เลือกบริการก่อน</div></div>
+            <div id="countryGrid" class="choice-grid country-grid" aria-live="polite"><div class="choice-empty"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังเตรียมประเทศ...</div></div>
           </div>
         </article>
 
@@ -276,7 +276,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyKb3nfh9WEon9jeaWvfiQK55-gNwmYmfwxcTO7t7aIlt9PaoE_KbQii9uTm82_sgWO/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;
@@ -293,6 +293,9 @@
     let orderToCancel = null;
     let ordersLoading = false;
     let recentSalesLoading = false;
+    let servicesLoadPromise = null;
+    let pendingServiceShortcut = "";
+    let pendingCountryShortcut = "";
     const localCachePrefix = "mailly_fast_cache_v1_";
 
     const $ = id => document.getElementById(id);
@@ -426,9 +429,11 @@
     }
     $("logoutButton").addEventListener("click", () => logout(true));
 
-    async function loadServices() {
+    function loadServices() {
+      if (servicesLoadPromise) return servicesLoadPromise;
       const select = $("serviceSelect");
-      try {
+      servicesLoadPromise = (async () => {
+        try {
         const cached = getCached("services", 10 * 60 * 1000);
         const data = cached || await api("getServices");
         if (!cached) setCached("services", data);
@@ -438,13 +443,21 @@
         select.innerHTML = `<option value="">เลือกบริการ</option>` + services.map(x => `<option value="${escapeHtml(x.ID)}">${escapeHtml(x.name)}</option>`).join("");
         $("serviceCount").textContent = `${services.length.toLocaleString("th-TH")} บริการ`;
         renderServiceCards();
-      } catch (_) { select.innerHTML = `<option value="">โหลดบริการไม่สำเร็จ</option>`; $("serviceGrid").innerHTML = `<div class="choice-empty">ไม่สามารถโหลดบริการได้</div>`; }
+        applyPendingServiceShortcut();
+      } catch (_) {
+        select.innerHTML = `<option value="">โหลดบริการไม่สำเร็จ</option>`;
+        $("serviceGrid").innerHTML = `<div class="choice-empty">ไม่สามารถโหลดบริการได้</div>`;
+      } finally { servicesLoadPromise = null; }
+      })();
+      return servicesLoadPromise;
     }
 
     function normalized(value) { return String(value || "").toLowerCase().trim(); }
     // Priority only affects the first screen; every live API item remains searchable and available.
     const popularServices = ["lazada","line","shopee","tiktok","google","gmail","telegram","whatsapp","instagram","facebook","discord","twitter","x","amazon","netflix","microsoft","uber","apple","openai","chatgpt","grab","ais"];
     const popularCountries = ["thailand","thai","ukraine","china","philippines","myanmar","indonesia","vietnam","united states","usa","united kingdom","india","canada","germany","japan","france","singapore","lao","malaysia"];
+    const popularServiceShortcuts = ["Lazada","LINE","Shopee","TikTok","Google","Telegram","WhatsApp","Instagram","Facebook","Discord","Netflix","OpenAI"];
+    const popularCountryShortcuts = [["Thailand","🇹🇭"],["Ukraine","🇺🇦"],["China","🇨🇳"],["Philippines","🇵🇭"],["Myanmar","🇲🇲"],["Indonesia","🇮🇩"],["Vietnam","🇻🇳"],["United States","🇺🇸"],["United Kingdom","🇬🇧"],["India","🇮🇳"],["Canada","🇨🇦"],["Germany","🇩🇪"]];
     const serviceLogoSlugs = [["lazada","lazada"],["line","line"],["shopee","shopee"],["tiktok","tiktok"],["google","google"],["gmail","gmail"],["telegram","telegram"],["whatsapp","whatsapp"],["instagram","instagram"],["facebook","facebook"],["discord","discord"],["twitter","x"],["amazon","amazon"],["netflix","netflix"],["microsoft","microsoft"],["uber","uber"],["apple","apple"],["openai","openai"],["chatgpt","openai"],["grab","grab"],["ais","ais"]];
     function apiLogoUrl(service) { const candidate = service.logoUrl || service.logo_url || service.logo || service.iconUrl || service.icon_url || service.icon || ""; return /^https:\/\//i.test(String(candidate)) ? String(candidate) : ""; }
     function logoSlug(service) { const match = serviceLogoSlugs.find(([name]) => normalized(service.name).includes(name)); return match ? match[1] : ""; }
@@ -482,6 +495,37 @@
     function selectedService() { return services.find(x => String(x.ID) === $("serviceSelect").value); }
     function selectedCountry() { return countries.find(x => String(x.country_id || x.id) === $("countrySelect").value); }
     function selectedProvider() { return providerOptions.find(x => String(x.providerId) === selectedProviderId); }
+    function shortcutMatch(items, shortcut, label) {
+      const needle = normalized(shortcut);
+      return items.find(item => normalized(label(item)).includes(needle) || needle.includes(normalized(label(item))));
+    }
+    function renderReadyShortcuts() {
+      if (!services.length) {
+        $("serviceCount").textContent = "ยอดนิยมพร้อมเลือก";
+        $("serviceGrid").innerHTML = popularServiceShortcuts.map(name => `<button type="button" class="choice-card service-card ready-shortcut" data-service-shortcut="${escapeHtml(name)}">${appLogoMarkup({ name })}<span class="choice-name">${escapeHtml(name)}</span></button>`).join("");
+      }
+      if (!countries.length) {
+        $("countryCount").textContent = "ยอดนิยมพร้อมเลือก";
+        $("countryGrid").innerHTML = popularCountryShortcuts.map(([name, flag]) => `<button type="button" class="choice-card country-card ready-shortcut" data-country-shortcut="${escapeHtml(name)}"><span class="country-flag">${flag}</span><span>${escapeHtml(name)}</span></button>`).join("");
+      }
+    }
+    function applyPendingServiceShortcut() {
+      if (!pendingServiceShortcut) return;
+      const item = shortcutMatch(services, pendingServiceShortcut, service => service.name);
+      const shortcut = pendingServiceShortcut;
+      pendingServiceShortcut = "";
+      if (!item) return toast(`ยังไม่มีบริการ ${shortcut} ในรายการขณะนี้`);
+      $("serviceSelect").value = String(item.ID);
+      $("serviceSelect").dispatchEvent(new Event("change"));
+    }
+    function applyPendingCountryShortcut() {
+      if (!pendingCountryShortcut) return;
+      const item = shortcutMatch(countries, pendingCountryShortcut, country => `${country.name || ""} ${country.code || ""}`);
+      const shortcut = pendingCountryShortcut;
+      pendingCountryShortcut = "";
+      if (!item) return toast(`บริการนี้ยังไม่รองรับประเทศ ${shortcut}`);
+      selectCountry(item.country_id || item.id);
+    }
     function renderServiceCards() {
       const query = normalized($("serviceSearch").value);
       const matches = services.filter(x => normalized(x.name).includes(query));
@@ -528,10 +572,21 @@
       countries = items.filter(x => x.country_id || x.id);
       country.innerHTML = `<option value="">เลือกประเทศ</option>` + countries.map(x => `<option value="${escapeHtml(x.country_id || x.id)}">${escapeHtml(x.name || x.code || x.country_id || x.id)}</option>`).join("");
       country.disabled = false; $("countrySearch").disabled = false; $("countryCount").textContent = `${countries.length.toLocaleString("th-TH")} ประเทศ`; $("countryHint").textContent = `ประเทศที่รองรับสำหรับ ${selectedService()?.name || "บริการนี้"}`; renderCountryCards();
+      applyPendingCountryShortcut();
     });
 
     $("serviceGrid").addEventListener("click", event => {
       const card = event.target.closest("[data-service-id]");
+      const shortcut = event.target.closest("[data-service-shortcut]");
+      if (shortcut && $("serviceGrid").contains(shortcut)) {
+        event.preventDefault();
+        pendingServiceShortcut = shortcut.dataset.serviceShortcut;
+        shortcut.classList.add("selected");
+        $("serviceGrid").querySelectorAll("[data-service-shortcut]").forEach(item => { if (item !== shortcut) item.classList.remove("selected"); });
+        if (!services.length) { toast("กำลังเปิดบริการที่เลือก..."); loadServices(); return; }
+        applyPendingServiceShortcut();
+        return;
+      }
       if (!card || !$("serviceGrid").contains(card)) return;
       event.preventDefault();
       $("serviceSelect").value = card.dataset.serviceId;
@@ -567,6 +622,17 @@
     // Delegation keeps country cards tappable after the grid is redrawn on mobile Safari.
     $("countryGrid").addEventListener("click", event => {
       const card = event.target.closest("[data-country-id]");
+      const shortcut = event.target.closest("[data-country-shortcut]");
+      if (shortcut && $("countryGrid").contains(shortcut)) {
+        event.preventDefault();
+        pendingCountryShortcut = shortcut.dataset.countryShortcut;
+        shortcut.classList.add("selected");
+        $("countryGrid").querySelectorAll("[data-country-shortcut]").forEach(item => { if (item !== shortcut) item.classList.remove("selected"); });
+        if (!$("serviceSelect").value) { toast("เลือกบริการ แล้วระบบจะเลือกประเทศนี้ให้ทันที"); return; }
+        if (!countries.length) { toast("กำลังค้นหาประเทศที่รองรับ..."); return; }
+        applyPendingCountryShortcut();
+        return;
+      }
       if (!card || !$("countryGrid").contains(card)) return;
       event.preventDefault();
       selectCountry(card.dataset.countryId);
@@ -723,6 +789,7 @@
     $("copyUserButton").addEventListener("click", () => navigator.clipboard.writeText(currentUser.username).then(() => toast("คัดลอก Username แล้ว")));
 
     (async function boot() {
+      renderReadyShortcuts();
       loadLoginStats();
       if (!sessionToken) return showAuth();
       try {
