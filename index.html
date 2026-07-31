@@ -105,7 +105,7 @@
     .phone{font:600 13px Inter,sans-serif}
     .otp{font:800 17px Inter,sans-serif;color:var(--green);letter-spacing:1px}
     .badge{display:inline-flex;padding:6px 9px;border-radius:999px;font-size:10px;font-weight:600}
-    .badge.pending,.badge.processing,.badge.resend{background:#fff5e9;color:#a65a1f}
+    .badge.pending,.badge.waiting,.badge.processing,.badge.resend,.badge.retry,.badge.active{background:#fff5e9;color:#a65a1f}
     .badge.completed{background:#ebfbf4;color:#087747}
     .badge.refunded,.badge.expired,.badge.cancelled{background:#f2f3f5;color:#707887}
     .order-actions{display:flex;gap:7px}
@@ -267,9 +267,20 @@
       <div class="confirm-actions"><button id="modalCancel" class="secondary-button" type="button" data-close-modal>กลับไปแก้ไข</button><button id="confirmBuyButton" class="primary" type="button"><i class="fa-solid fa-bolt"></i> ยืนยันและซื้อเบอร์</button></div>
     </div>
   </div>
+  <div id="cancelModal" class="purchase-modal hidden" role="dialog" aria-modal="true" aria-labelledby="cancelTitle">
+    <div class="modal-backdrop" data-close-cancel-modal></div>
+    <div class="confirm-card cancel-confirm-card">
+      <button class="modal-close" type="button" data-close-cancel-modal aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button>
+      <div class="confirm-icon cancel-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <p class="section-kicker">CANCEL ACTIVATION</p><h2 id="cancelTitle">ยืนยันการยกเลิก</h2><p class="confirm-subtitle">ระบบจะตรวจสถานะล่าสุดกับ OTP-sms ก่อนส่งคำขอยกเลิกและคืนเครดิต</p>
+      <div class="confirm-details"><div><span>บริการ</span><strong id="cancelService">—</strong></div><div><span>หมายเลข</span><strong id="cancelPhone">—</strong></div><div class="confirm-total"><span>เครดิตที่จะคืน</span><strong><span id="cancelPrice">—</span> ฿</strong></div></div>
+      <div id="cancelAlert" class="alert" role="alert" aria-live="polite"></div>
+      <div class="confirm-actions"><button class="secondary-button" type="button" data-close-cancel-modal>เก็บรายการไว้</button><button id="confirmCancelButton" class="primary danger-primary" type="button"><i class="fa-solid fa-xmark"></i> ยืนยันยกเลิก</button></div>
+    </div>
+  </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbx3nvWnT021wBm60Gx8gEMAv0KFL5ACzV_x93-b51FrV-e7LhACBmBucCnvw71I0Bes/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;
@@ -283,6 +294,7 @@
     let showAllServices = false;
     let showAllCountries = false;
     let providerRequestId = 0;
+    let orderToCancel = null;
 
     const $ = id => document.getElementById(id);
     async function api(action, payload = {}) {
@@ -569,7 +581,7 @@
     $("countrySearch").addEventListener("input", renderCountryCards);
 
     function isActiveOrder(order) {
-      return ["pending", "processing", "resend", "1"].includes(String(order.status).toLowerCase());
+      return ["pending", "waiting", "processing", "resend", "retry", "active", "1"].includes(String(order.status).toLowerCase());
     }
     function activeOrderMarkup(order) {
       const otp = order.sms ? `<button type="button" class="active-otp copy-otp" data-otp="${escapeHtml(order.sms)}" title="แตะเพื่อคัดลอกรหัส">${escapeHtml(order.sms)} <i class="fa-regular fa-copy"></i></button>` : `<div class="active-wait"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังรอ SMS...</div>`;
@@ -632,6 +644,7 @@
       const result = await api("getMyOrders");
       if (!result.success) return;
       const orders = result.orders || [], container = $("orders");
+      container._items = orders;
       renderActiveOrders(orders);
       if (!orders.length) { container.innerHTML = `<div class="empty"><i class="fa-regular fa-folder-open" style="display:block;font-size:24px;margin-bottom:10px"></i>ยังไม่มีรายการสั่งซื้อ</div>`; return; }
       container.innerHTML = orders.map(order => {
@@ -647,7 +660,7 @@
     }
 
     function statusText(status) {
-      return ({ pending:"รอ OTP",processing:"กำลังทำงาน",resend:"รอ OTP ใหม่",completed:"สำเร็จ",refunded:"คืนเครดิต",expired:"หมดเวลา",cancelled:"ยกเลิก" })[String(status).toLowerCase()] || status;
+      return ({ pending:"รอ OTP",waiting:"รอ OTP",processing:"กำลังทำงาน",resend:"รอ OTP ใหม่",retry:"กำลังขอ OTP ใหม่",active:"กำลังรอ OTP",completed:"สำเร็จ",refunded:"คืนเครดิต",expired:"หมดเวลา",cancelled:"ยกเลิก" })[String(status).toLowerCase()] || status;
     }
     async function checkOrder(orderId) {
       const result = await api("checkOTP", { orderId });
@@ -655,13 +668,30 @@
       if (result.sms) toast("ได้รับ OTP: " + result.sms);
       await loadOrders();
     }
-    async function cancelOrder(orderId) {
-      if (!confirm("ยืนยันยกเลิกหมายเลขและขอคืนเครดิต?")) return;
-      const result = await api("cancelOrderWithRefund", { orderId });
-      if (!result.success) return toast(result.message || "ยังไม่สามารถยกเลิกได้");
-      currentUser.balance = result.newCredit; $("balance").textContent = Number(result.newCredit).toFixed(2) + " ฿";
-      toast("ยกเลิกและคืนเครดิตแล้ว"); await loadOrders();
+    function openCancelModal(orderId) {
+      const order = ($("orders")._items || []).find(item => String(item.orderId) === String(orderId));
+      if (!order) return toast("ไม่พบข้อมูลคำสั่งซื้อ กรุณารีเฟรชอีกครั้ง");
+      orderToCancel = order;
+      $("cancelService").textContent = order.service || "OTP Service";
+      $("cancelPhone").textContent = order.phone || "—";
+      $("cancelPrice").textContent = Number(order.price || 0).toFixed(2);
+      alertBox("cancelAlert", "");
+      $("cancelModal").classList.remove("hidden"); document.body.classList.add("modal-open");
     }
+    function closeCancelModal() { $("cancelModal").classList.add("hidden"); document.body.classList.remove("modal-open"); orderToCancel = null; }
+    async function cancelOrder(orderId) { openCancelModal(orderId); }
+    document.querySelectorAll("[data-close-cancel-modal]").forEach(button => button.addEventListener("click", closeCancelModal));
+    $("confirmCancelButton").addEventListener("click", async () => {
+      if (!orderToCancel) return;
+      const button = $("confirmCancelButton"); alertBox("cancelAlert", ""); setBusy(button, true, "กำลังตรวจสอบและยกเลิก...");
+      try {
+        const result = await api("cancelOrderWithRefund", { orderId: orderToCancel.orderId });
+        if (!result.success) throw new Error(result.message || "ยังไม่สามารถยกเลิกได้");
+        currentUser.balance = result.newCredit; $("balance").textContent = Number(result.newCredit).toFixed(2) + " ฿";
+        closeCancelModal(); toast("ยกเลิกและคืนเครดิตแล้ว"); await loadOrders();
+      } catch (error) { alertBox("cancelAlert", error.message); }
+      finally { setBusy(button, false); }
+    });
     window.checkOrder = checkOrder; window.cancelOrder = cancelOrder;
     $("refreshOrders").addEventListener("click", loadOrders);
     $("refreshActiveOrders").addEventListener("click", loadOrders);

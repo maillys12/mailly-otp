@@ -77,7 +77,8 @@ const SCHEMAS = {
     'cancel_unlock_at',
     'refunded_at',
     'provider',
-    'provider_id'
+    'provider_id',
+    'provider_status'
   ],
 
   Transactions: [
@@ -1877,6 +1878,70 @@ function getProviderOptions_(p) {
   };
 }
 
+function normalizeOtpSmsStatus_(result) {
+  const raw = String(
+    result.status ||
+    result.activation_status ||
+    result.state ||
+    ''
+  ).toLowerCase();
+
+  if (result.sms_code || result.code || raw === 'completed' || raw === 'complete' || raw === 'success') {
+    return 'completed';
+  }
+  if (['cancelled', 'canceled'].indexOf(raw) >= 0) return 'cancelled';
+  if (raw === 'refunded') return 'refunded';
+  if (['expired', 'timeout', 'timed_out'].indexOf(raw) >= 0) return 'expired';
+  if (['waiting', 'pending', 'processing', 'resend', 'retry', 'active'].indexOf(raw) >= 0) return raw;
+
+  // Keep an unknown upstream state visible instead of pretending the order is
+  // still pending. This makes discrepancies diagnosable from the source data.
+  return raw || 'pending';
+}
+
+function syncOtpSmsOrder_(order) {
+  const current = String(order.status || '').toLowerCase();
+  const finalStatuses = ['completed', 'cancelled', 'refunded', 'expired', 'failed'];
+  if (finalStatuses.indexOf(current) >= 0) return order;
+
+  try {
+    requireOtpSmsOrder_(order);
+    const response = otpSms_(CONFIG.OTP_SMS.status, {
+      activation_id: order.smspoolOrderId || order.provider_order_id
+    });
+    const result = response.data || response || {};
+    const nextStatus = normalizeOtpSmsStatus_(result);
+    const sms = result.sms_code || result.code || order.sms || '';
+    const providerStatus = String(result.status || result.activation_status || result.state || '');
+    const updates = {
+      status: nextStatus,
+      sms: sms,
+      provider_status: providerStatus,
+      updatedAt: now_()
+    };
+
+    updateRow_('Orders', order._row, updates);
+    Object.keys(updates).forEach(function(key) { order[key] = updates[key]; });
+
+    // A received OTP is complete at the upstream provider too. This call is
+    // best-effort; the stored OTP must remain available if closing it fails.
+    if (nextStatus === 'completed' && providerStatus !== 'completed') {
+      try {
+        otpSms_(CONFIG.OTP_SMS.setStatus, {
+          activation_id: order.smspoolOrderId || order.provider_order_id,
+          action: 'complete'
+        });
+      } catch (ignore) {}
+    }
+  } catch (error) {
+    // Do not replace a known status with a guessed value if the source is
+    // temporarily unavailable. The next poll will try again.
+    order.sync_error = safeError_(error);
+  }
+
+  return order;
+}
+
 function getMyOrders_(p) {
   const u = requireAuth_(p);
 
@@ -1892,6 +1957,7 @@ function getMyOrders_(p) {
     })
     .slice(-30)
     .reverse()
+    .map(syncOtpSmsOrder_)
     .map(function(o) {
       return {
         orderId:
@@ -1922,6 +1988,9 @@ function getMyOrders_(p) {
 
         status:
           o.status || '',
+
+        providerStatus:
+          o.provider_status || '',
 
         price:
           money_(
@@ -2255,54 +2324,13 @@ function checkOtp_(p) {
 
   requireOtpSmsOrder_(o);
 
-  const response = otpSms_(
-    CONFIG.OTP_SMS.status,
-    {
-      activation_id:
-        o.smspoolOrderId ||
-        o.provider_order_id
-    }
-  );
-  const result = response.data || {};
-
-  if (result.sms_code) {
-    updateRow_(
-      'Orders',
-      o._row,
-      {
-        status: 'completed',
-        sms: result.sms_code,
-        updatedAt: now_()
-      }
-    );
-
-    // Close a received activation. Failure here must not hide the OTP that
-    // has already been safely stored for the customer.
-    try {
-      otpSms_(CONFIG.OTP_SMS.setStatus, {
-        activation_id: result.activation_id,
-        action: 'complete'
-      });
-    } catch (e) {}
-  } else if (
-    ['expired', 'cancelled', 'refunded']
-      .indexOf(String(result.status).toLowerCase()) >= 0
-  ) {
-    updateRow_(
-      'Orders',
-      o._row,
-      {
-        status: String(result.status).toLowerCase(),
-        updatedAt: now_()
-      }
-    );
-  }
+  const synced = syncOtpSmsOrder_(o);
 
   return {
     success: true,
-    status: result.status,
-    sms: result.sms_code || '',
-    smsText: result.sms_text || ''
+    status: synced.status,
+    providerStatus: synced.provider_status || '',
+    sms: synced.sms || ''
   };
 }
 
@@ -2315,6 +2343,11 @@ function cancelOrder_(p) {
   );
   requireOtpSmsOrder_(o);
 
+  // Always check upstream before deciding whether an activation is eligible
+  // for cancellation. A locally cached pending status must not block a valid
+  // cancellation or refund when OTP-sms has already changed state.
+  const synced = syncOtpSmsOrder_(o);
+
   if (
     [
       'completed',
@@ -2322,7 +2355,7 @@ function cancelOrder_(p) {
       'cancelled',
       'expired'
     ].indexOf(
-      String(o.status)
+      String(synced.status).toLowerCase()
     ) >= 0
   ) {
     throw new Error(
@@ -2330,17 +2363,7 @@ function cancelOrder_(p) {
     );
   }
 
-  if (
-    new Date(
-      o.cancel_unlock_at
-    ).getTime() > Date.now()
-  ) {
-    throw new Error(
-      'ยังยกเลิกไม่ได้ กรุณารอให้ครบ 5 นาที'
-    );
-  }
-
-  const response = otpSms_(
+  otpSms_(
     CONFIG.OTP_SMS.setStatus,
     {
       activation_id:
