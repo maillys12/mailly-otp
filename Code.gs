@@ -2255,9 +2255,17 @@ function buyNumber_(p) {
     );
   }
 
-  const countries = getCountries_({
+  const countryResult = getCountries_({
     serviceId: service
   });
+  // getCountries_ now returns a named collection so request metadata can be
+  // appended safely. Keep accepting the former array response as well, which
+  // makes purchases resilient while cached/deployed versions are transitioning.
+  const countries = Array.isArray(countryResult)
+    ? countryResult
+    : countryResult && Array.isArray(countryResult.countries)
+      ? countryResult.countries
+      : [];
   const countryInfo = countries.find(function(item) {
     return String(item.country_id) === country;
   });
