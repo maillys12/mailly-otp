@@ -1788,26 +1788,9 @@ function priceFromThb_(thb) {
     throw new Error('OTP-sms ส่งราคาที่ไม่ถูกต้อง');
   }
 
-  const markup =
-    Number(
-      setting_(
-        'markup',
-        CONFIG.DEFAULT_MARKUP
-      )
-    ) || CONFIG.DEFAULT_MARKUP;
-
-  const minimum =
-    Number(
-      setting_(
-        'min_price_thb',
-        CONFIG.DEFAULT_MIN_PRICE_THB
-      )
-    ) || CONFIG.DEFAULT_MIN_PRICE_THB;
-
-  return Math.max(
-    minimum,
-    money_(base * markup)
-  );
+  // Sell at the exact cost returned by OTP-sms. This same function is used
+  // both for the provider cards and immediately before charging credit.
+  return money_(base);
 }
 
 function priceOptions_(service, country) {

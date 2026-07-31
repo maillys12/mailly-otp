@@ -240,12 +240,13 @@
       <div class="confirm-icon"><i class="fa-solid fa-circle-check"></i></div>
       <p class="section-kicker">READY TO PURCHASE</p><h2 id="confirmTitle">ยืนยันการสั่งซื้อ</h2><p class="confirm-subtitle">ตรวจสอบรายละเอียดและยอดเครดิตก่อนดำเนินการ</p>
       <div class="confirm-details"><div><span>บริการ</span><strong id="confirmService">—</strong></div><div><span>ประเทศ</span><strong id="confirmCountry">—</strong></div><div><span>Provider</span><strong id="confirmProvider">—</strong></div><div class="confirm-total"><span>ยอดที่ต้องชำระ</span><strong><span id="confirmPrice">—</span> ฿</strong></div></div>
+      <div id="purchaseAlert" class="alert" role="alert" aria-live="polite"></div>
       <div class="confirm-actions"><button id="modalCancel" class="secondary-button" type="button" data-close-modal>กลับไปแก้ไข</button><button id="confirmBuyButton" class="primary" type="button"><i class="fa-solid fa-bolt"></i> ยืนยันและซื้อเบอร์</button></div>
     </div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzT1rGE1M-sPQuR9ZkzKjDXxNtY8V7QGBD0-TDTWU1w1xPh7dFq82lNo4lCWYowrY24/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;
@@ -274,7 +275,10 @@
       button.innerHTML = busy ? `<i class="fa-solid fa-circle-notch fa-spin"></i> ${text}` : button.dataset.text;
     }
     function alertBox(id, message, type = "error") {
-      const box = $(id); box.textContent = message || ""; box.className = `alert ${message ? "show" : ""} ${type}`;
+      const box = $(id);
+      if (!box) return;
+      box.textContent = message || "";
+      box.className = `alert ${message ? "show" : ""} ${type}`;
     }
     function toast(message) {
       const el = $("toast"); el.textContent = message; el.classList.add("show");
