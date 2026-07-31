@@ -1713,7 +1713,7 @@ function otpSms_(
     body = JSON.parse(text);
   } catch (e) {
     throw new Error(
-      'OTP-sms ส่งข้อมูลไม่ใช่ JSON'
+      'ระบบรับข้อมูลตอบกลับไม่ถูกต้อง'
     );
   }
 
@@ -1721,11 +1721,27 @@ function otpSms_(
     throw new Error(
       body.message ||
       body.error ||
-      'OTP-sms HTTP ' + code
+      'ไม่สามารถเชื่อมต่อระบบได้ (รหัส ' + code + ')'
     );
   }
 
   return body;
+}
+
+// Keep catalogue lookups responsive without weakening the purchase checks.
+// CacheService is best-effort: a cache miss always falls back to the live
+// provider, and buyNumber_ explicitly bypasses the short price cache.
+function cachedJson_(key, seconds, loader, bypass) {
+  const cache = CacheService.getScriptCache();
+  if (!bypass) {
+    const cached = cache.get(key);
+    if (cached) {
+      try { return JSON.parse(cached); } catch (_) {}
+    }
+  }
+  const value = loader();
+  try { cache.put(key, JSON.stringify(value), seconds); } catch (_) {}
+  return value;
 }
 
 function getServices_() {
@@ -1742,13 +1758,9 @@ function getServices_() {
     );
   }
 
-  const response = otpSms_(
-    CONFIG.OTP_SMS.services,
-    {}
-  );
-
-  return (response.data.services || [])
-    .map(function(service) {
+  return cachedJson_('mailly_catalogue_services_v1', 600, function() {
+    const response = otpSms_(CONFIG.OTP_SMS.services, {});
+    return (response.data.services || []).map(function(service) {
       return {
         ID: service.code,
         name: service.name_th || service.name || service.code,
@@ -1756,6 +1768,7 @@ function getServices_() {
         popular: Boolean(service.popular)
       };
     });
+  });
 }
 
 function getCountries_(p) {
@@ -1768,15 +1781,11 @@ function getCountries_(p) {
     );
   }
 
-  const response = otpSms_(
-    CONFIG.OTP_SMS.countries,
-    {}
-  );
-
-  // OTP-sms returns a global country catalogue. Availability and price are
-  // checked server-side by getPriceQuote_ before the user can buy.
-  return (response.data.countries || [])
-    .map(function(country) {
+  // This is a global catalogue; actual availability is still fetched when a
+  // customer selects the route and again immediately before purchase.
+  return cachedJson_('mailly_catalogue_countries_v1', 3600, function() {
+    const response = otpSms_(CONFIG.OTP_SMS.countries, {});
+    return (response.data.countries || []).map(function(country) {
       return {
         country_id: country.id,
         name: country.name_th || country.name || String(country.id),
@@ -1786,13 +1795,14 @@ function getCountries_(p) {
         popular: Boolean(country.popular)
       };
     });
+  });
 }
 
 function priceFromThb_(thb) {
   const base = Number(thb);
 
   if (isNaN(base) || base < 0) {
-    throw new Error('OTP-sms ส่งราคาที่ไม่ถูกต้อง');
+    throw new Error('ระบบส่งราคาที่ไม่ถูกต้อง');
   }
 
   // Sell at the exact cost returned by OTP-sms. This same function is used
@@ -1800,35 +1810,18 @@ function priceFromThb_(thb) {
   return money_(base);
 }
 
-function priceOptions_(service, country) {
-  const response = otpSms_(
-    CONFIG.OTP_SMS.prices,
-    {
-      service: service,
-      country: country
-    }
-  );
-
-  const options =
-    response.data &&
-    Array.isArray(response.data.options)
-      ? response.data.options
-      : [];
-
-  const available = options
-    .filter(function(option) {
-      return Number(option.count) > 0 &&
-        option.provider_id !== undefined;
-    })
-    .sort(function(a, b) {
-      return Number(a.price) - Number(b.price);
-    });
-
-  if (!available.length) {
-    throw new Error('ไม่มีหมายเลขว่างสำหรับบริการและประเทศที่เลือก');
-  }
-
-  return available;
+function priceOptions_(service, country, bypassCache) {
+  const cacheKey = 'mailly_prices_v1_' + service + '_' + country;
+  return cachedJson_(cacheKey, 12, function() {
+    const response = otpSms_(CONFIG.OTP_SMS.prices, { service: service, country: country });
+    const options = response.data && Array.isArray(response.data.options)
+      ? response.data.options : [];
+    const available = options.filter(function(option) {
+      return Number(option.count) > 0 && option.provider_id !== undefined;
+    }).sort(function(a, b) { return Number(a.price) - Number(b.price); });
+    if (!available.length) throw new Error('ไม่มีหมายเลขว่างสำหรับบริการและประเทศที่เลือก');
+    return available;
+  }, Boolean(bypassCache));
 }
 
 function getPriceQuote_(p) {
@@ -2128,15 +2121,15 @@ function buyNumber_(p) {
   // request a provider id, but it can never set the price or bypass stock.
   const requestedProviderId = String(p.providerId || '');
   if (!requestedProviderId) {
-    throw new Error('กรุณาเลือก Provider ก่อนสั่งซื้อ');
+    throw new Error('กรุณาเลือกตัวเลือกก่อนสั่งซื้อ');
   }
 
-  const selectedOption = priceOptions_(service, country).find(function(option) {
+  const selectedOption = priceOptions_(service, country, true).find(function(option) {
     return String(option.provider_id) === requestedProviderId;
   });
 
   if (!selectedOption) {
-    throw new Error('Provider ที่เลือกไม่มีหมายเลขว่างแล้ว กรุณาเลือกใหม่');
+    throw new Error('ตัวเลือกที่เลือกไม่มีหมายเลขว่างแล้ว กรุณาเลือกใหม่');
   }
   const sellPrice = priceFromThb_(selectedOption.price);
 
@@ -2164,7 +2157,7 @@ function buyNumber_(p) {
 
   if (!provider.activation_id || !provider.phone_number) {
     throw new Error(
-      'OTP-sms ไม่สามารถออกหมายเลขได้'
+      'ยังไม่สามารถออกหมายเลขได้ กรุณาลองใหม่อีกครั้ง'
     );
   }
 
@@ -2291,7 +2284,7 @@ function requireOtpSmsOrder_(order) {
     activationId.charAt(0) !== 'X'
   ) {
     throw new Error(
-      'รายการเดิมมาจากผู้ให้บริการก่อนหน้า จึงจัดการผ่าน OTP-sms ไม่ได้'
+      'รายการนี้ไม่สามารถจัดการต่อได้ กรุณาติดต่อแอดมิน'
     );
   }
 }
@@ -2437,7 +2430,7 @@ function resendSms_(p) {
 
 function buyKeepNumber_(p) {
   throw new Error(
-      'OTP-sms API ไม่มี endpoint สำหรับเช่าเบอร์ระยะยาว'
+      'บริการเช่าเบอร์ระยะยาวยังไม่พร้อมใช้งาน'
   );
 }
 

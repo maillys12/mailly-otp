@@ -235,16 +235,12 @@
           </div>
         </article>
 
-        <article class="card provider-card">
-          <div class="card-head picker-heading"><div><p class="section-kicker">STEP 03</p><h2><span class="icon-box"><i class="fa-solid fa-building-circle-check"></i></span> เลือก Provider</h2><p id="providerHint">เลือกบริการและประเทศก่อนเพื่อดูราคาและจำนวนเบอร์</p></div><span id="providerCount" class="item-count">—</span></div>
-          <div class="card-body"><div id="providerGrid" class="provider-grid" aria-live="polite"><div class="choice-empty"><i class="fa-solid fa-arrow-left"></i> เลือกบริการและประเทศก่อน</div></div></div>
-        </article>
+        <select id="serviceSelect" class="selection-native" aria-hidden="true" tabindex="-1"><option value="">กำลังโหลดบริการ...</option></select>
+        <select id="countrySelect" class="selection-native" aria-hidden="true" tabindex="-1" disabled><option value="">เลือกบริการก่อน</option></select>
 
-        <article class="card selection-summary">
-          <select id="serviceSelect" class="selection-native" aria-hidden="true" tabindex="-1"><option value="">กำลังโหลดบริการ...</option></select>
-          <select id="countrySelect" class="selection-native" aria-hidden="true" tabindex="-1" disabled><option value="">เลือกบริการก่อน</option></select>
-          <div class="selection-copy"><span class="summary-icon"><i class="fa-solid fa-bag-shopping"></i></span><div><p class="section-kicker">STEP 04</p><h2>ตรวจสอบก่อนสั่งซื้อ</h2><p id="selectionText">เลือก Provider ที่ต้องการเพื่อดูสรุปรายการ</p></div></div>
-          <div class="selection-action"><div class="summary-price"><span>ราคาที่เลือก</span><strong><span id="quotePrice">—</span> <small>฿</small></strong></div><button id="buyButton" class="primary buy" disabled><i class="fa-solid fa-arrow-right"></i> ดูสรุปรายการ</button></div>
+        <article class="card provider-card">
+          <div class="card-head picker-heading"><div><p class="section-kicker">STEP 03</p><h2><span class="icon-box"><i class="fa-solid fa-layer-group"></i></span> เลือกตัวเลือก</h2><p id="providerHint">เลือกบริการและประเทศก่อนเพื่อดูราคาและจำนวนเบอร์</p></div><span id="providerCount" class="item-count">—</span></div>
+          <div class="card-body"><div id="providerGrid" class="provider-grid" aria-live="polite"><div class="choice-empty"><i class="fa-solid fa-arrow-left"></i> เลือกบริการและประเทศก่อน</div></div></div>
         </article>
 
         <article class="card orders-card">
@@ -262,7 +258,7 @@
       <button class="modal-close" type="button" data-close-modal aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button>
       <div class="confirm-icon"><i class="fa-solid fa-circle-check"></i></div>
       <p class="section-kicker">READY TO PURCHASE</p><h2 id="confirmTitle">ยืนยันการสั่งซื้อ</h2><p class="confirm-subtitle">ตรวจสอบรายละเอียดและยอดเครดิตก่อนดำเนินการ</p>
-      <div class="confirm-details"><div><span>บริการ</span><strong id="confirmService">—</strong></div><div><span>ประเทศ</span><strong id="confirmCountry">—</strong></div><div><span>Provider</span><strong id="confirmProvider">—</strong></div><div class="confirm-total"><span>ยอดที่ต้องชำระ</span><strong><span id="confirmPrice">—</span> ฿</strong></div></div>
+      <div class="confirm-details"><div><span>บริการ</span><strong id="confirmService">—</strong></div><div><span>ประเทศ</span><strong id="confirmCountry">—</strong></div><div class="confirm-total"><span>ยอดที่ต้องชำระ</span><strong><span id="confirmPrice">—</span> ฿</strong></div></div>
       <div id="purchaseAlert" class="alert" role="alert" aria-live="polite"></div>
       <div class="confirm-actions"><button id="modalCancel" class="secondary-button" type="button" data-close-modal>กลับไปแก้ไข</button><button id="confirmBuyButton" class="primary" type="button"><i class="fa-solid fa-bolt"></i> ยืนยันและซื้อเบอร์</button></div>
     </div>
@@ -272,7 +268,7 @@
     <div class="confirm-card cancel-confirm-card">
       <button class="modal-close" type="button" data-close-cancel-modal aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button>
       <div class="confirm-icon cancel-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-      <p class="section-kicker">CANCEL ACTIVATION</p><h2 id="cancelTitle">ยืนยันการยกเลิก</h2><p class="confirm-subtitle">ระบบจะตรวจสถานะล่าสุดกับ OTP-sms ก่อนส่งคำขอยกเลิกและคืนเครดิต</p>
+      <p class="section-kicker">CANCEL ORDER</p><h2 id="cancelTitle">ยืนยันการยกเลิก</h2><p class="confirm-subtitle">ระบบจะตรวจสอบสถานะล่าสุดก่อนส่งคำขอยกเลิกและคืนเครดิต</p>
       <div class="confirm-details"><div><span>บริการ</span><strong id="cancelService">—</strong></div><div><span>หมายเลข</span><strong id="cancelPhone">—</strong></div><div class="confirm-total"><span>เครดิตที่จะคืน</span><strong><span id="cancelPrice">—</span> ฿</strong></div></div>
       <div id="cancelAlert" class="alert" role="alert" aria-live="polite"></div>
       <div class="confirm-actions"><button class="secondary-button" type="button" data-close-cancel-modal>เก็บรายการไว้</button><button id="confirmCancelButton" class="primary danger-primary" type="button"><i class="fa-solid fa-xmark"></i> ยืนยันยกเลิก</button></div>
@@ -280,7 +276,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzWYKjmThnXI6UgD4gqgoCVhujZmkQX_T5iLorW5xgc6RAdhI22mnXQN2dxXlaFL0Qs/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;
@@ -295,13 +291,30 @@
     let showAllCountries = false;
     let providerRequestId = 0;
     let orderToCancel = null;
+    let ordersLoading = false;
+    let recentSalesLoading = false;
+    const localCachePrefix = "mailly_fast_cache_v1_";
 
     const $ = id => document.getElementById(id);
     async function api(action, payload = {}) {
-      const response = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action, payload: { ...payload, token: sessionToken } }) });
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+      let response;
+      try {
+        response = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action, payload: { ...payload, token: sessionToken } }), signal: controller.signal });
+      } finally { clearTimeout(timeout); }
       const data = await response.json();
       if (!data.success && /Session|เข้าสู่ระบบใหม่/.test(data.message || "")) logout(false);
       return data;
+    }
+    function getCached(key, maxAge) {
+      try {
+        const value = JSON.parse(localStorage.getItem(localCachePrefix + key) || "null");
+        return value && Date.now() - value.savedAt < maxAge ? value.data : null;
+      } catch (_) { return null; }
+    }
+    function setCached(key, data) {
+      try { localStorage.setItem(localCachePrefix + key, JSON.stringify({ savedAt: Date.now(), data })); } catch (_) {}
     }
     function show(id) { $(id).classList.remove("hidden"); }
     function hide(id) { $(id).classList.add("hidden"); }
@@ -398,7 +411,7 @@
       $("avatar").textContent = currentUser.username.charAt(0).toUpperCase();
       $("balance").textContent = Number(currentUser.balance || 0).toFixed(2) + " ฿";
       loadServices(); loadOrders(); loadRecentSales();
-      clearInterval(orderPoller); orderPoller = setInterval(loadOrders, 7000);
+      clearInterval(orderPoller); orderPoller = setInterval(loadOrders, 10000);
       clearInterval(recentSalesPoller); recentSalesPoller = setInterval(loadRecentSales, 30000);
     }
 
@@ -416,7 +429,9 @@
     async function loadServices() {
       const select = $("serviceSelect");
       try {
-        const data = await api("getServices");
+        const cached = getCached("services", 10 * 60 * 1000);
+        const data = cached || await api("getServices");
+        if (!cached) setCached("services", data);
         const rawServices = (Array.isArray(data) ? data : Object.values(data || {}).filter(x => x && typeof x === "object"))
           .filter(x => x.ID && x.name);
         services = rankByPopular(rawServices, item => item.name, popularServices);
@@ -483,32 +498,32 @@
     }
     function resetProviders(message = "เลือกบริการและประเทศก่อน") {
       providerOptions = []; selectedProviderId = ""; currentQuote = null;
-      $("providerCount").textContent = "—"; $("quotePrice").textContent = "—"; $("buyButton").disabled = true;
+      $("providerCount").textContent = "—";
       $("providerHint").textContent = message;
       $("providerGrid").innerHTML = `<div class="choice-empty"><i class="fa-solid fa-arrow-left"></i> ${escapeHtml(message)}</div>`;
-      $("selectionText").textContent = "เลือก Provider ที่ต้องการเพื่อดูสรุปรายการ";
     }
     function renderProviderCards() {
       $("providerGrid").innerHTML = providerOptions.length ? providerOptions.map((item, index) => {
         const selected = String(item.providerId) === selectedProviderId;
-        return `<article class="provider-option ${selected ? "selected" : ""}"><div class="provider-rank">#${index + 1}</div><div class="provider-copy"><strong>${escapeHtml(item.providerName)}</strong><span><i class="fa-solid fa-boxes-stacked"></i> พร้อมใช้งาน ${Number(item.available).toLocaleString("th-TH")} เบอร์</span></div><div class="provider-price"><small>ราคา</small><strong>${Number(item.price).toFixed(2)} <em>฿</em></strong></div><button type="button" class="provider-buy" data-provider-id="${escapeHtml(item.providerId)}"><i class="fa-solid fa-cart-shopping"></i> ${selected ? "เลือกแล้ว" : "เลือกซื้อ"}</button></article>`;
-      }).join("") : `<div class="choice-empty">ไม่มี Provider ที่มีหมายเลขว่าง</div>`;
+        return `<article class="provider-option ${selected ? "selected" : ""}"><div class="provider-rank">#${index + 1}</div><div class="provider-copy"><strong>ตัวเลือก ${index + 1}</strong><span><i class="fa-solid fa-boxes-stacked"></i> พร้อมใช้งาน ${Number(item.available).toLocaleString("th-TH")} เบอร์</span></div><div class="provider-price"><small>ราคา</small><strong>${Number(item.price).toFixed(2)} <em>฿</em></strong></div><button type="button" class="provider-buy" data-provider-id="${escapeHtml(item.providerId)}"><i class="fa-solid fa-cart-shopping"></i> ${selected ? "เลือกแล้ว" : "เลือกซื้อ"}</button></article>`;
+      }).join("") : `<div class="choice-empty">ไม่มีตัวเลือกที่มีหมายเลขว่าง</div>`;
       document.querySelectorAll("[data-provider-id]").forEach(button => button.addEventListener("click", () => {
         selectedProviderId = button.dataset.providerId;
         const provider = selectedProvider(); currentQuote = provider.price;
-        $("quotePrice").textContent = Number(provider.price).toFixed(2); $("buyButton").disabled = false;
-        $("selectionText").textContent = `${selectedService()?.name || "บริการ"} · ${selectedCountry()?.name || selectedCountry()?.code || "ประเทศ"} · ${provider.providerName}`;
         renderProviderCards(); openPurchaseModal();
       }));
     }
 
     $("serviceSelect").addEventListener("change", async event => {
       providerRequestId++;
-      resetProviders("เลือกประเทศเพื่อดู Provider ทั้งหมด");
+      resetProviders("เลือกประเทศเพื่อดูตัวเลือกทั้งหมด");
       const country = $("countrySelect"); country.disabled = true; country.innerHTML = `<option value="">กำลังโหลดประเทศ...</option>`;
-      countries = []; showAllCountries = false; $("countrySearch").value = ""; $("countrySearch").disabled = true; $("countryGrid").innerHTML = `<div class="choice-empty"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังโหลดประเทศ...</div>`; $("countryHint").textContent = "กำลังค้นหาประเทศที่รองรับ"; $("selectionText").textContent = "เลือกประเทศเพื่อดูราคา"; renderServiceCards();
+      countries = []; showAllCountries = false; $("countrySearch").value = ""; $("countrySearch").disabled = true; $("countryGrid").innerHTML = `<div class="choice-empty"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังโหลดประเทศ...</div>`; $("countryHint").textContent = "กำลังค้นหาประเทศที่รองรับ"; renderServiceCards();
       if (!event.target.value) return;
-      const data = await api("getCountryDataForService", { serviceId: event.target.value });
+      const cacheKey = `countries_${event.target.value}`;
+      const cached = getCached(cacheKey, 60 * 60 * 1000);
+      const data = cached || await api("getCountryDataForService", { serviceId: event.target.value });
+      if (!cached) setCached(cacheKey, data);
       const items = Array.isArray(data) ? data : Object.keys(data || {}).map(id => ({ id, ...data[id] }));
       countries = items.filter(x => x.country_id || x.id);
       country.innerHTML = `<option value="">เลือกประเทศ</option>` + countries.map(x => `<option value="${escapeHtml(x.country_id || x.id)}">${escapeHtml(x.name || x.code || x.country_id || x.id)}</option>`).join("");
@@ -529,20 +544,20 @@
       countrySelect.value = String(countryId);
       renderCountryCards();
       const requestId = ++providerRequestId;
-      resetProviders("กำลังโหลด Provider และราคา...");
+      resetProviders("กำลังโหลดตัวเลือกและราคา...");
       $("countryGrid").setAttribute("aria-busy", "true");
       try {
         const result = await api("getProviderOptions", { serviceId: $("serviceSelect").value, countryId: countrySelect.value });
         if (requestId !== providerRequestId) return;
-        if (!result.success) throw new Error(result.message || "ไม่สามารถโหลด Provider ได้");
+        if (!result.success) throw new Error(result.message || "ไม่สามารถโหลดตัวเลือกได้");
         providerOptions = result.providers || [];
-        $("providerCount").textContent = `${providerOptions.length.toLocaleString("th-TH")} Provider`;
-        $("providerHint").textContent = "เลือก Provider ที่เหมาะกับราคาและจำนวนเบอร์ที่ต้องการ";
+        $("providerCount").textContent = `${providerOptions.length.toLocaleString("th-TH")} ตัวเลือก`;
+        $("providerHint").textContent = "เลือกตัวเลือกที่เหมาะกับราคาและจำนวนเบอร์ที่ต้องการ";
         renderProviderCards(); renderCountryCards();
         $("providerGrid").closest(".provider-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
       } catch (error) {
         if (requestId !== providerRequestId) return;
-        const message = error.message || "ไม่สามารถโหลด Provider ได้";
+        const message = error.message || "ไม่สามารถโหลดตัวเลือกได้";
         resetProviders(message); toast(message);
       } finally {
         if (requestId === providerRequestId) $("countryGrid").removeAttribute("aria-busy");
@@ -560,10 +575,9 @@
 
     function openPurchaseModal() {
       if (currentQuote === null || !selectedProvider()) return;
-      $("confirmService").textContent = selectedService()?.name || "—"; $("confirmCountry").textContent = selectedCountry()?.name || selectedCountry()?.code || "—"; $("confirmProvider").textContent = selectedProvider().providerName; $("confirmPrice").textContent = Number(currentQuote).toFixed(2); $("purchaseModal").classList.remove("hidden"); document.body.classList.add("modal-open");
+      $("confirmService").textContent = selectedService()?.name || "—"; $("confirmCountry").textContent = selectedCountry()?.name || selectedCountry()?.code || "—"; $("confirmPrice").textContent = Number(currentQuote).toFixed(2); $("purchaseModal").classList.remove("hidden"); document.body.classList.add("modal-open");
     }
     function closePurchaseModal() { $("purchaseModal").classList.add("hidden"); document.body.classList.remove("modal-open"); }
-    $("buyButton").addEventListener("click", openPurchaseModal);
     document.querySelectorAll("[data-close-modal]").forEach(button => button.addEventListener("click", closePurchaseModal));
     $("confirmBuyButton").addEventListener("click", async () => {
       if (currentQuote === null || !selectedProvider()) return;
@@ -620,7 +634,8 @@
       return `<article class="recent-sale-item"><span class="recent-sale-logo">${appLogoMarkup({ name: service })}</span><span class="recent-sale-copy"><strong>${escapeHtml(service)}</strong><span>${countryFlag({ name: country })} ${escapeHtml(country)} · ฿${Number(sale.price || 0).toFixed(2)}</span></span><time>${escapeHtml(relativeOrderTime(sale.createdAt))}</time></article>`;
     }
     async function loadRecentSales() {
-      if (!sessionToken) return;
+      if (!sessionToken || recentSalesLoading) return;
+      recentSalesLoading = true;
       const track = $("recentSalesTrack");
       try {
         const result = await api("getRecentSales");
@@ -637,12 +652,15 @@
       } catch (_) {
         track.classList.remove("is-moving");
         track.innerHTML = `<span class="recent-sales-empty"><i class="fa-solid fa-clock"></i> ยังไม่สามารถโหลดรายการล่าสุดได้</span>`;
-      }
+      } finally { recentSalesLoading = false; }
     }
     async function loadOrders() {
-      if (!sessionToken) return;
-      const result = await api("getMyOrders");
-      if (!result.success) return;
+      if (!sessionToken || ordersLoading) return;
+      ordersLoading = true;
+      let result;
+      try { result = await api("getMyOrders"); } catch (_) { return; }
+      finally { ordersLoading = false; }
+      if (!result || !result.success) return;
       const orders = result.orders || [], container = $("orders");
       container._items = orders;
       renderActiveOrders(orders);
