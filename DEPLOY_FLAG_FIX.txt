@@ -1,0 +1,9 @@
+MAILLY OTP - COUNTRY FLAG FIX
+
+Files to upload:
+- index.html
+- Code.gs
+
+Then deploy Google Apps Script as a New version.
+The frontend cache key and backend country cache key were both updated, so old
+country data and the stray requestId entry will not be reused after deployment.

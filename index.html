@@ -282,7 +282,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbykKbGBavHDx6bIbSBsBEnFflRgaALgK2WadIswKk8dNPXi2JnyXFCafMuGoni8qZda/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;
@@ -300,9 +300,10 @@
     let ordersLoading = false;
     let recentSalesLoading = false;
     let servicesLoadPromise = null;
+    let serviceRequestId = 0;
     let pendingServiceShortcut = "";
     let pendingCountryShortcut = "";
-    const localCachePrefix = "mailly_fast_cache_v1_";
+    const localCachePrefix = "mailly_fast_cache_v3_";
 
     const $ = id => document.getElementById(id);
     async function api(action, payload = {}) {
@@ -341,6 +342,12 @@
     function toast(message) {
       const el = $("toast"); el.textContent = message; el.classList.add("show");
       clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.remove("show"), 2800);
+    }
+    function friendlyRouteMessage(message) {
+      const value = String(message || "");
+      if (/service\s+not\s+found|service.*inactive/i.test(value)) return "บริการนี้ยังไม่พร้อมใช้งาน กรุณาเลือกบริการอื่น";
+      if (/country\s+not\s+found|country.*inactive|not available.*country/i.test(value)) return "ประเทศนี้ยังไม่พร้อมใช้งานสำหรับบริการที่เลือก";
+      return value || "ไม่สามารถโหลดตัวเลือกได้ กรุณาลองใหม่อีกครั้ง";
     }
     function formatStat(value, suffix = "") {
       return value === null || value === undefined ? "—" : `${Number(value).toLocaleString("th-TH")}${suffix}`;
@@ -442,6 +449,7 @@
         try {
         const cached = getCached("services", 10 * 60 * 1000);
         const data = cached || await api("getServices");
+        if (data && data.success === false) throw new Error(data.message || "โหลดบริการไม่สำเร็จ");
         if (!cached) setCached("services", data);
         const rawServices = (Array.isArray(data) ? data : Object.values(data || {}).filter(x => x && typeof x === "object"))
           .filter(x => x.ID && x.name);
@@ -492,18 +500,65 @@
       if (value.includes("lazada") || value.includes("shopee")) return "fa-solid fa-bag-shopping";
       return "fa-solid fa-mobile-screen-button";
     }
+    const countryIsoByName = {
+      "afghanistan":"AF","aland islands":"AX","albania":"AL","algeria":"DZ","american samoa":"AS","andorra":"AD","angola":"AO","anguilla":"AI","antarctica":"AQ","antigua and barbuda":"AG","argentina":"AR","armenia":"AM","aruba":"AW","australia":"AU","austria":"AT","azerbaijan":"AZ",
+      "bahamas":"BS","the bahamas":"BS","bahrain":"BH","bangladesh":"BD","barbados":"BB","belarus":"BY","belgium":"BE","belize":"BZ","benin":"BJ","bermuda":"BM","bhutan":"BT","bolivia":"BO","bolivia plurinational state of":"BO","bonaire sint eustatius and saba":"BQ","bosnia and herzegovina":"BA","botswana":"BW","bouvet island":"BV","brazil":"BR","british indian ocean territory":"IO","brunei":"BN","brunei darussalam":"BN","bulgaria":"BG","burkina faso":"BF","burundi":"BI",
+      "cabo verde":"CV","cape verde":"CV","cambodia":"KH","cameroon":"CM","canada":"CA","cayman islands":"KY","central african republic":"CF","chad":"TD","chile":"CL","china":"CN","christmas island":"CX","cocos islands":"CC","cocos keeling islands":"CC","colombia":"CO","comoros":"KM","congo":"CG","republic of the congo":"CG","congo democratic republic of the":"CD","democratic republic of the congo":"CD","cook islands":"CK","costa rica":"CR","cote d ivoire":"CI","ivory coast":"CI","croatia":"HR","cuba":"CU","curacao":"CW","cyprus":"CY","czechia":"CZ","czech republic":"CZ",
+      "denmark":"DK","djibouti":"DJ","dominica":"DM","dominican republic":"DO","ecuador":"EC","egypt":"EG","el salvador":"SV","equatorial guinea":"GQ","eritrea":"ER","estonia":"EE","eswatini":"SZ","swaziland":"SZ","ethiopia":"ET","falkland islands":"FK","faroe islands":"FO","fiji":"FJ","finland":"FI","france":"FR","french guiana":"GF","french polynesia":"PF","french southern territories":"TF",
+      "gabon":"GA","gambia":"GM","the gambia":"GM","georgia":"GE","germany":"DE","ghana":"GH","gibraltar":"GI","greece":"GR","greenland":"GL","grenada":"GD","guadeloupe":"GP","guam":"GU","guatemala":"GT","guernsey":"GG","guinea":"GN","guinea bissau":"GW","guyana":"GY","haiti":"HT","heard island and mcdonald islands":"HM","holy see":"VA","vatican city":"VA","honduras":"HN","hong kong":"HK","hungary":"HU",
+      "iceland":"IS","india":"IN","indonesia":"ID","iran":"IR","iran islamic republic of":"IR","iraq":"IQ","ireland":"IE","isle of man":"IM","israel":"IL","italy":"IT","jamaica":"JM","japan":"JP","jersey":"JE","jordan":"JO","kazakhstan":"KZ","kenya":"KE","kiribati":"KI","north korea":"KP","korea north":"KP","korea democratic people s republic of":"KP","south korea":"KR","korea south":"KR","republic of korea":"KR","korea republic of":"KR","kuwait":"KW","kyrgyzstan":"KG",
+      "laos":"LA","lao people s democratic republic":"LA","latvia":"LV","lebanon":"LB","lesotho":"LS","liberia":"LR","libya":"LY","liechtenstein":"LI","lithuania":"LT","luxembourg":"LU","macao":"MO","macau":"MO","madagascar":"MG","malawi":"MW","malaysia":"MY","maldives":"MV","mali":"ML","malta":"MT","marshall islands":"MH","martinique":"MQ","mauritania":"MR","mauritius":"MU","mayotte":"YT","mexico":"MX","micronesia":"FM","micronesia federated states of":"FM","moldova":"MD","moldova republic of":"MD","monaco":"MC","mongolia":"MN","montenegro":"ME","montserrat":"MS","morocco":"MA","mozambique":"MZ","myanmar":"MM","burma":"MM",
+      "namibia":"NA","nauru":"NR","nepal":"NP","netherlands":"NL","new caledonia":"NC","new zealand":"NZ","nicaragua":"NI","niger":"NE","nigeria":"NG","niue":"NU","norfolk island":"NF","north macedonia":"MK","macedonia":"MK","northern mariana islands":"MP","norway":"NO","oman":"OM","pakistan":"PK","palau":"PW","palestine":"PS","palestine state of":"PS","panama":"PA","papua new guinea":"PG","paraguay":"PY","peru":"PE","philippines":"PH","pitcairn":"PN","poland":"PL","portugal":"PT","puerto rico":"PR",
+      "qatar":"QA","reunion":"RE","romania":"RO","russia":"RU","russian federation":"RU","rwanda":"RW","saint barthelemy":"BL","saint helena":"SH","saint kitts and nevis":"KN","saint lucia":"LC","saint martin":"MF","saint pierre and miquelon":"PM","saint vincent and the grenadines":"VC","samoa":"WS","san marino":"SM","sao tome and principe":"ST","saudi arabia":"SA","senegal":"SN","serbia":"RS","seychelles":"SC","sierra leone":"SL","singapore":"SG","sint maarten":"SX","slovakia":"SK","slovenia":"SI","solomon islands":"SB","somalia":"SO","south africa":"ZA","south georgia and the south sandwich islands":"GS","south sudan":"SS","spain":"ES","sri lanka":"LK","sudan":"SD","suriname":"SR","svalbard and jan mayen":"SJ","sweden":"SE","switzerland":"CH","syria":"SY","syrian arab republic":"SY",
+      "taiwan":"TW","taiwan province of china":"TW","tajikistan":"TJ","tanzania":"TZ","tanzania united republic of":"TZ","thailand":"TH","timor leste":"TL","east timor":"TL","togo":"TG","tokelau":"TK","tonga":"TO","trinidad and tobago":"TT","tunisia":"TN","turkey":"TR","turkiye":"TR","turkmenistan":"TM","turks and caicos islands":"TC","tuvalu":"TV","uganda":"UG","ukraine":"UA","united arab emirates":"AE","uae":"AE","united kingdom":"GB","great britain":"GB","uk":"GB","united states":"US","united states of america":"US","usa":"US","united states minor outlying islands":"UM","uruguay":"UY","uzbekistan":"UZ","vanuatu":"VU","venezuela":"VE","venezuela bolivarian republic of":"VE","vietnam":"VN","viet nam":"VN","virgin islands british":"VG","british virgin islands":"VG","virgin islands u s":"VI","us virgin islands":"VI","wallis and futuna":"WF","western sahara":"EH","yemen":"YE","zambia":"ZM","zimbabwe":"ZW"
+    };
+    function cleanCountryName(value) {
+      return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
+    }
+    function countryIso(country) {
+      if (!country || typeof country !== "object") return "";
+      const direct = [country.iso2, country.iso_2, country.alpha2, country.alpha_2, country.country_code, country.code, country.flag]
+        .map(value => String(value || "").trim().toUpperCase())
+        .find(value => /^[A-Z]{2}$/.test(value));
+      if (direct) return direct;
+      const names = [country.name_en, country.english_name, country.name].map(cleanCountryName).filter(Boolean);
+      for (const name of names) if (countryIsoByName[name]) return countryIsoByName[name];
+      return "";
+    }
+    function isoToFlag(iso) {
+      return /^[A-Z]{2}$/.test(iso) ? String.fromCodePoint(...[...iso].map(char => 127397 + char.charCodeAt(0))) : "";
+    }
     function countryFlag(country) {
-      if (country && country.flag) return country.flag;
-      const value = normalized(`${country.name || ""} ${country.code || ""}`);
-      const flags = [["thailand| thai|ไทย","🇹🇭"],["united states|usa|america","🇺🇸"],["united kingdom|britain|uk","🇬🇧"],["vietnam","🇻🇳"],["indonesia","🇮🇩"],["philippines","🇵🇭"],["china","🇨🇳"],["ukraine","🇺🇦"],["myanmar","🇲🇲"],["singapore","🇸🇬"],["lao","🇱🇦"],["india","🇮🇳"],["canada","🇨🇦"],["germany","🇩🇪"],["france","🇫🇷"],["japan","🇯🇵"],["korea","🇰🇷"],["malaysia","🇲🇾"],["brazil","🇧🇷"],["turkey","🇹🇷"]];
-      const found = flags.find(([terms]) => new RegExp(terms).test(value)); return found ? found[1] : "🌐";
+      const supplied = String(country?.flag || "").trim();
+      if (/^(?:\p{Regional_Indicator}){2}$/u.test(supplied)) return supplied;
+      return isoToFlag(countryIso(country)) || "🏳️";
+    }
+    function countryItemsFromResponse(data) {
+      const source = Array.isArray(data) ? data : Array.isArray(data?.countries) ? data.countries : Object.entries(data || {})
+        .filter(([key, value]) => /^\d+$/.test(key) && value && typeof value === "object")
+        .map(([, value]) => value);
+      const seen = new Set();
+      return source.filter(item => {
+        if (!item || typeof item !== "object") return false;
+        const id = item.country_id ?? item.id;
+        if (id === undefined || id === null || id === "") return false;
+        const key = String(id);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return Boolean(item.name || item.name_en || item.code);
+      });
     }
     function selectedService() { return services.find(x => String(x.ID) === $("serviceSelect").value); }
     function selectedCountry() { return countries.find(x => String(x.country_id || x.id) === $("countrySelect").value); }
     function selectedProvider() { return providerOptions.find(x => String(x.providerId) === selectedProviderId); }
     function shortcutMatch(items, shortcut, label) {
       const needle = normalized(shortcut);
-      return items.find(item => normalized(label(item)).includes(needle) || needle.includes(normalized(label(item))));
+      const exact = items.find(item => normalized(label(item)).split(/[^a-z0-9ก-๙]+/i).includes(needle));
+      if (exact) return exact;
+      return items.find(item => {
+        const candidate = normalized(label(item));
+        return needle.length >= 4 && (candidate.startsWith(needle + " ") || candidate === needle);
+      });
     }
     function renderReadyShortcuts() {
       if (!services.length) {
@@ -517,7 +572,7 @@
     }
     function applyPendingServiceShortcut() {
       if (!pendingServiceShortcut) return;
-      const item = shortcutMatch(services, pendingServiceShortcut, service => service.name);
+      const item = shortcutMatch(services, pendingServiceShortcut, service => `${service.name || ""} ${service.name_en || ""}`);
       const shortcut = pendingServiceShortcut;
       pendingServiceShortcut = "";
       if (!item) return toast(`ยังไม่มีบริการ ${shortcut} ในรายการขณะนี้`);
@@ -526,7 +581,7 @@
     }
     function applyPendingCountryShortcut() {
       if (!pendingCountryShortcut) return;
-      const item = shortcutMatch(countries, pendingCountryShortcut, country => `${country.name || ""} ${country.code || ""}`);
+      const item = shortcutMatch(countries, pendingCountryShortcut, country => `${country.name || ""} ${country.name_en || ""} ${country.code || ""}`);
       const shortcut = pendingCountryShortcut;
       pendingCountryShortcut = "";
       if (!item) return toast(`บริการนี้ยังไม่รองรับประเทศ ${shortcut}`);
@@ -541,7 +596,7 @@
     }
     function renderCountryCards() {
       const query = normalized($("countrySearch").value);
-      const matches = rankByPopular(countries.filter(x => normalized(`${x.name || ""} ${x.code || ""}`).includes(query)), item => `${item.name || ""} ${item.code || ""}`, popularCountries);
+      const matches = rankByPopular(countries.filter(x => normalized(`${x.name || ""} ${x.name_en || ""} ${x.code || ""}`).includes(query)), item => `${item.name || ""} ${item.name_en || ""} ${item.code || ""}`, popularCountries);
       const visible = (query || showAllCountries) ? matches : matches.slice(0, 24);
       $("countryGrid").innerHTML = visible.length ? visible.map(item => { const id = item.country_id || item.id, name = item.name || item.code || id; return `<button type="button" class="choice-card country-card ${String(id) === $("countrySelect").value ? "selected" : ""}" data-country-id="${escapeHtml(id)}"><span class="country-flag">${countryFlag(item)}</span><span>${escapeHtml(name)}</span><i class="fa-solid fa-check card-check"></i></button>`; }).join("") + (!query && matches.length > 24 ? `<button type="button" class="show-more" data-show-countries>${showAllCountries ? "แสดงน้อยลง" : `แสดงทั้งหมด ${matches.length.toLocaleString("th-TH")} ประเทศ`} <i class="fa-solid fa-chevron-down"></i></button>` : "") : `<div class="choice-empty">ไม่พบประเทศที่ค้นหา</div>`;
       document.querySelector("[data-show-countries]")?.addEventListener("click", () => { showAllCountries = !showAllCountries; renderCountryCards(); });
@@ -565,20 +620,32 @@
     }
 
     $("serviceSelect").addEventListener("change", async event => {
+      const requestId = ++serviceRequestId;
       providerRequestId++;
       resetProviders("เลือกประเทศเพื่อดูตัวเลือกทั้งหมด");
       const country = $("countrySelect"); country.disabled = true; country.innerHTML = `<option value="">กำลังโหลดประเทศ...</option>`;
       countries = []; showAllCountries = false; $("countrySearch").value = ""; $("countrySearch").disabled = true; $("countryGrid").innerHTML = `<div class="choice-empty"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังโหลดประเทศ...</div>`; $("countryHint").textContent = "กำลังค้นหาประเทศที่รองรับ"; renderServiceCards();
       if (!event.target.value) return;
-      const cacheKey = `countries_${event.target.value}`;
-      const cached = getCached(cacheKey, 60 * 60 * 1000);
-      const data = cached || await api("getCountryDataForService", { serviceId: event.target.value });
-      if (!cached) setCached(cacheKey, data);
-      const items = Array.isArray(data) ? data : Object.keys(data || {}).map(id => ({ id, ...data[id] }));
-      countries = items.filter(x => x.country_id || x.id);
-      country.innerHTML = `<option value="">เลือกประเทศ</option>` + countries.map(x => `<option value="${escapeHtml(x.country_id || x.id)}">${escapeHtml(x.name || x.code || x.country_id || x.id)}</option>`).join("");
-      country.disabled = false; $("countrySearch").disabled = false; $("countryCount").textContent = `${countries.length.toLocaleString("th-TH")} ประเทศ`; $("countryHint").textContent = `ประเทศที่รองรับสำหรับ ${selectedService()?.name || "บริการนี้"}`; renderCountryCards();
-      applyPendingCountryShortcut();
+      try {
+        const cacheKey = `countries_${event.target.value}`;
+        const cached = getCached(cacheKey, 60 * 60 * 1000);
+        const data = cached || await api("getCountryDataForService", { serviceId: event.target.value });
+        if (requestId !== serviceRequestId) return;
+        if (data && data.success === false) throw new Error(data.message || "โหลดประเทศไม่สำเร็จ");
+        if (!cached) setCached(cacheKey, data);
+        countries = countryItemsFromResponse(data);
+        country.innerHTML = `<option value="">เลือกประเทศ</option>` + countries.map(x => `<option value="${escapeHtml(x.country_id || x.id)}">${escapeHtml(x.name || x.code || x.country_id || x.id)}</option>`).join("");
+        country.disabled = false; $("countrySearch").disabled = false; $("countryCount").textContent = `${countries.length.toLocaleString("th-TH")} ประเทศ`; $("countryHint").textContent = `ประเทศที่รองรับสำหรับ ${selectedService()?.name || "บริการนี้"}`; renderCountryCards();
+        applyPendingCountryShortcut();
+      } catch (error) {
+        if (requestId !== serviceRequestId) return;
+        const message = friendlyRouteMessage(error.message);
+        country.innerHTML = `<option value="">เลือกบริการใหม่</option>`;
+        $("countryCount").textContent = "—";
+        $("countryHint").textContent = message;
+        $("countryGrid").innerHTML = `<div class="choice-empty">${escapeHtml(message)}</div>`;
+        resetProviders("เลือกบริการอื่นเพื่อดูตัวเลือก");
+      }
     });
 
     $("serviceGrid").addEventListener("click", event => {
@@ -618,8 +685,8 @@
         $("providerGrid").closest(".provider-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
       } catch (error) {
         if (requestId !== providerRequestId) return;
-        const message = error.message || "ไม่สามารถโหลดตัวเลือกได้";
-        resetProviders(message); toast(message);
+        const message = friendlyRouteMessage(error.message);
+        resetProviders(message);
       } finally {
         if (requestId === providerRequestId) $("countryGrid").removeAttribute("aria-busy");
       }

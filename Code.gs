@@ -253,7 +253,7 @@ function dispatch_(action, p) {
       return getProviderOptions_(p);
 
     case 'getServices':
-      return getServices_();
+      return getServices_(p);
 
     case 'getCountryDataForService':
       return getCountries_(p);
@@ -1762,7 +1762,21 @@ function cachedJson_(key, seconds, loader, bypass) {
   return value;
 }
 
-function getServices_() {
+function serviceIsActive_(service) {
+  if (!service || !service.code) return false;
+  const active = service.active !== undefined
+    ? service.active
+    : service.is_active;
+  const status = String(service.status || service.state || '').toLowerCase();
+
+  if (active === false || active === 0 || active === '0' || String(active).toLowerCase() === 'false') {
+    return false;
+  }
+
+  return ['inactive', 'disabled', 'deleted', 'archived'].indexOf(status) === -1;
+}
+
+function getServices_(p) {
   if (
     String(
       setting_(
@@ -1776,17 +1790,24 @@ function getServices_() {
     );
   }
 
-  return cachedJson_('mailly_catalogue_services_v1', 600, function() {
+  p = p || {};
+  return cachedJson_('mailly_catalogue_services_v2', 600, function() {
     const response = otpSms_(CONFIG.OTP_SMS.services, {});
-    return (response.data.services || []).map(function(service) {
+    const seen = {};
+    return (response.data.services || []).filter(serviceIsActive_).map(function(service) {
       return {
         ID: service.code,
         name: service.name_th || service.name || service.code,
         name_en: service.name || '',
         popular: Boolean(service.popular)
       };
+    }).filter(function(service) {
+      const id = String(service.ID || '');
+      if (!id || seen[id]) return false;
+      seen[id] = true;
+      return true;
     });
-  });
+  }, Boolean(p.refresh));
 }
 
 function getCountries_(p) {
@@ -1801,19 +1822,41 @@ function getCountries_(p) {
 
   // This is a global catalogue; actual availability is still fetched when a
   // customer selects the route and again immediately before purchase.
-  return cachedJson_('mailly_catalogue_countries_v1', 3600, function() {
+  const countries = cachedJson_('mailly_catalogue_countries_v2', 3600, function() {
     const response = otpSms_(CONFIG.OTP_SMS.countries, {});
     return (response.data.countries || []).map(function(country) {
+      const iso2 = [
+        country.iso2,
+        country.iso_2,
+        country.alpha2,
+        country.alpha_2,
+        country.country_code,
+        country.code,
+        country.flag
+      ].map(function(value) {
+        return String(value || '').trim().toUpperCase();
+      }).filter(function(value) {
+        return /^[A-Z]{2}$/.test(value);
+      })[0] || '';
+      const suppliedFlag = String(country.flag || '').trim();
       return {
         country_id: country.id,
         name: country.name_th || country.name || String(country.id),
         name_en: country.name || '',
-        code: country.flag || '',
-        flag: country.flag || '',
+        code: iso2,
+        iso2: iso2,
+        flag: suppliedFlag.length <= 4 && !/^[A-Za-z]{2}$/.test(suppliedFlag) ? suppliedFlag : '',
         popular: Boolean(country.popular)
       };
     });
   });
+
+  // Return a named collection so doPost can append requestId without turning
+  // that metadata field into a fake country in array/object conversions.
+  return {
+    success: true,
+    countries: countries
+  };
 }
 
 function priceFromThb_(thb) {
@@ -1829,9 +1872,25 @@ function priceFromThb_(thb) {
 }
 
 function priceOptions_(service, country, bypassCache) {
-  const cacheKey = 'mailly_prices_v1_' + service + '_' + country;
+  if (!service || !country) {
+    throw new Error('กรุณาเลือกบริการและประเทศ');
+  }
+
+  const cacheKey = 'mailly_prices_v2_' + service + '_' + country;
   return cachedJson_(cacheKey, 12, function() {
-    const response = otpSms_(CONFIG.OTP_SMS.prices, { service: service, country: country });
+    let response;
+    try {
+      response = otpSms_(CONFIG.OTP_SMS.prices, { service: service, country: country });
+    } catch (err) {
+      const message = String(err && err.message || err || '');
+      if (/service\s+not\s+found|service.*inactive/i.test(message)) {
+        throw new Error('บริการนี้ยังไม่พร้อมใช้งาน กรุณาเลือกบริการอื่น');
+      }
+      if (/country\s+not\s+found|country.*inactive|not available.*country/i.test(message)) {
+        throw new Error('ประเทศนี้ยังไม่พร้อมใช้งานสำหรับบริการที่เลือก');
+      }
+      throw err;
+    }
     const options = response.data && Array.isArray(response.data.options)
       ? response.data.options : [];
     const available = options.filter(function(option) {
