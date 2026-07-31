@@ -295,23 +295,17 @@ function dispatch_(action, p) {
     case 'buyProductWithCredit':
       return buyProduct_(p);
 
-    case 'getShopnoiCatalog':
+    case 'getStoreCatalog':
       return getShopnoiCatalog_(p);
 
-    case 'getShopnoiProduct':
+    case 'getStoreProduct':
       return getShopnoiProduct_(p);
 
-    case 'buyShopnoiProductWithCredit':
+    case 'buyStoreProductWithCredit':
       return buyShopnoiProduct_(p);
 
-    case 'getMyShopnoiPurchases':
+    case 'getMyStorePurchases':
       return getMyShopnoiPurchases_(p);
-
-    case 'getMyShopnoiOrder':
-      return getMyShopnoiOrder_(p);
-
-    case 'getShopnoiProfileForAdmin':
-      return getShopnoiProfileForAdmin_(p);
 
     case 'getYtUserData':
       return getYtUserData_(p);
@@ -2897,21 +2891,35 @@ function shopnoiProfile_() {
 function getShopnoiCatalog_(p) {
   requireAuth_(p);
 
-  const response = shopnoiRequest_(
-    CONFIG.SHOPNOI.products,
-    {},
-    'get'
-  );
+  let response;
+  try {
+    response = cachedJson_('mailly_store_catalog_v1', 120, function() {
+      return shopnoiRequest_(
+        CONFIG.SHOPNOI.products,
+        {},
+        'get'
+      );
+    }, p && (p.force === true || String(p.force) === 'true'));
+  } catch (error) {
+    console.warn('Store catalogue request failed: ' + safeError_(error));
+    throw new Error('ไม่สามารถโหลดรายการสินค้าได้ในขณะนี้');
+  }
 
   if (!shopnoiSuccess_(response)) {
     throw new Error(
-      shopnoiError_(response, 'โหลดรายการ Shopnoi ไม่สำเร็จ')
+      'ไม่สามารถโหลดรายการสินค้าได้ในขณะนี้'
     );
   }
 
-  const categories = Array.isArray(response.categories)
+  const categories = (Array.isArray(response.categories)
     ? response.categories
-    : [];
+    : []).map(function(category) {
+      return {
+        id: String(category.id || category.category_id || ''),
+        name: storeText_(category.name || category.category_name || 'อื่น ๆ'),
+        products: (Array.isArray(category.products) ? category.products : []).map(storeProductView_)
+      };
+    });
 
   return {
     success: true,
@@ -2924,8 +2932,25 @@ function getShopnoiCatalog_(p) {
           : 0
       );
     }, 0),
-    pricing: 'shopnoi-direct',
     fetchedAt: new Date().toISOString()
+  };
+}
+
+function storeText_(value) {
+  return String(value || '').replace(/shopnoi/gi, 'MAILLY');
+}
+
+function storeProductView_(product) {
+  product = product || {};
+  return {
+    id: String(product.id || product.product_id || ''),
+    name: storeText_(product.name || product.product_name || ''),
+    description: storeText_(product.description || product.detail || product.desc || ''),
+    price: money_(product.price),
+    amount: Math.max(0, Number(product.amount || product.stock) || 0),
+    min: Math.max(1, Number(product.min || product.minimum) || 1),
+    max: Math.max(0, Number(product.max || product.maximum) || 0),
+    flag: storeText_(product.flag || product.badge || '')
   };
 }
 
@@ -2937,10 +2962,15 @@ function getShopnoiProduct_(p) {
     throw new Error('รหัสสินค้าไม่ถูกต้อง');
   }
 
-  return {
-    success: true,
-    product: shopnoiProductById_(productId)
-  };
+  try {
+    return {
+      success: true,
+      product: storeProductView_(shopnoiProductById_(productId))
+    };
+  } catch (error) {
+    console.warn('Store product request failed: ' + safeError_(error));
+    throw new Error('ไม่สามารถโหลดรายละเอียดสินค้าได้ในขณะนี้');
+  }
 }
 
 function getShopnoiProfileForAdmin_(p) {
@@ -2958,7 +2988,7 @@ function getShopnoiProfileForAdmin_(p) {
 
 function shopnoiPurchaseData_(value) {
   if (Array.isArray(value)) {
-    return value.map(String);
+    return value.map(storeText_);
   }
 
   if (value === undefined || value === null || value === '') {
@@ -2967,14 +2997,16 @@ function shopnoiPurchaseData_(value) {
 
   return [
     typeof value === 'string'
-      ? value
-      : JSON.stringify(value)
+      ? storeText_(value)
+      : storeText_(JSON.stringify(value))
   ];
 }
 
 function parseStoredPurchaseData_(value) {
   if (Array.isArray(value)) {
-    return value;
+    return value.map(function(item) {
+      return typeof item === 'string' ? storeText_(item) : item;
+    });
   }
 
   const text = String(value || '');
@@ -2982,9 +3014,11 @@ function parseStoredPurchaseData_(value) {
 
   try {
     const parsed = JSON.parse(text);
-    return Array.isArray(parsed) ? parsed : [parsed];
+    return (Array.isArray(parsed) ? parsed : [parsed]).map(function(item) {
+      return typeof item === 'string' ? storeText_(item) : item;
+    });
   } catch (error) {
-    return [text];
+    return [storeText_(text)];
   }
 }
 
@@ -3020,7 +3054,13 @@ function buyShopnoiProduct_(p) {
   let creditReserved = false;
 
   try {
-    const product = shopnoiProductById_(productId);
+    let product;
+    try {
+      product = shopnoiProductById_(productId);
+    } catch (error) {
+      console.warn('Store checkout product request failed: ' + safeError_(error));
+      throw new Error('ไม่สามารถตรวจสอบสินค้าได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง');
+    }
     const min = Math.max(1, Number(product.min) || 1);
     const maxByApi = Math.max(min, Number(product.max) || quantity);
     const available = Math.max(0, Number(product.amount) || 0);
@@ -3048,14 +3088,7 @@ function buyShopnoiProduct_(p) {
       );
     }
 
-    let supplierBalanceBefore = null;
-    try {
-      supplierBalanceBefore = money_(shopnoiProfile_().money);
-    } catch (profileError) {
-      console.warn('Shopnoi profile before purchase unavailable');
-    }
-
-    purchaseId = newId_('SHP');
+    purchaseId = newId_('MLY');
     const newCreditAfterReserve = changeCredit_(
       u.username,
       -reservedTotal
@@ -3066,7 +3099,7 @@ function buyShopnoiProduct_(p) {
       purchase_id: purchaseId,
       username: u.username,
       product_id: productId,
-      product_name: product.name || '',
+      product_name: storeText_(product.name || ''),
       price: reservedTotal,
       item_data: '[]',
       created_at: now_(),
@@ -3108,14 +3141,14 @@ function buyShopnoiProduct_(p) {
       }
 
       throw new Error(
-        'เชื่อมต่อ Shopnoi ไม่สำเร็จ ระบบคืนเครดิตแล้ว (คงเหลือ ' +
+        'ไม่สามารถดำเนินการสั่งซื้อได้ ระบบคืนเครดิตแล้ว (คงเหลือ ' +
         refundedCredit.toFixed(2) +
         ' บาท)'
       );
     }
 
     if (!shopnoiSuccess_(response)) {
-      const reason = shopnoiError_(response, 'สั่งซื้อ Shopnoi ไม่สำเร็จ');
+      const reason = storeText_(shopnoiError_(response, 'สั่งซื้อไม่สำเร็จ'));
       const refundedCredit = changeCredit_(u.username, reservedTotal);
       creditReserved = false;
 
@@ -3144,26 +3177,9 @@ function buyShopnoiProduct_(p) {
       response.trans_id || response.order || response.order_id || ''
     );
     const deliveredItems = shopnoiPurchaseData_(response.data);
-    let chargedTotal = reservedTotal;
-
-    if (supplierBalanceBefore !== null) {
-      try {
-        const supplierBalanceAfter = money_(shopnoiProfile_().money);
-        const supplierCharge = money_(supplierBalanceBefore - supplierBalanceAfter);
-
-        if (supplierCharge >= 0 && supplierCharge <= reservedTotal) {
-          chargedTotal = supplierCharge;
-        }
-      } catch (profileError) {
-        console.warn('Shopnoi profile after purchase unavailable');
-      }
-    }
-
-    let finalCredit = newCreditAfterReserve;
-    const discountRefund = money_(reservedTotal - chargedTotal);
-    if (discountRefund > 0) {
-      finalCredit = changeCredit_(u.username, discountRefund);
-    }
+    const chargedTotal = reservedTotal;
+    const finalCredit = newCreditAfterReserve;
+    const discountRefund = 0;
     if (purchaseRow) {
       updateRow_('Purchases', purchaseRow._row, {
         price: chargedTotal,
@@ -3178,16 +3194,30 @@ function buyShopnoiProduct_(p) {
     return {
       success: true,
       purchaseId: purchaseId,
-      orderId: providerOrderId || purchaseId,
+      orderId: purchaseId,
       productId: productId,
-      productName: product.name || '',
+      productName: storeText_(product.name || ''),
       quantity: quantity,
       unitPrice: unitPrice,
       total: chargedTotal,
       discount: discountRefund,
       data: deliveredItems,
       newCredit: finalCredit,
-      status: 'completed'
+      status: 'completed',
+      purchase: {
+        purchaseId: purchaseId,
+        orderId: purchaseId,
+        productId: productId,
+        productName: storeText_(product.name || ''),
+        quantity: quantity,
+        total: chargedTotal,
+        data: deliveredItems,
+        status: 'completed',
+        coupon: coupon,
+        createdAt: now_(),
+        updatedAt: now_(),
+        errorMessage: ''
+      }
     };
   } finally {
     if (creditReserved && reservedTotal > 0) {
@@ -3220,9 +3250,9 @@ function getMyShopnoiPurchases_(p) {
     .map(function(row) {
       return {
         purchaseId: row.purchase_id,
-        orderId: row.provider_order_id || row.purchase_id,
+        orderId: row.purchase_id,
         productId: row.product_id,
-        productName: row.product_name,
+        productName: storeText_(row.product_name),
         quantity: Number(row.quantity) || 1,
         total: money_(row.price),
         data: parseStoredPurchaseData_(row.item_data),
@@ -3230,7 +3260,7 @@ function getMyShopnoiPurchases_(p) {
         coupon: row.coupon || '',
         createdAt: row.created_at,
         updatedAt: row.updated_at || row.created_at,
-        errorMessage: row.error_message || ''
+        errorMessage: storeText_(row.error_message || '')
       };
     });
 

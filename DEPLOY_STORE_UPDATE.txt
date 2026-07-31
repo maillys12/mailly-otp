@@ -1,0 +1,19 @@
+MAILLY OTP - Store performance and privacy update
+
+Files to update:
+1. Code.gs
+2. shop.html
+3. store.js (new customer-facing store script)
+
+Deployment:
+1. Replace Code.gs and create a New version of the existing Web App deployment.
+2. Upload shop.html and store.js to the website.
+3. The previous shop script is no longer referenced and may be removed.
+4. Keep the existing backend URL and Script Properties unchanged.
+
+Customer-facing changes:
+- Faster catalogue loading with short-lived server and browser-tab caches.
+- Session and catalogue requests run concurrently.
+- Store history comes only from MAILLY Purchases rows matched to the signed-in username.
+- Customer order numbers use MAILLY purchase IDs.
+- Supplier branding, supplier status, upstream order lookup, and external category images are not exposed.
