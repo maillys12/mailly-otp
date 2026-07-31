@@ -202,3 +202,214 @@ body:has(#login-page) input, body:has(#login-page) select, body:has(#login-page)
   body:has(#login-page) #login-page > .glass-card { padding: 26px 20px !important; }
   .active-orders-panel { margin-bottom:18px; padding:18px; border-radius:20px; }.active-orders-heading { align-items:start; }.active-orders-heading h2 { font-size:17px; }.active-orders-heading p:not(.section-kicker) { font-size:11px; }.active-refresh { flex:0 0 auto; padding:0 10px; }.active-order { grid-template-columns:minmax(0,1fr) auto; gap:13px 10px; padding:14px; }.active-number,.active-code { grid-column:span 1; }.active-number strong { font-size:13px; }.active-otp { min-width:0; width:100%; font-size:15px; }.active-state { grid-column:1; text-align:left; }.active-actions { grid-column:2; justify-self:end; }.active-action { width:auto; min-width:37px; padding:0 10px; }.active-action span { display:inline; margin-left:5px; font:700 10px Prompt,Inter,sans-serif; }
 }
+
+/* Mailly OTP — dark theme */
+:root {
+  color-scheme: dark;
+  --mailly-ink: #f4f7ff;
+  --mailly-muted: #9ca7bd;
+  --mailly-line: #29334a;
+  --mailly-surface: #151c2d;
+  --mailly-bg: #090e19;
+  --mailly-accent: #ff7a3d;
+  --mailly-accent-dark: #e96127;
+  --mailly-accent-soft: #382116;
+  --mailly-navy: #080d18;
+  --mailly-success: #35d493;
+  --mailly-shadow: 0 16px 42px rgba(0, 0, 0, .32);
+}
+
+html, body { background: var(--mailly-bg); color: var(--mailly-ink); }
+body { scrollbar-color: #39435a #101625; }
+::selection { background: rgba(255,122,61,.32); color: #fff; }
+
+/* OTP marketplace */
+#appScreen {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255,122,61,.08), transparent 28%),
+    radial-gradient(circle at 88% 28%, rgba(56,91,176,.08), transparent 34%),
+    var(--mailly-bg);
+  color: var(--mailly-ink);
+}
+#appScreen .topbar { background: rgba(7,11,22,.96); border-bottom: 1px solid #20293c; }
+#appScreen .balance-chip,
+#appScreen .user-button,
+#appScreen .logout { background: #121a2a; border-color: #2b354b; }
+
+.login-stat { border-color:#29344b; border-top-color:#ff7a3d; background:rgba(21,28,45,.94); box-shadow:var(--mailly-shadow); }
+.login-stat::after { color:#1c263b; }
+.login-stat strong { color:#ff8a52; }
+.login-stat > span:last-child { color:#aab4c8; }
+
+#appScreen .recent-sales-bar { border-color:#242e43; background:#0f1625; box-shadow:0 8px 24px rgba(0,0,0,.2); }
+.recent-sales-title { color:#f1f4fb; border-color:#29334a; }
+.recent-sales-flame { background:#382116; color:#ff8a52; }
+.recent-sales-live { color:#48dda0; }
+.recent-sales-live i { box-shadow:0 0 0 4px rgba(55,206,133,.12); }
+.recent-sale-item { border-color:#29334a; background:#171f31; box-shadow:0 5px 14px rgba(0,0,0,.18); }
+.recent-sale-copy strong { color:#edf1fa; }
+.recent-sale-copy span, .recent-sale-item time, .recent-sales-loading, .recent-sales-empty { color:#8f9ab1; }
+
+#appScreen .quick-menu { border-color:#29334a; background:rgba(14,20,34,.97); box-shadow:0 8px 22px rgba(0,0,0,.22); }
+.quick-menu-item, .quick-menu-item:first-child { border-color:#29334a; color:#d6dcea; }
+.quick-menu-icon { background:#1d2639; color:#a9b3c8; }
+.quick-menu-item:hover { background:#211b1a; color:#ff9461; }
+.quick-menu-item:hover .quick-menu-icon { background:#382116; color:#ff8a52; }
+.quick-menu-item.active { background:#2a1c18; color:#ff9461; }
+.quick-menu-item small { color:#7f8aa1; }
+
+#appScreen .welcome h1,
+#appScreen .card-head h2,
+.active-orders-heading h2,
+.active-service strong,
+.active-number strong,
+.provider-copy strong,
+.confirm-card h2,
+.confirm-details strong { color:#f4f7ff; }
+#appScreen .welcome p,
+#appScreen .card-head p,
+.active-orders-heading p:not(.section-kicker),
+.active-service span,
+.active-number > span,
+.active-code > span,
+.provider-copy span,
+.confirm-subtitle,
+.confirm-details span { color:#909bb2; }
+#appScreen .status-pill { background:#132c26; color:#51dfa7; border:1px solid #215240; }
+
+.active-orders-panel { border-color:#2b3650; background:linear-gradient(135deg,#151d2f 0%,#101728 100%); box-shadow:var(--mailly-shadow); }
+.active-refresh,
+.active-order,
+.active-action { border-color:#303b52; background:#192235; color:#aeb8cc; }
+.active-order { box-shadow:0 5px 16px rgba(0,0,0,.18); }
+.active-order:hover { border-color:#965234; }
+.copy-number { background:#252f45; color:#bbc4d5; }
+.active-otp { background:#123127; color:#54e2aa; }
+.active-wait { color:#ffb16f; }
+.active-state small { color:#8490a8; }
+.active-action:hover { background:#2b201c; }
+.active-action.cancel:hover { background:#321c22; }
+
+#appScreen .card { border-color:#29344b; background:#151d2e; box-shadow:var(--mailly-shadow); }
+#appScreen .card-head { border-bottom-color:#29344b; background:linear-gradient(110deg,#182135,#121929); }
+#appScreen .icon-box { background:#382116; color:#ff8951; }
+.item-count { background:#232d42; color:#a6b0c5; }
+.card-search { border-color:#303a50; background:#101827; color:#7f8aa2; }
+.card-search:focus-within { background:#171f31; border-color:#ff8a52; }
+.card-search input { color:#edf2fb; }
+.card-search input::placeholder { color:#707b92; }
+.choice-card { color:#d7ddea; border-color:#2d374d; background:#192235; }
+.choice-card:hover { border-color:#a35b39; box-shadow:0 12px 24px rgba(0,0,0,.24); }
+.choice-card.selected { color:#ffab80; border-color:#ff7d42; background:linear-gradient(145deg,#31211d,#1b2232); }
+.app-logo, .service-icon, .country-flag { background:#222c40; color:#c5cddd; }
+.app-logo { background:#f7f8fb; border-color:#39445a; }
+.choice-card.selected .app-logo, .choice-card.selected .service-icon { border-color:#a65b38; background:#f7f8fb; }
+.country-flag { background:#222c40; }
+.choice-empty { color:#8e99af; }
+.show-more { border-color:#465168; background:#121a2a; color:#aeb7c9; }
+.show-more:hover { background:#2a1c18; color:#ff9a68; }
+
+.provider-option { border-color:#2e384e; background:#192235; }
+.provider-option:hover { border-color:#a35b39; box-shadow:0 10px 22px rgba(0,0,0,.22); }
+.provider-option.selected { border-color:#ff7d42; background:#2c201d; }
+.provider-rank { background:#252f44; color:#aab4c8; }
+.provider-option.selected .provider-rank { background:#42271b; color:#ff9a68; }
+.provider-price small { color:#8c97ad; }
+.provider-price strong { color:#ff8951; }
+.provider-buy { background:#303b53; }
+
+#appScreen .selection-summary { border-color:#35415d; background:linear-gradient(105deg,#1d2741,#0e1423); }
+
+.modal-backdrop { background:rgba(3,6,13,.78); }
+.confirm-card { border:1px solid #303b52; background:#161e30; box-shadow:0 28px 90px rgba(0,0,0,.55); }
+.modal-close { background:#252f43; color:#aeb8cc; }
+.confirm-icon { background:#382116; color:#ff8951; }
+.confirm-details { border-color:#303a50; }
+.confirm-details > div { border-color:#29344a; }
+.confirm-details .confirm-total { background:#101827; }
+.confirm-details .confirm-total strong { color:#ff8951; }
+.secondary-button { border-color:#344056; background:#1c2538; color:#c0c8d8; }
+.cancel-confirm-card .cancel-icon { background:#371d24; color:#ff7077; }
+
+/* Top-up */
+body:has(.topup-card) {
+  background:var(--mailly-bg) !important;
+  background-image:radial-gradient(circle at 10% 0%,rgba(255,122,61,.1),transparent 30%),radial-gradient(circle at 90% 100%,rgba(55,85,158,.1),transparent 34%) !important;
+  color:var(--mailly-ink);
+}
+body:has(.topup-card) .topup-card,
+body:has(.topup-card) .modal-box { border-color:var(--mailly-line); background:#151d2e; color:var(--mailly-ink); box-shadow:var(--mailly-shadow); }
+body:has(.topup-card) .card-header h2,
+body:has(.topup-card) .modal-box h3 { color:#f4f7ff; }
+body:has(.topup-card) .card-header p,
+body:has(.topup-card) .form-note,
+body:has(.topup-card) .modal-box p { color:#929db3; }
+body:has(.topup-card) .form-group label { color:#c5cddd; }
+body:has(.topup-card) .form-input,
+body:has(.topup-card) .btn-amount-choice { border-color:#344057; background:#101827; color:#edf2fb; }
+body:has(.topup-card) .btn-amount-choice:hover,
+body:has(.topup-card) .btn-amount-choice.active { border-color:#ff7a3d; background:#382116; color:#ff9a68; }
+body:has(.topup-card) .btn-secondary { border-color:#344057; background:#202a3d; color:#c7cede; }
+
+/* Premium shop */
+body:has(#productGrid) { background:var(--mailly-bg) !important; color:var(--mailly-ink) !important; }
+body:has(#productGrid) .glass-card { background:rgba(21,29,46,.96) !important; border-color:var(--mailly-line) !important; box-shadow:var(--mailly-shadow) !important; }
+body:has(#productGrid) header { background:rgba(10,15,26,.95) !important; border-color:var(--mailly-line) !important; }
+body:has(#productGrid) header .text-white,
+body:has(#productGrid) header .font-black,
+body:has(#productGrid) main h1 { color:var(--mailly-ink) !important; }
+body:has(#productGrid) main p { color:var(--mailly-muted) !important; }
+body:has(#productGrid) .premium-card:hover { border-color:#9c5737 !important; box-shadow:0 18px 38px rgba(0,0,0,.34) !important; }
+body:has(#productGrid) input,
+body:has(#productGrid) select,
+body:has(#productGrid) textarea { background:#101827 !important; border-color:#344057 !important; color:#edf2fb !important; }
+
+/* YouTube dashboard */
+body:has(#login-page) { background:var(--mailly-bg) !important; background-image:radial-gradient(circle at 0 0,rgba(255,122,61,.1),transparent 32%),radial-gradient(circle at 100% 100%,rgba(55,85,158,.1),transparent 36%) !important; color:var(--mailly-ink) !important; }
+body:has(#login-page) .glass-card,
+body:has(#login-page) #dashboard-page .bg-white,
+body:has(#login-page) #admin-page .bg-white { background:rgba(21,29,46,.97) !important; border-color:var(--mailly-line) !important; box-shadow:var(--mailly-shadow) !important; }
+body:has(#login-page) #login-page h1,
+body:has(#login-page) #dashboard-page h2,
+body:has(#login-page) #admin-page h2 { color:var(--mailly-ink) !important; }
+body:has(#login-page) input,
+body:has(#login-page) select,
+body:has(#login-page) textarea { background:#101827 !important; border-color:#344057 !important; color:#edf2fb !important; }
+body:has(#login-page) .text-slate-500,
+body:has(#login-page) .text-slate-600,
+body:has(#login-page) .text-gray-500,
+body:has(#login-page) .text-gray-600 { color:#9ca7bd !important; }
+
+/* Main sign-in */
+.auth-shell { background:#0d1422; }
+.brand-panel { background:linear-gradient(145deg,#0c1321 0%,#181721 100%); }
+.brand-panel:before { background:rgba(255,122,61,.13); }
+.brand-panel:after { background:rgba(57,91,174,.1); }
+.auth-panel { border-color:#29334a; background:#111827; }
+.logo, .hero h1, .auth-card h2 { color:#f4f7ff; }
+.eyebrow { border-color:#6f3f2a; background:#221b1a; color:#ff9a68; }
+.hero p, .subtext, .brand-foot { color:#98a3b8; }
+.benefits { color:#bdc5d5; }
+.tabs { background:#1a2335; }
+.tab { color:#929db2; }
+.tab.active { background:#2a3449; color:#fff; box-shadow:0 5px 14px rgba(0,0,0,.24); }
+.field label { color:#c2cad9; }
+.input { border-color:#344057; background:#0e1625; color:#eef2fa; }
+.input::placeholder { color:#6f7a91; }
+.input:focus { border-color:#ff8a52; box-shadow:0 0 0 4px rgba(255,122,61,.13); }
+.legacy-note { background:#2c211c; color:#dcb290; }
+.loading-screen { background:#090e19; }
+.alert.error { color:#ff9ca1; background:#321c22; border-color:#613039; }
+.alert.success { color:#62e6b2; background:#143027; border-color:#275644; }
+
+/* Top-up payment method cards */
+body:has(.topup-card) .payment-method-label { color:#aab4c7; }
+body:has(.topup-card) .payment-method { border-color:#344057; background:#101827; color:#edf2fb; }
+body:has(.topup-card) .payment-method:hover:not(:disabled),
+body:has(.topup-card) .payment-method.is-selected { border-color:#ff7a3d; background:#2d201c; box-shadow:0 0 0 2px rgba(255,122,61,.12); }
+body:has(.topup-card) .payment-method__detail { color:#929db3; }
+body:has(.topup-card) .payment-method--soon { background:#182133; }
+body:has(.topup-card) .payment-method--soon .payment-method__icon { background:#465168; }
+body:has(.topup-card) .payment-method__badge { background:#263248; color:#aeb8ca; }
+body:has(.topup-card) .file-input-styled { border-color:#344057; background:#101827; color:#aeb8ca; }
+body:has(.topup-card) .qr-container { border-color:#344057; background:#fff; }

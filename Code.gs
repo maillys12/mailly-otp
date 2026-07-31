@@ -16,6 +16,8 @@ const CONFIG = {
   DEFAULT_MIN_PRICE_THB: 7,
   // OTP-sms permits a refunded cancellation after five minutes.
   CANCEL_UNLOCK_SECONDS: 300,
+  // An activation that has no SMS after this period is cancelled and refunded.
+  AUTO_REFUND_SECONDS: 20 * 60,
 
   SELLING_PRICE_RULES: [
     { maxUsd: 0.09, thb: 7 },
@@ -341,8 +343,24 @@ function setupSheets() {
 
   migrateLegacyUserSheet_();
   seedSettings_();
+  ensureAutoRefundTrigger_();
 
-  return 'สร้าง/ตรวจสอบชีตเรียบร้อยแล้ว';
+  return 'สร้าง/ตรวจสอบชีตและตั้งงานคืนเครดิตอัตโนมัติเรียบร้อยแล้ว';
+}
+
+// Run by the Apps Script time trigger.  It is deliberately public because
+// installable triggers execute without a browser request.
+function autoRefundExpiredOrders() {
+  return processExpiredOrders_();
+}
+
+function ensureAutoRefundTrigger_() {
+  const exists = ScriptApp.getProjectTriggers().some(function(trigger) {
+    return trigger.getHandlerFunction() === 'autoRefundExpiredOrders';
+  });
+  if (!exists) {
+    ScriptApp.newTrigger('autoRefundExpiredOrders').timeBased().everyMinutes(1).create();
+  }
 }
 
 function ensureSchemaHeaders_(sh, requiredHeaders) {
@@ -1935,8 +1953,68 @@ function syncOtpSmsOrder_(order) {
   return order;
 }
 
+function orderCreatedAt_(order) {
+  const created = new Date(order.createdAt || order.created_at || 0).getTime();
+  return Number.isNaN(created) ? 0 : created;
+}
+
+function cancelUnlockAt_(order) {
+  const stored = new Date(order.cancel_unlock_at || 0).getTime();
+  return stored || orderCreatedAt_(order) + CONFIG.CANCEL_UNLOCK_SECONDS * 1000;
+}
+
+function autoRefundOverdueOrder_(order) {
+  const finalStatuses = ['completed', 'cancelled', 'refunded', 'expired', 'failed'];
+  const status = String(order.status || '').toLowerCase();
+  const createdAt = orderCreatedAt_(order);
+  if (!createdAt) return false;
+  const age = Date.now() - createdAt;
+  if (finalStatuses.indexOf(status) >= 0 || order.sms || age < CONFIG.AUTO_REFUND_SECONDS * 1000) return false;
+
+  requireOtpSmsOrder_(order);
+  otpSms_(CONFIG.OTP_SMS.setStatus, {
+    activation_id: order.smspoolOrderId || order.provider_order_id,
+    action: 'cancel'
+  });
+
+  const newCredit = changeCredit_(order.userId || order.username, Number(order.price !== undefined ? order.price : order.price_thb));
+  updateRow_('Orders', order._row, {
+    status: 'refunded',
+    refunded_at: now_(),
+    updatedAt: now_(),
+    provider_status: 'cancelled'
+  });
+  order.status = 'refunded';
+  order.refunded_at = now_();
+  order.provider_status = 'cancelled';
+  return newCredit;
+}
+
+function processExpiredOrders_() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) return { success: true, processed: 0 };
+  try {
+    let processed = 0;
+    rows_('Orders').forEach(function(order) {
+      const status = String(order.status || '').toLowerCase();
+      if (['pending', 'waiting', 'processing', 'resend', 'retry', 'active', '1'].indexOf(status) < 0) return;
+      syncOtpSmsOrder_(order);
+      try {
+        if (autoRefundOverdueOrder_(order) !== false) processed++;
+      } catch (error) {
+        console.warn('Auto-refund skipped for ' + (order.orderId || order.order_id) + ': ' + safeError_(error));
+      }
+    });
+    return { success: true, processed: processed };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function getMyOrders_(p) {
   const u = requireAuth_(p);
+  // Covers the short period between the one-minute background runs as well.
+  processExpiredOrders_();
 
   const items = rows_('Orders')
     .filter(function(o) {
@@ -1994,6 +2072,10 @@ function getMyOrders_(p) {
 
         sms:
           o.sms || '',
+
+        cancelUnlockAt: new Date(cancelUnlockAt_(o)).toISOString(),
+        expiresAt: new Date(orderCreatedAt_(o) + CONFIG.AUTO_REFUND_SECONDS * 1000).toISOString(),
+        canCancel: Date.now() >= cancelUnlockAt_(o),
 
         createdAt:
           o.createdAt ||
@@ -2279,10 +2361,9 @@ function requireOtpSmsOrder_(order) {
     ''
   );
 
-  if (
-    String(order.provider || '').toLowerCase() !== 'otp-sms' &&
-    activationId.charAt(0) !== 'X'
-  ) {
+  // Older rows were saved before the provider column existed and activation
+  // ids can be numeric.  A non-empty stored activation id is sufficient.
+  if (!activationId) {
     throw new Error(
       'รายการนี้ไม่สามารถจัดการต่อได้ กรุณาติดต่อแอดมิน'
     );
@@ -2335,6 +2416,12 @@ function cancelOrder_(p) {
     p.orderId
   );
   requireOtpSmsOrder_(o);
+
+  const remainingMs = cancelUnlockAt_(o) - Date.now();
+  if (remainingMs > 0) {
+    const minutes = Math.ceil(remainingMs / 60000);
+    throw new Error('รายการนี้ยกเลิกได้หลังสั่งซื้อครบ 5 นาที (เหลือประมาณ ' + minutes + ' นาที)');
+  }
 
   // Always check upstream before deciding whether an activation is eligible
   // for cancellation. A locally cached pending status must not block a valid

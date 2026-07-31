@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#090e19">
   <title>Mailly OTP — รับรหัส OTP ออนไลน์</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -276,7 +276,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbx5vmlwbG32c7eSncguID9tz9f9S4vx8GbZ5UHAVQfqYoU3lmF3HghGGO9OMBKQkZRZ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;
@@ -669,9 +669,27 @@
         <div class="active-service">${appLogoMarkup({ name: order.service || "OTP" })}<div><strong>${escapeHtml(order.service || "OTP Service")}</strong><span>${countryFlag({ name: order.country || "" })} ${escapeHtml(order.country || "")}</span></div></div>
         <div class="active-number"><span>หมายเลขที่ได้รับ</span><strong>${escapeHtml(order.phone || "—")}</strong><button type="button" class="copy-number" data-phone="${escapeHtml(order.phone || "")}"><i class="fa-regular fa-copy"></i> คัดลอก</button></div>
         <div class="active-code"><span>รหัส OTP</span>${otp}</div>
-        <div class="active-state"><span class="badge ${escapeHtml(order.status)}"><i class="fa-solid fa-signal"></i> ${escapeHtml(statusText(order.status))}</span><small>${formatOrderTime(order.createdAt)}</small></div>
-        <div class="active-actions"><button class="active-action check" type="button" data-check-order="${escapeHtml(order.orderId)}"><i class="fa-solid fa-rotate"></i><span>ตรวจ OTP</span></button><button class="active-action cancel" type="button" data-cancel-order="${escapeHtml(order.orderId)}"><i class="fa-solid fa-xmark"></i><span>ยกเลิก</span></button></div>
+        <div class="active-state"><span class="badge ${escapeHtml(order.status)}"><i class="fa-solid fa-signal"></i> ${escapeHtml(statusText(order.status))}</span><small>${formatOrderTime(order.createdAt)}</small>${orderCountdownMarkup(order)}</div>
+        <div class="active-actions"><button class="active-action check" type="button" data-check-order="${escapeHtml(order.orderId)}"><i class="fa-solid fa-rotate"></i><span>ตรวจ OTP</span></button>${cancelActionMarkup(order)}</div>
       </article>`;
+    }
+    function cancelActionMarkup(order) {
+      if (order.canCancel) return `<button class="active-action cancel" type="button" data-cancel-order="${escapeHtml(order.orderId)}"><i class="fa-solid fa-xmark"></i><span>ยกเลิก</span></button>`;
+      return `<button class="active-action cancel" type="button" disabled title="ยกเลิกได้หลังสั่งซื้อครบ 5 นาที"><i class="fa-regular fa-clock"></i><span>ยกเลิกได้ใน <b data-cancel-countdown="${escapeHtml(order.cancelUnlockAt || '')}">${escapeHtml(remainingTime(order.cancelUnlockAt))}</b></span></button>`;
+    }
+    function remainingTime(value) {
+      const milliseconds = Math.max(0, new Date(value).getTime() - Date.now());
+      const seconds = Math.floor(milliseconds / 1000);
+      const minutes = Math.floor(seconds / 60);
+      return `${minutes}:${String(seconds % 60).padStart(2, "0")}`;
+    }
+    function orderCountdownMarkup(order) {
+      const cancelText = order.canCancel ? "ยกเลิกได้แล้ว" : `ยกเลิกได้ใน <b data-cancel-countdown="${escapeHtml(order.cancelUnlockAt || '')}">${escapeHtml(remainingTime(order.cancelUnlockAt))}</b>`;
+      return `<small><i class="fa-regular fa-clock"></i> ${cancelText}</small><small><i class="fa-solid fa-rotate"></i> คืนเครดิตอัตโนมัติใน <b data-expiry-countdown="${escapeHtml(order.expiresAt || '')}">${escapeHtml(remainingTime(order.expiresAt))}</b></small>`;
+    }
+    function updateOrderCountdowns() {
+      document.querySelectorAll("[data-cancel-countdown]").forEach(el => { el.textContent = remainingTime(el.dataset.cancelCountdown); });
+      document.querySelectorAll("[data-expiry-countdown]").forEach(el => { el.textContent = remainingTime(el.dataset.expiryCountdown); });
     }
     function formatOrderTime(value) {
       const date = new Date(value);
@@ -738,7 +756,7 @@
           <div class="order-meta"><div class="phone">${escapeHtml(order.phone || "—")}</div><span>หมายเลขโทรศัพท์</span></div>
           <div class="order-meta"><div class="otp">${escapeHtml(order.sms || (active ? "กำลังรอ..." : "—"))}</div><span>รหัส OTP</span></div>
           <div><span class="badge ${escapeHtml(order.status)}">${escapeHtml(statusText(order.status))}</span></div>
-          <div class="order-actions">${active ? `<button class="small-btn" onclick="checkOrder('${escapeHtml(order.orderId)}')"><i class="fa-solid fa-rotate"></i> ตรวจ OTP</button><button class="small-btn danger" onclick="cancelOrder('${escapeHtml(order.orderId)}')">ยกเลิก</button>` : ""}</div>
+          <div class="order-actions">${active ? `<button class="small-btn" onclick="checkOrder('${escapeHtml(order.orderId)}')"><i class="fa-solid fa-rotate"></i> ตรวจ OTP</button>${order.canCancel ? `<button class="small-btn danger" onclick="cancelOrder('${escapeHtml(order.orderId)}')">ยกเลิก</button>` : `<button class="small-btn" disabled>ยกเลิกได้หลัง 5 นาที</button>`}` : ""}</div>
         </div>`;
       }).join("");
     }
@@ -790,6 +808,7 @@
 
     (async function boot() {
       renderReadyShortcuts();
+      setInterval(updateOrderCountdowns, 1000);
       loadLoginStats();
       if (!sessionToken) return showAuth();
       try {
