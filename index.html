@@ -136,6 +136,12 @@
           <span><i class="fa-solid fa-circle-check"></i> ตรวจสอบสถานะแบบเรียลไทม์</span>
           <span><i class="fa-solid fa-circle-check"></i> เครดิตในบัญชี</span>
         </div>
+        <section class="login-stats" aria-label="สถิติของ Mailly OTP">
+          <article class="login-stat service-stat"><span class="login-stat-icon"><i class="fa-solid fa-bolt"></i></span><strong id="loginServiceCount">—</strong><span>บริการที่รองรับ</span></article>
+          <article class="login-stat order-stat"><span class="login-stat-icon"><i class="fa-solid fa-cart-shopping"></i></span><strong id="loginOrderCount">—</strong><span>ออเดอร์ทั้งหมด</span></article>
+          <article class="login-stat member-stat"><span class="login-stat-icon"><i class="fa-solid fa-users"></i></span><strong id="loginMemberCount">—</strong><span>สมาชิกใช้งาน</span></article>
+          <article class="login-stat rate-stat"><span class="login-stat-icon"><i class="fa-solid fa-circle-check"></i></span><strong id="loginSuccessRate">—</strong><span>อัตราสำเร็จ 30 วัน</span></article>
+        </section>
       </div>
       <div class="brand-foot">© 2026 Mailly OTP. All rights reserved.</div>
     </aside>
@@ -179,11 +185,38 @@
       </div>
     </header>
 
+    <section class="recent-sales-bar" aria-label="รายการสั่งซื้อล่าสุด" aria-live="polite">
+      <div class="recent-sales-inner">
+        <div class="recent-sales-title"><span class="recent-sales-flame"><i class="fa-solid fa-fire-flame-curved"></i></span><span>รายการสั่งซื้อล่าสุด</span><span class="recent-sales-live"><i></i> LIVE</span></div>
+        <div id="recentSalesViewport" class="recent-sales-viewport">
+          <div id="recentSalesTrack" class="recent-sales-track"><span class="recent-sales-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังโหลดรายการล่าสุด...</span></div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="quick-menu" aria-label="เมนูหลัก">
+      <div class="quick-menu-inner">
+        <a class="quick-menu-item active" href="index.html" aria-current="page"><span class="quick-menu-icon"><i class="fa-solid fa-mobile-screen-button"></i></span><span>ซื้อเบอร์</span></a>
+        <a class="quick-menu-item" href="page2.html"><span class="quick-menu-icon"><i class="fa-solid fa-wallet"></i></span><span>เติมเครดิต</span></a>
+        <a class="quick-menu-item" href="shop.html"><span class="quick-menu-icon"><i class="fa-solid fa-bag-shopping"></i></span><span>ร้านค้า</span></a>
+        <a class="quick-menu-item" href="youtube.html"><span class="quick-menu-icon"><i class="fa-brands fa-youtube"></i></span><span>YouTube</span></a>
+        <button class="quick-menu-item" type="button" id="copyUserButton"><span class="quick-menu-icon"><i class="fa-regular fa-user"></i></span><span>บัญชี</span><small id="miniUsername">—</small></button>
+      </div>
+    </nav>
+
     <main class="main">
       <div class="welcome">
         <div><h1>สวัสดี, <span id="welcomeUsername">สมาชิก</span></h1><p>เลือกบริการที่ต้องการและรับหมายเลข OTP ได้ทันที</p></div>
         <div class="status-pill"><span class="dot"></span> ระบบพร้อมให้บริการ</div>
       </div>
+
+      <section id="activeOrdersPanel" class="active-orders-panel hidden" aria-live="polite">
+        <div class="active-orders-heading">
+          <div><p class="section-kicker"><i class="fa-solid fa-hourglass-half"></i> LIVE ACTIVATIONS</p><h2>รายการที่กำลังรอ OTP <span id="activeOrderCount" class="active-count">0</span></h2><p>หมายเลขที่กำลังใช้งานจะแสดงอยู่ตรงนี้จนกว่าจะได้รับรหัส</p></div>
+          <button id="refreshActiveOrders" class="active-refresh" type="button"><i class="fa-solid fa-rotate"></i> รีเฟรช</button>
+        </div>
+        <div id="activeOrders" class="active-orders"></div>
+      </section>
 
       <div class="purchase-layout">
         <article class="card picker-card">
@@ -214,16 +247,6 @@
           <div class="selection-action"><div class="summary-price"><span>ราคาที่เลือก</span><strong><span id="quotePrice">—</span> <small>฿</small></strong></div><button id="buyButton" class="primary buy" disabled><i class="fa-solid fa-arrow-right"></i> ดูสรุปรายการ</button></div>
         </article>
 
-        <aside class="card service-menu">
-          <div class="card-head"><h2><span class="icon-box"><i class="fa-solid fa-grid-2"></i></span> เมนูบริการ</h2><p>เข้าถึงบริการอื่นของ Mailly</p></div>
-          <div class="card-body mini-links">
-            <a class="mini-link" href="page2.html"><i class="fa-solid fa-wallet"></i><strong>เติมเครดิต</strong><span>PromptPay และสลิป</span></a>
-            <a class="mini-link" href="shop.html"><i class="fa-solid fa-bag-shopping"></i><strong>ร้านค้า</strong><span>สินค้าและบริการ</span></a>
-            <a class="mini-link" href="youtube.html"><i class="fa-brands fa-youtube"></i><strong>YouTube</strong><span>Premium Family</span></a>
-            <button class="mini-link" type="button" id="copyUserButton" style="text-align:left"><i class="fa-regular fa-copy"></i><strong>คัดลอก Username</strong><span id="miniUsername">—</span></button>
-          </div>
-        </aside>
-
         <article class="card orders-card">
           <div class="card-head orders-head"><div><h2><span class="icon-box"><i class="fa-solid fa-clock-rotate-left"></i></span> รายการของฉัน</h2><p>ตรวจสอบหมายเลข สถานะ และรหัส OTP</p></div><button id="refreshOrders" class="refresh"><i class="fa-solid fa-rotate"></i> รีเฟรช</button></div>
           <div class="card-body"><div id="orders" class="orders"><div class="empty">กำลังโหลดรายการ...</div></div></div>
@@ -246,12 +269,13 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzAzPCwHB9v5hj8MP7qFlZ0IO8HLNqF97KalPWRV6da8Qu6mzVdKV4zti0N0GSUEq9n/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;
     let currentQuote = null;
     let orderPoller = null;
+    let recentSalesPoller = null;
     let services = [];
     let countries = [];
     let providerOptions = [];
@@ -283,6 +307,21 @@
     function toast(message) {
       const el = $("toast"); el.textContent = message; el.classList.add("show");
       clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.remove("show"), 2800);
+    }
+    function formatStat(value, suffix = "") {
+      return value === null || value === undefined ? "—" : `${Number(value).toLocaleString("th-TH")}${suffix}`;
+    }
+    async function loadLoginStats() {
+      try {
+        const result = await api("getLoginStats");
+        if (!result.success) throw new Error();
+        $("loginServiceCount").textContent = formatStat(result.services, result.services === null ? "" : "+");
+        $("loginOrderCount").textContent = formatStat(result.totalOrders, "+");
+        $("loginMemberCount").textContent = formatStat(result.activeMembers, "+");
+        $("loginSuccessRate").textContent = formatStat(result.successRate30d, result.successRate30d === null ? "" : "%");
+      } catch (_) {
+        // Keep neutral placeholders if real statistics are temporarily unavailable.
+      }
     }
     function escapeHtml(value) {
       return String(value ?? "").replace(/[&<>"']/g, char => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[char]));
@@ -346,8 +385,9 @@
       $("miniUsername").textContent = currentUser.username;
       $("avatar").textContent = currentUser.username.charAt(0).toUpperCase();
       $("balance").textContent = Number(currentUser.balance || 0).toFixed(2) + " ฿";
-      loadServices(); loadOrders();
+      loadServices(); loadOrders(); loadRecentSales();
       clearInterval(orderPoller); orderPoller = setInterval(loadOrders, 7000);
+      clearInterval(recentSalesPoller); recentSalesPoller = setInterval(loadRecentSales, 30000);
     }
 
     function showAuth() {
@@ -357,7 +397,7 @@
     async function logout(callApi = true) {
       if (callApi && sessionToken) { try { await api("logoutUser"); } catch (_) {} }
       sessionToken = ""; currentUser = null; localStorage.removeItem(STORAGE_TOKEN);
-      clearInterval(orderPoller); showAuth();
+      clearInterval(orderPoller); clearInterval(recentSalesPoller); showAuth();
     }
     $("logoutButton").addEventListener("click", () => logout(true));
 
@@ -528,14 +568,74 @@
     $("serviceSearch").addEventListener("input", renderServiceCards);
     $("countrySearch").addEventListener("input", renderCountryCards);
 
+    function isActiveOrder(order) {
+      return ["pending", "processing", "resend", "1"].includes(String(order.status).toLowerCase());
+    }
+    function activeOrderMarkup(order) {
+      const otp = order.sms ? `<button type="button" class="active-otp copy-otp" data-otp="${escapeHtml(order.sms)}" title="แตะเพื่อคัดลอกรหัส">${escapeHtml(order.sms)} <i class="fa-regular fa-copy"></i></button>` : `<div class="active-wait"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังรอ SMS...</div>`;
+      return `<article class="active-order">
+        <div class="active-service">${appLogoMarkup({ name: order.service || "OTP" })}<div><strong>${escapeHtml(order.service || "OTP Service")}</strong><span>${countryFlag({ name: order.country || "" })} ${escapeHtml(order.country || "")}</span></div></div>
+        <div class="active-number"><span>หมายเลขที่ได้รับ</span><strong>${escapeHtml(order.phone || "—")}</strong><button type="button" class="copy-number" data-phone="${escapeHtml(order.phone || "")}"><i class="fa-regular fa-copy"></i> คัดลอก</button></div>
+        <div class="active-code"><span>รหัส OTP</span>${otp}</div>
+        <div class="active-state"><span class="badge ${escapeHtml(order.status)}"><i class="fa-solid fa-signal"></i> ${escapeHtml(statusText(order.status))}</span><small>${formatOrderTime(order.createdAt)}</small></div>
+        <div class="active-actions"><button class="active-action check" type="button" data-check-order="${escapeHtml(order.orderId)}"><i class="fa-solid fa-rotate"></i><span>ตรวจ OTP</span></button><button class="active-action cancel" type="button" data-cancel-order="${escapeHtml(order.orderId)}"><i class="fa-solid fa-xmark"></i><span>ยกเลิก</span></button></div>
+      </article>`;
+    }
+    function formatOrderTime(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "กำลังใช้งาน";
+      return `เริ่ม ${new Intl.DateTimeFormat("th-TH", { hour: "2-digit", minute: "2-digit" }).format(date)} น.`;
+    }
+    function renderActiveOrders(orders) {
+      const active = orders.filter(isActiveOrder), panel = $("activeOrdersPanel"), container = $("activeOrders");
+      $("activeOrderCount").textContent = active.length;
+      panel.classList.toggle("hidden", active.length === 0);
+      container.innerHTML = active.map(activeOrderMarkup).join("");
+    }
+    function relativeOrderTime(value) {
+      const time = new Date(value).getTime();
+      if (Number.isNaN(time)) return "เมื่อสักครู่";
+      const minutes = Math.max(0, Math.floor((Date.now() - time) / 60000));
+      if (minutes < 1) return "เมื่อสักครู่";
+      if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours} ชั่วโมงที่แล้ว`;
+      return `${Math.floor(hours / 24)} วันที่แล้ว`;
+    }
+    function recentSaleMarkup(sale) {
+      const service = sale.service || "OTP Service";
+      const country = sale.country || "ต่างประเทศ";
+      return `<article class="recent-sale-item"><span class="recent-sale-logo">${appLogoMarkup({ name: service })}</span><span class="recent-sale-copy"><strong>${escapeHtml(service)}</strong><span>${countryFlag({ name: country })} ${escapeHtml(country)} · ฿${Number(sale.price || 0).toFixed(2)}</span></span><time>${escapeHtml(relativeOrderTime(sale.createdAt))}</time></article>`;
+    }
+    async function loadRecentSales() {
+      if (!sessionToken) return;
+      const track = $("recentSalesTrack");
+      try {
+        const result = await api("getRecentSales");
+        if (!result.success) throw new Error(result.message || "โหลดรายการล่าสุดไม่สำเร็จ");
+        const sales = result.sales || [];
+        if (!sales.length) {
+          track.classList.remove("is-moving");
+          track.innerHTML = `<span class="recent-sales-empty"><i class="fa-solid fa-bolt"></i> รายการสั่งซื้อใหม่จะแสดงที่นี่</span>`;
+          return;
+        }
+        const items = sales.map(recentSaleMarkup).join("");
+        track.innerHTML = items + items;
+        track.classList.add("is-moving");
+      } catch (_) {
+        track.classList.remove("is-moving");
+        track.innerHTML = `<span class="recent-sales-empty"><i class="fa-solid fa-clock"></i> ยังไม่สามารถโหลดรายการล่าสุดได้</span>`;
+      }
+    }
     async function loadOrders() {
       if (!sessionToken) return;
       const result = await api("getMyOrders");
       if (!result.success) return;
       const orders = result.orders || [], container = $("orders");
+      renderActiveOrders(orders);
       if (!orders.length) { container.innerHTML = `<div class="empty"><i class="fa-regular fa-folder-open" style="display:block;font-size:24px;margin-bottom:10px"></i>ยังไม่มีรายการสั่งซื้อ</div>`; return; }
       container.innerHTML = orders.map(order => {
-        const active = ["pending","processing","resend","1"].includes(String(order.status).toLowerCase());
+        const active = isActiveOrder(order);
         return `<div class="order">
           <div class="order-title"><strong>${escapeHtml(order.service || "OTP Service")}</strong><span>${escapeHtml(order.country || "")} · ${escapeHtml(order.orderId)}</span></div>
           <div class="order-meta"><div class="phone">${escapeHtml(order.phone || "—")}</div><span>หมายเลขโทรศัพท์</span></div>
@@ -564,9 +664,18 @@
     }
     window.checkOrder = checkOrder; window.cancelOrder = cancelOrder;
     $("refreshOrders").addEventListener("click", loadOrders);
+    $("refreshActiveOrders").addEventListener("click", loadOrders);
+    $("activeOrders").addEventListener("click", event => {
+      const copyNumber = event.target.closest("[data-phone]"), copyOtp = event.target.closest("[data-otp]"), check = event.target.closest("[data-check-order]"), cancel = event.target.closest("[data-cancel-order]");
+      if (copyNumber?.dataset.phone) navigator.clipboard.writeText(copyNumber.dataset.phone).then(() => toast("คัดลอกเบอร์แล้ว"));
+      else if (copyOtp?.dataset.otp) navigator.clipboard.writeText(copyOtp.dataset.otp).then(() => toast("คัดลอกรหัส OTP แล้ว"));
+      else if (check) checkOrder(check.dataset.checkOrder);
+      else if (cancel) cancelOrder(cancel.dataset.cancelOrder);
+    });
     $("copyUserButton").addEventListener("click", () => navigator.clipboard.writeText(currentUser.username).then(() => toast("คัดลอก Username แล้ว")));
 
     (async function boot() {
+      loadLoginStats();
       if (!sessionToken) return showAuth();
       try {
         const result = await api("getSessionUser");

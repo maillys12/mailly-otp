@@ -237,6 +237,12 @@ function dispatch_(action, p) {
     case 'getMyOrders':
       return getMyOrders_(p);
 
+    case 'getRecentSales':
+      return getRecentSales_(p);
+
+    case 'getLoginStats':
+      return getLoginStats_();
+
     case 'getPriceQuote':
       return getPriceQuote_(p);
 
@@ -1938,6 +1944,84 @@ function getMyOrders_(p) {
     success: true,
     orders: items
   };
+}
+
+// Returns a privacy-safe activity feed for the signed-in app.  Do not expose
+// phone numbers, usernames, provider order ids, or OTPs in this response.
+function getRecentSales_(p) {
+  requireAuth_(p);
+
+  const excludedStatuses = ['cancelled', 'refunded', 'failed', 'expired'];
+  const items = rows_('Orders')
+    .filter(function(o) {
+      return excludedStatuses.indexOf(String(o.status || '').toLowerCase()) === -1;
+    })
+    .sort(function(a, b) {
+      return new Date(b.createdAt || b.created_at || 0).getTime() -
+        new Date(a.createdAt || a.created_at || 0).getTime();
+    })
+    .slice(0, 10)
+    .map(function(o) {
+      return {
+        service: o.service || o.service_name || 'OTP Service',
+        country: o.country || o.country_name || '',
+        price: money_(o.price !== undefined ? o.price : o.price_thb),
+        createdAt: o.createdAt || o.created_at || ''
+      };
+    });
+
+  return { success: true, sales: items };
+}
+
+// Public, aggregate-only figures used on the sign-in page. No account or
+// order-level details are included in this response.
+function getLoginStats_() {
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get('mailly_login_stats_v1');
+  if (cached) {
+    return JSON.parse(cached);
+  }
+
+  const users = rows_('Users');
+  const orders = rows_('Orders');
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const finalStatuses = ['completed', 'cancelled', 'refunded', 'expired', 'failed'];
+  const completedStatuses = ['completed'];
+  const recentFinalOrders = orders.filter(function(order) {
+    const placedAt = new Date(order.createdAt || order.created_at || 0);
+    return placedAt >= thirtyDaysAgo &&
+      finalStatuses.indexOf(String(order.status || '').toLowerCase()) !== -1;
+  });
+  const successfulOrders = recentFinalOrders.filter(function(order) {
+    return completedStatuses.indexOf(String(order.status || '').toLowerCase()) !== -1;
+  }).length;
+  let serviceCount = null;
+
+  try {
+    serviceCount = getServices_().length;
+  } catch (_) {
+    // The login page shows an unavailable marker rather than inventing a count
+    // when the upstream service catalogue is temporarily unreachable.
+  }
+
+  const result = {
+    success: true,
+    services: serviceCount,
+    totalOrders: orders.length,
+    activeMembers: users.filter(function(user) {
+      const active = String(user.active).toLowerCase();
+      const status = String(user.status || 'active').toLowerCase();
+      return active !== 'false' && active !== '0' &&
+        ['disabled', 'inactive', 'suspended'].indexOf(status) === -1;
+    }).length,
+    successRate30d: recentFinalOrders.length
+      ? Math.round((successfulOrders / recentFinalOrders.length) * 100)
+      : null
+  };
+
+  cache.put('mailly_login_stats_v1', JSON.stringify(result), 300);
+  return result;
 }
 
 function buyNumber_(p) {
