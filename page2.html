@@ -195,15 +195,29 @@
   </style>
   <link rel="stylesheet" href="theme.css">
 </head>
-<body>
+<body class="reference-page topup-page">
+  <header class="reference-header">
+    <a class="reference-brand" href="index.html"><span><i class="fa-solid fa-message"></i></span><strong>MAILLY OTP</strong></a>
+    <nav class="reference-nav" aria-label="เมนูหลัก">
+      <a href="index.html">รับ OTP</a><a class="active" href="page2.html">เติมเครดิต</a><a href="shop.html">ร้านค้า</a><a href="youtube.html">YouTube</a>
+    </nav>
+    <div class="reference-account"><span class="reference-credit"><i class="fa-solid fa-wallet"></i> เครดิต</span><strong id="topupHeaderBalance">0.00 ฿</strong><span class="reference-user"><b id="topupHeaderAvatar">M</b><em id="topupHeaderUser">สมาชิก</em></span></div>
+  </header>
 
+  <main class="reference-main">
+    <section class="reference-hero">
+      <div><h1>เติมเครดิต</h1><i></i><p>ชำระผ่าน PromptPay แล้วแนบสลิปเพื่อรอตรวจสอบ</p></div>
+      <a class="reference-outline-button" href="index.html"><i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก</a>
+    </section>
+
+    <section class="topup-layout">
   <div class="topup-card">
     <div class="card-header">
       <div class="wallet-icon-box">
-        <i class="fa-solid fa-wallet"></i>
+        <i class="fa-solid fa-qrcode"></i>
       </div>
-      <h2>ระบบเติมเงินอัตโนมัติ</h2>
-      <p>เพิ่มเครดิตเข้าสู่บัญชี Mailly OTP ของคุณ</p>
+      <h2>สร้าง QR PromptPay</h2>
+      <p>ยอดขั้นต่ำ 50 บาท</p>
     </div>
 
     <div class="payment-method-group" aria-labelledby="paymentMethodLabel">
@@ -258,11 +272,27 @@
 
     <div id="resultMessage" class="alert-message hidden"></div>
 
-    <button type="button" onclick="backToMain()" class="btn btn-secondary">
-      <i class="fa-solid fa-arrow-left" style="font-size: 13px;"></i>
-      <span>ย้อนกลับไปหน้าหลัก</span>
-    </button>
   </div>
+
+  <aside class="topup-card topup-slip-card">
+    <div class="card-header">
+      <div class="wallet-icon-box"><i class="fa-solid fa-receipt"></i></div>
+      <h2>ส่งสลิป</h2>
+      <p>ระบบผูกสลิปกับบัญชีที่ล็อกอินอยู่โดยอัตโนมัติ</p>
+    </div>
+    <div class="form-group slip-account-preview"><label>บัญชีผู้รับเครดิต</label><div id="topupAccountPreview">สมาชิก</div></div>
+    <div class="file-upload-box">
+      <label for="slipFile"><i class="fa-solid fa-image"></i> ไฟล์สลิป (JPG, PNG หรือ WEBP)</label>
+      <input type="file" id="slipFile" onchange="document.getElementById('modalResultMessage').classList.add('hidden')" accept="image/*" class="file-input-styled">
+    </div>
+    <div id="modalResultMessage" class="alert-message alert-error hidden"></div>
+    <button id="btnSubmit" onclick="submitTopup()" class="btn btn-success" disabled>
+      <span id="btnText"><i class="fa-solid fa-cloud-arrow-up"></i> ส่งสลิปเพื่อตรวจสอบ</span>
+      <div id="spinner" class="spinner hidden"></div>
+    </button>
+  </aside>
+    </section>
+  </main>
 
   <div id="qrModal" class="modal-overlay hidden">
     <div style="position: absolute; inset: 0;" onclick="closeModal()"></div>
@@ -277,17 +307,6 @@
         <p class="account-holder">ชื่อบัญชีผู้รับ: ชนกานต์ ปีนะถา</p>
       </div>
       
-      <div class="file-upload-box">
-        <label for="slipFile"><i class="fa-solid fa-image" style="color: var(--success); margin-right: 4px;"></i> อัปโหลดรูปภาพสลิปโอนเงิน:</label>
-        <input type="file" id="slipFile" onchange="document.getElementById('modalResultMessage').classList.add('hidden')" accept="image/*" class="file-input-styled">
-      </div>
-
-      <div id="modalResultMessage" class="alert-message alert-error hidden" style="margin-top: 0; margin-bottom: 14px; padding: 10px; font-size: 13px;"></div>
-
-      <button id="btnSubmit" onclick="submitTopup()" class="btn btn-success">
-        <span id="btnText">อัปโหลด & ยืนยันสลิป</span>
-        <div id="spinner" class="spinner hidden"></div>
-      </button>
     </div>
   </div>
 
@@ -305,6 +324,23 @@
       if (savedUser) {
         document.getElementById('username').value = savedUser;
         document.getElementById('rememberMe').checked = true;
+        document.getElementById('topupHeaderUser').textContent = savedUser;
+        document.getElementById('topupHeaderAvatar').textContent = savedUser.charAt(0).toUpperCase();
+        document.getElementById('topupAccountPreview').textContent = savedUser;
+      }
+      const sessionToken = localStorage.getItem(STORAGE_TOKEN) || '';
+      if (sessionToken) {
+        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getSessionUser', payload: { token: sessionToken } }) })
+          .then(response => response.json())
+          .then(result => {
+            if (!result || !result.success || !result.user) return;
+            const liveUser = result.user.username || savedUser || 'สมาชิก';
+            const liveBalance = result.user.balance ?? result.user.credit ?? 0;
+            document.getElementById('topupHeaderUser').textContent = liveUser;
+            document.getElementById('topupHeaderAvatar').textContent = liveUser.charAt(0).toUpperCase();
+            document.getElementById('topupHeaderBalance').textContent = Number(liveBalance).toFixed(2) + ' ฿';
+            document.getElementById('topupAccountPreview').textContent = liveUser;
+          }).catch(() => {});
       }
     });
 
@@ -318,7 +354,11 @@
     }
 
     function setAmount(value) { document.getElementById('amount').value = value; handleInputChange(); }
-    function handleInputChange() { document.getElementById('resultMessage').classList.add('hidden'); }
+    function handleInputChange() {
+      document.getElementById('resultMessage').classList.add('hidden');
+      const typedUser = document.getElementById('username').value.trim();
+      if (typedUser) document.getElementById('topupAccountPreview').textContent = typedUser;
+    }
     function openModal() {
       const modal = document.getElementById('qrModal');
       document.getElementById('modalResultMessage').classList.add('hidden'); 
@@ -366,6 +406,7 @@
         btnGenerateQR.disabled = false;
         btnQRText.innerText = 'ยืนยันจำนวนเงิน & สร้าง QR Code';
         qrSpinner.classList.add('hidden');
+        document.getElementById('btnSubmit').disabled = false;
         openModal();
       }, 1000);
     }
@@ -425,6 +466,7 @@
               showResult(response.message + '<br>ยอดเงินคงเหลือใหม่: ' + response.newCredit + ' ฿', 'success');
               document.getElementById('amount').value = '';
               fileInput.value = '';
+              document.getElementById('btnSubmit').disabled = true;
             } else {
               showModalResult(response.message, 'error');
             }

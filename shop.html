@@ -110,25 +110,16 @@
     <div class="neon-bg-glow bg-red-600 -bottom-20 left-1/3" style="animation-delay: -5s;"></div>
 
     <!-- Header / Navbar -->
-    <header class="sticky top-0 z-40 glass-card border-b border-orange-950/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 p-0.5 shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform">
-                    <div class="w-full h-full bg-stone-950 rounded-[10px] flex items-center justify-center text-orange-400">
-                        <i class="fa-solid fa-flask-vial text-lg"></i>
-                    </div>
-                </div>
-                <span class="font-black text-xl tracking-wide text-white">MAILLY <span class="text-gradient">PREMIUM</span></span>
-            </a>
+    <header class="reference-header">
+        <div class="reference-header-inner">
+            <a href="index.html" class="reference-brand"><span><i class="fa-solid fa-message"></i></span><strong>MAILLY OTP</strong></a>
+            <nav class="reference-nav" aria-label="เมนูหลัก"><a href="index.html">รับ OTP</a><a href="page2.html">เติมเครดิต</a><a class="active" href="shop.html">ร้านค้า</a><a href="youtube.html">YouTube</a></nav>
 
             <!-- User Credit Info & Nav Menu -->
             <div class="flex items-center gap-3 sm:gap-4">
-                <div class="bg-stone-900/90 border border-orange-500/30 rounded-full px-4 py-1.5 flex items-center gap-2.5 shadow-lg shadow-orange-950/50">
-                    <i class="fa-solid fa-user-astronaut text-orange-400 text-xs"></i>
-                    <span id="userNameDisplay" class="text-xs text-stone-200 font-medium">admin</span>
-                    <span class="text-stone-700">|</span>
-                    <i class="fa-solid fa-wallet text-amber-400 text-xs animate-pulse"></i>
-                    <span id="userCreditDisplay" class="font-bold text-amber-400 text-xs sm:text-sm">0.00 ฿</span>
+                <div class="reference-account">
+                    <span class="reference-credit"><i class="fa-solid fa-wallet"></i> เครดิต</span><strong id="userCreditDisplay">0.00 ฿</strong>
+                    <span class="reference-user"><b id="shopHeaderAvatar">M</b><em id="userNameDisplay">สมาชิก</em></span>
                 </div>
 
                 <!-- Admin Button -->
@@ -136,9 +127,6 @@
                     <i class="fa-solid fa-sliders"></i> <span class="hidden sm:inline">จัดการร้านค้า</span>
                 </button>
 
-                <a href="index.html" class="text-stone-400 hover:text-white transition-colors text-sm p-2 hover:scale-110">
-                    <i class="fa-solid fa-house"></i>
-                </a>
             </div>
         </div>
     </header>
@@ -147,16 +135,9 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 flex-1 relative z-10">
         
         <!-- Hero Section -->
-        <div class="text-center mb-10 animate-fade-in-up">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs font-semibold mb-4 shadow-lg shadow-orange-500/10">
-                <i class="fa-solid fa-sparkles text-amber-400 animate-spin" style="animation-duration: 4s;"></i> ศูนย์รวมเทคนิค & สูตรสมัครบริการพรีเมี่ยม
-            </div>
-            <h1 class="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight drop-shadow-md">
-                จำหน่าย<span class="text-gradient">สูตรแอพพรีเมี่ยม</span>
-            </h1>
-            <p class="text-stone-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-                เลือกซื้อสูตรและวิธีสมัครแอพพรีเมี่ยมราคาประหยัด การันตีติด 100% อัปเดตล่าสุด นำไปใช้งานหรือรับทำเป็นอาชีพเสริมได้ทันที
-            </p>
+        <div class="reference-hero shop-hero animate-fade-in-up">
+            <div><h1>ร้านค้าดิจิทัล</h1><i></i><p>สินค้า ราคา และสต็อกทั้งหมดดึงจากระบบหลังบ้านแบบเรียลไทม์</p></div>
+            <button type="button" class="reference-outline-button" onclick="switchMainTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> ประวัติการซื้อ</button>
         </div>
 
         <!-- Navigation Tabs -->
@@ -429,6 +410,7 @@
             }
 
             document.getElementById("userNameDisplay").innerText = currentUser;
+            document.getElementById("shopHeaderAvatar").innerText = (currentUser || "M").charAt(0).toUpperCase();
             if (currentUser) localStorage.setItem("username", currentUser);
             
             if (currentUser.toLowerCase() === "admin") {
@@ -475,6 +457,7 @@
                 if (data.success) {
                     currentUser = data.user.username;
                     document.getElementById("userNameDisplay").innerText = currentUser;
+                    document.getElementById("shopHeaderAvatar").innerText = (currentUser || "M").charAt(0).toUpperCase();
                     currentCredit = parseFloat(data.user.credit) || 0;
                     document.getElementById("userCreditDisplay").innerText = currentCredit.toFixed(2) + " ฿";
                 }

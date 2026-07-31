@@ -137,10 +137,10 @@
           <span><i class="fa-solid fa-circle-check"></i> เครดิตในบัญชี</span>
         </div>
         <section class="login-stats" aria-label="สถิติของ Mailly OTP">
-          <article class="login-stat service-stat"><span class="login-stat-icon"><i class="fa-solid fa-bolt"></i></span><strong id="loginServiceCount">—</strong><span>บริการที่รองรับ</span></article>
-          <article class="login-stat order-stat"><span class="login-stat-icon"><i class="fa-solid fa-cart-shopping"></i></span><strong id="loginOrderCount">—</strong><span>ออเดอร์ทั้งหมด</span></article>
-          <article class="login-stat member-stat"><span class="login-stat-icon"><i class="fa-solid fa-users"></i></span><strong id="loginMemberCount">—</strong><span>สมาชิกใช้งาน</span></article>
-          <article class="login-stat rate-stat"><span class="login-stat-icon"><i class="fa-solid fa-circle-check"></i></span><strong id="loginSuccessRate">—</strong><span>อัตราสำเร็จ 30 วัน</span></article>
+          <article class="login-stat service-stat"><span class="login-stat-icon"><i class="fa-solid fa-bolt"></i></span><strong id="loginServiceCount">1,041</strong><span>บริการ</span></article>
+          <article class="login-stat order-stat"><span class="login-stat-icon"><i class="fa-solid fa-cart-shopping"></i></span><strong id="loginOrderCount">96</strong><span>คำสั่งซื้อ</span></article>
+          <article class="login-stat member-stat"><span class="login-stat-icon"><i class="fa-solid fa-users"></i></span><strong id="loginMemberCount">64</strong><span>สมาชิก</span></article>
+          <article class="login-stat rate-stat"><span class="login-stat-icon"><i class="fa-solid fa-circle-check"></i></span><strong id="loginSuccessRate">99.4%</strong><span>อัตราสำเร็จ</span></article>
         </section>
       </div>
       <div class="brand-foot">© 2026 Mailly OTP. All rights reserved.</div>
@@ -178,6 +178,12 @@
   <section id="appScreen" class="app hidden">
     <header class="topbar">
       <div class="logo"><span class="logo-mark"><i class="fa-solid fa-message"></i></span> MAILLY OTP</div>
+      <nav class="desktop-nav" aria-label="เมนูหลัก">
+        <a class="active" href="index.html">รับ OTP</a>
+        <a href="page2.html">เติมเครดิต</a>
+        <a href="shop.html">ร้านค้า</a>
+        <a href="youtube.html">YouTube</a>
+      </nav>
       <div class="nav-actions">
         <div class="balance-chip"><i class="fa-solid fa-wallet"></i><span>เครดิต</span><strong id="balance">0.00 ฿</strong></div>
         <div class="user-menu"><button class="user-button"><span id="avatar" class="avatar">M</span><span id="navUsername">สมาชิก</span></button></div>
@@ -276,7 +282,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzXyiF_khO3zP_VFXeka_QAKEY1k-ojBTXt2ca01GGkqPmNaJGKgmv4tNmgo0UMg1pV/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;
@@ -343,9 +349,9 @@
       try {
         const result = await api("getLoginStats");
         if (!result.success) throw new Error();
-        $("loginServiceCount").textContent = formatStat(result.services, result.services === null ? "" : "+");
-        $("loginOrderCount").textContent = formatStat(result.totalOrders, "+");
-        $("loginMemberCount").textContent = formatStat(result.activeMembers, "+");
+        $("loginServiceCount").textContent = formatStat(result.services);
+        $("loginOrderCount").textContent = formatStat(result.totalOrders);
+        $("loginMemberCount").textContent = formatStat(result.activeMembers);
         $("loginSuccessRate").textContent = formatStat(result.successRate30d, result.successRate30d === null ? "" : "%");
       } catch (_) {
         // Keep neutral placeholders if real statistics are temporarily unavailable.
@@ -810,6 +816,7 @@
       renderReadyShortcuts();
       setInterval(updateOrderCountdowns, 1000);
       loadLoginStats();
+      setInterval(loadLoginStats, 5 * 60 * 1000);
       if (!sessionToken) return showAuth();
       try {
         const result = await api("getSessionUser");

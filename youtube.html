@@ -31,6 +31,12 @@
 </head>
 <body class="min-h-screen text-slate-800 flex flex-col items-center selection:bg-red-100 selection:text-red-900 w-full overflow-x-hidden">
 
+  <header class="reference-header youtube-header">
+    <a class="reference-brand" href="index.html"><span><i class="fa-solid fa-message"></i></span><strong>MAILLY OTP</strong></a>
+    <nav class="reference-nav" aria-label="เมนูหลัก"><a href="index.html">รับ OTP</a><a href="page2.html">เติมเครดิต</a><a href="shop.html">ร้านค้า</a><a class="active" href="youtube.html">YouTube</a></nav>
+    <div class="reference-account"><span class="reference-credit"><i class="fa-solid fa-wallet"></i> เครดิต</span><strong id="ytHeaderBalance">0.00 ฿</strong><span class="reference-user"><b id="ytHeaderAvatar">M</b><em id="ytHeaderUser">สมาชิก</em></span></div>
+  </header>
+
   <datalist id="status-options">
     <option value="ใช้งานได้">
     <option value="ชำระเงินแล้ว">
@@ -521,11 +527,23 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const savedUser = localStorage.getItem('yt_family_username');
+      const savedUser = localStorage.getItem('yt_family_username') || localStorage.getItem('username');
       if (savedUser) {
+        document.getElementById('ytHeaderUser').textContent = savedUser;
+        document.getElementById('ytHeaderAvatar').textContent = savedUser.charAt(0).toUpperCase();
         document.getElementById('usernameInput').value = savedUser;
         document.getElementById('rememberMe').checked = true;
         login(true);
+      }
+      if (localStorage.getItem(STORAGE_TOKEN)) {
+        callAPI('getSessionUser').then(result => {
+          if (!result || !result.success || !result.user) return;
+          const headerUser = result.user.username || savedUser || 'สมาชิก';
+          const headerBalance = result.user.balance ?? result.user.credit ?? 0;
+          document.getElementById('ytHeaderUser').textContent = headerUser;
+          document.getElementById('ytHeaderAvatar').textContent = headerUser.charAt(0).toUpperCase();
+          document.getElementById('ytHeaderBalance').textContent = Number(headerBalance).toFixed(2) + ' ฿';
+        }).catch(() => {});
       }
     });
 
@@ -738,6 +756,8 @@
 
           userData = response;
           document.getElementById('displayUsername').textContent = username;
+          document.getElementById('ytHeaderUser').textContent = username;
+          document.getElementById('ytHeaderAvatar').textContent = username.charAt(0).toUpperCase();
           
           fetchInboxMessages(username);
 
