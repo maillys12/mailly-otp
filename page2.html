@@ -178,6 +178,18 @@
     .modal-overlay.show .modal-box { transform: scale(1); }
     .modal-close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); }
 
+    .maintenance-modal-box { max-width: 460px; padding: 34px 30px 28px; text-align: center; overflow: hidden; }
+    .maintenance-modal-box::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: linear-gradient(90deg, #ff9a4b, #ff7126); }
+    .maintenance-icon { width: 70px; height: 70px; margin: 4px auto 20px; display: grid; place-items: center; border: 1px solid rgba(255, 135, 56, .42); border-radius: 22px; background: linear-gradient(145deg, rgba(255, 135, 56, .22), rgba(255, 113, 38, .08)); color: #ff9c68; font-size: 29px; box-shadow: 0 14px 34px rgba(255, 113, 38, .14); }
+    .maintenance-modal-box h2 { margin: 0 0 11px; color: #fff8f1; font-size: 22px; font-weight: 750; }
+    .maintenance-modal-box p { margin: 0; color: #b8a9b3; font-size: 14px; line-height: 1.75; }
+    .maintenance-line { margin-top: 16px !important; color: #fff3eb !important; }
+    .maintenance-line strong { color: #ff9c68; font-family: Inter, Prompt, sans-serif; }
+    .maintenance-actions { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .maintenance-actions a, .maintenance-actions button { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 14px; font-family: Prompt, sans-serif; font-size: 13px; font-weight: 700; text-decoration: none; cursor: pointer; }
+    .maintenance-contact { border: 0; background: linear-gradient(90deg, #ff8738, #ff7126); color: #fff; box-shadow: 0 10px 24px rgba(255, 113, 38, .2); }
+    .maintenance-dismiss { border: 1px solid #4b3045; background: #1b111b; color: #c9bbc4; }
+
     .qr-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin: 8px 0 12px 0; }
     .qr-container { background: #FFF; padding: 12px; border-radius: 16px; display: inline-block; border: 1px solid var(--border-color); }
     .qr-image { width: 190px; height: 190px; margin: 0 auto; display: block; object-fit: contain; }
@@ -310,10 +322,26 @@
     </div>
   </div>
 
+  <div id="maintenanceModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="maintenanceTitle">
+    <div style="position: absolute; inset: 0;" onclick="closeMaintenanceModal()"></div>
+    <div class="modal-box maintenance-modal-box">
+      <button type="button" onclick="closeMaintenanceModal()" class="modal-close-btn" aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button>
+      <div class="maintenance-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+      <h2 id="maintenanceTitle">ระบบอยู่ระหว่างปรับปรุง</h2>
+      <p>ระบบอยู่ระหว่างปรับปรุงชั่วคราว<br>โปรดติดต่อแอดมิน</p>
+      <p class="maintenance-line">Line <strong>@418xiejk</strong></p>
+      <div class="maintenance-actions">
+        <button type="button" class="maintenance-dismiss" onclick="closeMaintenanceModal()">ปิดหน้าต่าง</button>
+        <a class="maintenance-contact" href="https://line.me/R/ti/p/@418xiejk" target="_blank" rel="noopener"><i class="fa-brands fa-line"></i> ติดต่อแอดมิน</a>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const PROMPTPAY_ID = "0633390911"; 
     const STORAGE_TOKEN = "mailly_session_token";
+    const TOPUP_MAINTENANCE_MODE = true;
     let selectedPaymentMethod = 'promptpay';
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -371,6 +399,18 @@
       setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
+    function openMaintenanceModal() {
+      const modal = document.getElementById('maintenanceModal');
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    function closeMaintenanceModal() {
+      const modal = document.getElementById('maintenanceModal');
+      modal.classList.remove('show');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
     function confirmAndGenerateQR() {
       const username = document.getElementById('username').value.trim();
       const amount = document.getElementById('amount').value.trim();
@@ -412,6 +452,11 @@
     }
 
     function submitTopup() {
+      if (TOPUP_MAINTENANCE_MODE) {
+        openMaintenanceModal();
+        return;
+      }
+
       const sessionToken = localStorage.getItem(STORAGE_TOKEN) || '';
       if (!sessionToken) {
         showModalResult('กรุณาเข้าสู่ระบบจากหน้าหลักก่อนเติมเงินครับ', 'error');
@@ -501,5 +546,6 @@
 
     function backToMain() { window.location.href = 'index.html'; }
   </script>
+  <script src="maintenance.js"></script>
 </body>
 </html>

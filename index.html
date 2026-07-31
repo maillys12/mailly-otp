@@ -211,6 +211,52 @@
     </nav>
 
     <main class="main">
+      <aside class="otp-business-banner" aria-label="บริการสร้างเว็บขาย OTP">
+        <div class="otp-business-banner-copy">
+          <span class="otp-business-banner-icon"><i class="fa-solid fa-store"></i></span>
+          <strong>คุณอยากมีเว็บขาย OTP เป็นของตัวเองใช่ไหม?</strong>
+        </div>
+        <button class="otp-package-open" type="button" id="openPackageModal">
+          ดูแพ็กเกจ <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </aside>
+
+      <div class="otp-package-overlay" id="packageModal" role="dialog" aria-modal="true" aria-labelledby="packageModalTitle" aria-hidden="true">
+        <section class="otp-package-dialog">
+          <button class="otp-package-close" type="button" id="closePackageModal" aria-label="ปิดหน้าต่างแพ็กเกจ"><i class="fa-solid fa-xmark"></i></button>
+          <div class="otp-package-heading">
+            <span class="otp-package-kicker">MAILLY OTP WEBSITE</span>
+            <h2 id="packageModalTitle">เลือกแพ็กเกจเว็บไซต์ของคุณ</h2>
+            <p>รายละเอียดและราคาของแต่ละแพ็กเกจจะเปิดให้บริการเร็ว ๆ นี้</p>
+          </div>
+          <div class="otp-package-grid">
+            <article class="otp-package-card">
+              <span class="otp-package-number">01</span>
+              <div class="otp-package-card-icon"><i class="fa-solid fa-seedling"></i></div>
+              <h3>แพ็กเกจเริ่มต้น</h3>
+              <p>เหมาะสำหรับผู้ที่อยากเริ่มต้นมีเว็บขาย OTP เป็นของตัวเอง</p>
+              <span class="otp-package-pending">รอรายละเอียดแพ็กเกจ</span>
+            </article>
+            <article class="otp-package-card is-featured">
+              <span class="otp-package-recommended">ยอดนิยม</span>
+              <span class="otp-package-number">02</span>
+              <div class="otp-package-card-icon"><i class="fa-solid fa-store"></i></div>
+              <h3>แพ็กเกจธุรกิจ</h3>
+              <p>เหมาะสำหรับร้านค้าที่ต้องการระบบพร้อมใช้งานและรองรับการเติบโต</p>
+              <span class="otp-package-pending">รอรายละเอียดแพ็กเกจ</span>
+            </article>
+            <article class="otp-package-card">
+              <span class="otp-package-number">03</span>
+              <div class="otp-package-card-icon"><i class="fa-solid fa-crown"></i></div>
+              <h3>แพ็กเกจมืออาชีพ</h3>
+              <p>เหมาะสำหรับธุรกิจที่ต้องการเว็บไซต์และฟังก์ชันแบบครบชุด</p>
+              <span class="otp-package-pending">รอรายละเอียดแพ็กเกจ</span>
+            </article>
+          </div>
+          <p class="otp-package-footnote">คุณสามารถแจ้งชื่อ ราคา และรายละเอียดจริงของทั้ง 3 แพ็กเกจเพื่ออัปเดตภายหลังได้</p>
+        </section>
+      </div>
+
       <div class="welcome">
         <div><h1>สวัสดี, <span id="welcomeUsername">สมาชิก</span></h1><p>เลือกบริการที่ต้องการและรับหมายเลข OTP ได้ทันที</p></div>
         <div class="status-pill"><span class="dot"></span> ระบบพร้อมให้บริการ</div>
@@ -282,7 +328,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxfFp9Z-EKSEq32jGQRmR6zcQDk6PvfyRPqQBIblxwO0edxZMltE498fLt2mlIdutHz/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;
@@ -892,5 +938,36 @@
       } catch (_) { logout(false); }
     })();
   </script>
+  <script>
+    (() => {
+      const modal = document.getElementById('packageModal');
+      const openButton = document.getElementById('openPackageModal');
+      const closeButton = document.getElementById('closePackageModal');
+      if (!modal || !openButton || !closeButton) return;
+
+      const openModal = () => {
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('package-modal-open');
+        closeButton.focus();
+      };
+      const closeModal = () => {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('package-modal-open');
+        openButton.focus();
+      };
+
+      openButton.addEventListener('click', openModal);
+      closeButton.addEventListener('click', closeModal);
+      modal.addEventListener('click', event => {
+        if (event.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+      });
+    })();
+  </script>
+  <script src="maintenance.js"></script>
 </body>
 </html>
