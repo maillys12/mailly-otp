@@ -1,0 +1,32 @@
+MAILLY OTP — ติดตั้งระบบร้านค้า Shopnoi
+
+ไฟล์ที่ต้องอัปโหลด/Deploy
+1) Code.gs
+2) shop.html
+3) shopnoi.js
+4) maintenance.js
+
+ตั้งค่า API key อย่างปลอดภัย
+1) เปิดโปรเจกต์ Google Apps Script
+2) ไปที่ Project Settings > Script Properties
+3) เพิ่ม Property ชื่อ SHOPNOI_API_KEY
+4) ใส่ API key ใหม่ของ Shopnoi เป็น Value แล้วกด Save
+
+ห้ามใส่ API key ใน shop.html, shopnoi.js หรือไฟล์หน้าเว็บ
+
+Deploy
+1) Deploy > Manage deployments
+2) กด Edit ที่ Web app เดิม
+3) เลือก New version แล้วกด Deploy
+4) ตรวจว่า Execute as = Me และ Who has access ตรงกับการตั้งค่าเดิม
+
+หลัง Deploy
+- เปิดหน้า Shop และกดรีเฟรชรายการ
+- ล็อกอินด้วยบัญชี admin แล้วกด “สถานะ Shopnoi” เพื่อตรวจยอดคงเหลือ
+- ระบบจะเพิ่มคอลัมน์ที่จำเป็นในชีต Purchases ให้อัตโนมัติเมื่อมีการใช้งาน
+
+ข้อควรทราบ
+- ราคาในหน้าเว็บใช้ราคา Shopnoi ตรง ๆ
+- คูปองจะถูกส่งให้ Shopnoi และระบบคืนส่วนต่างเข้ากระเป๋า MAILLY เมื่อ API ตรวจพบยอดส่วนลด
+- หาก Shopnoi ปฏิเสธคำสั่งซื้อ ระบบจะคืนเครดิต MAILLY ให้อัตโนมัติ
+- ควรเปลี่ยน API key เดิมที่เคยส่งในแชต แล้วใช้คีย์ใหม่ใน Script Properties

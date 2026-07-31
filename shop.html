@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>จำหน่ายสูตรแอพพรีเมี่ยม - MAILLY OTP</title>
+    <title>ร้านค้าบัญชีดิจิทัล - MAILLY OTP</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -122,21 +122,30 @@
                     <span class="reference-user"><b id="shopHeaderAvatar">M</b><em id="userNameDisplay">สมาชิก</em></span>
                 </div>
 
-                <!-- Admin Button -->
-                <button id="adminPanelBtn" onclick="openAdminModal()" class="hidden bg-orange-600/20 border border-orange-500/40 hover:bg-orange-600/40 text-orange-300 text-xs px-3.5 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95 shadow-lg shadow-orange-900/30">
-                    <i class="fa-solid fa-sliders"></i> <span class="hidden sm:inline">จัดการร้านค้า</span>
+                <button id="supplierStatusBtn" onclick="loadSupplierProfile()" class="hidden bg-orange-600/20 border border-orange-500/40 hover:bg-orange-600/40 text-orange-300 text-xs px-3.5 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95 shadow-lg shadow-orange-900/30">
+                    <i class="fa-solid fa-server"></i> <span class="hidden sm:inline">สถานะ Shopnoi</span>
                 </button>
 
             </div>
         </div>
     </header>
 
+    <nav class="mobile-app-nav" aria-label="เมนูหลักบนมือถือ">
+        <div class="mobile-app-nav-inner">
+            <a class="mobile-app-nav-item" href="index.html"><span class="mobile-app-nav-icon"><i class="fa-solid fa-mobile-screen-button"></i></span><span>ซื้อเบอร์</span></a>
+            <a class="mobile-app-nav-item" href="page2.html"><span class="mobile-app-nav-icon"><i class="fa-solid fa-wallet"></i></span><span>เติมเงิน</span></a>
+            <a class="mobile-app-nav-item active" href="shop.html" aria-current="page"><span class="mobile-app-nav-icon"><i class="fa-solid fa-bag-shopping"></i></span><span>ร้านค้า</span></a>
+            <a class="mobile-app-nav-item" href="youtube.html"><span class="mobile-app-nav-icon"><i class="fa-brands fa-youtube"></i></span><span>YouTube</span></a>
+            <a class="mobile-app-nav-item" href="index.html"><span class="mobile-app-nav-icon"><i class="fa-solid fa-user"></i></span><span>บัญชี</span></a>
+        </div>
+    </nav>
+
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 flex-1 relative z-10">
         
         <!-- Hero Section -->
         <div class="reference-hero shop-hero animate-fade-in-up">
-            <div><h1>ร้านค้าดิจิทัล</h1><i></i><p>สินค้า ราคา และสต็อกทั้งหมดดึงจากระบบหลังบ้านแบบเรียลไทม์</p></div>
+            <div><h1>ร้านค้าดิจิทัล</h1><i></i><p>ทุกหมวด สินค้า ราคา และสต็อก ดึงจาก Shopnoi แบบเรียลไทม์</p></div>
             <button type="button" class="reference-outline-button" onclick="switchMainTab('history')"><i class="fa-solid fa-clock-rotate-left"></i> ประวัติการซื้อ</button>
         </div>
 
@@ -154,25 +163,28 @@
 
         <!-- Section 1: หน้าร้านค้า (Shop View) -->
         <div id="shopViewSection">
-            <!-- Category Filters -->
-            <div class="flex flex-wrap items-center justify-center gap-2.5 mb-10 animate-fade-in-up" style="animation-delay: 0.15s;">
-                <button onclick="filterCategory('all', this)" class="cat-btn active px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-all hover:scale-105">
+            <div class="glass-card rounded-2xl p-4 sm:p-5 mb-5 animate-fade-in-up" style="animation-delay: 0.12s;">
+                <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
+                    <label class="relative flex-1 max-w-2xl">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-stone-500"></i>
+                        <input id="productSearch" type="search" placeholder="ค้นหาสินค้าจากทุกหมวด..." class="w-full bg-stone-950/80 border border-stone-700 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder:text-stone-500 focus:outline-none focus:border-orange-500" autocomplete="off">
+                    </label>
+                    <div class="flex items-center justify-between lg:justify-end gap-3 text-xs">
+                        <span id="catalogSummary" class="text-stone-400">กำลังเชื่อมต่อ Shopnoi...</span>
+                        <button type="button" onclick="loadCatalog(true)" class="px-3.5 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 transition-all active:scale-95"><i class="fa-solid fa-rotate-right mr-1"></i> รีเฟรช</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="categoryFilters" class="flex gap-2.5 mb-8 overflow-x-auto pb-2 animate-fade-in-up" style="animation-delay: 0.15s;">
+                <button data-category="all" onclick="filterCategory('all', this)" class="cat-btn active shrink-0 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-all">
                     <i class="fa-solid fa-border-all mr-1.5"></i> ทั้งหมด
-                </button>
-                <button onclick="filterCategory('streaming', this)" class="cat-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-stone-800/80 text-stone-300 hover:bg-stone-700 transition-all hover:scale-105 border border-stone-700/50">
-                    <i class="fa-solid fa-film mr-1.5 text-red-400"></i> สตรีมมิ่ง & ดูหนัง
-                </button>
-                <button onclick="filterCategory('ai', this)" class="cat-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-stone-800/80 text-stone-300 hover:bg-stone-700 transition-all hover:scale-105 border border-stone-700/50">
-                    <i class="fa-solid fa-robot mr-1.5 text-emerald-400"></i> AI & เครื่องมือ
-                </button>
-                <button onclick="filterCategory('entertainment', this)" class="cat-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-stone-800/80 text-stone-300 hover:bg-stone-700 transition-all hover:scale-105 border border-stone-700/50">
-                    <i class="fa-solid fa-music mr-1.5 text-amber-400"></i> บันเทิง & ฟังเพลง
                 </button>
             </div>
 
             <!-- Product Grid -->
             <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- รายการสูตรจะถูกโหลดมาแสดงตรงนี้ -->
+                <div class="col-span-full text-center text-stone-400 py-16"><i class="fa-solid fa-spinner animate-spin text-2xl text-orange-400 mb-3 block"></i>กำลังโหลดสินค้าจาก Shopnoi...</div>
             </div>
         </div>
 
@@ -184,7 +196,7 @@
                         <h2 class="text-xl font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-clock-rotate-left text-orange-400"></i> ประวัติการสั่งซื้อสินค้า
                         </h2>
-                        <p class="text-xs text-stone-400 mt-1">รายการสูตรและเทคนิคทั้งหมดที่คุณเคยสั่งซื้อ</p>
+                        <p class="text-xs text-stone-400 mt-1">ข้อมูลสินค้าที่ได้รับและสถานะคำสั่งซื้อของคุณ</p>
                     </div>
                     <button onclick="loadPurchaseHistory()" class="text-xs bg-stone-800 hover:bg-stone-700 text-stone-300 px-3.5 py-2 rounded-lg border border-stone-700 transition-all active:scale-95">
                         <i class="fa-solid fa-rotate-right mr-1"></i> รีเฟรช
@@ -205,7 +217,7 @@
 
     <!-- Modal ยืนยันการสั่งซื้อ -->
     <div id="buyModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
-        <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-orange-500/30 shadow-2xl relative animate-pop">
+        <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-orange-500/30 shadow-2xl relative animate-pop max-h-[92vh] overflow-y-auto">
             <button onclick="closeBuyModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white transition-colors">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
@@ -215,14 +227,14 @@
                 <div id="modalLogoContainer" class="w-20 h-20 rounded-2xl bg-stone-900 border border-orange-500/30 flex items-center justify-center mx-auto mb-3 shadow-xl overflow-hidden p-2">
                     <i class="fa-solid fa-cart-shopping text-3xl text-orange-400"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-white">ยืนยันการสั่งซื้อสูตร</h3>
-                <p class="text-xs text-stone-400 mt-1">โปรดตรวจสอบรายละเอียดก่อนทำรายการ</p>
+                <h3 class="text-xl font-extrabold text-white">ยืนยันการสั่งซื้อ</h3>
+                <p class="text-xs text-stone-400 mt-1">ระบบจะตรวจราคาและสต็อกกับ Shopnoi อีกครั้งก่อนซื้อ</p>
             </div>
 
             <div class="bg-stone-950/80 rounded-xl p-4 mb-6 space-y-3 text-sm border border-stone-800">
                 <div class="flex justify-between border-b border-stone-800/80 pb-2">
-                    <span class="text-stone-400">สูตรแอพ:</span>
-                    <span id="modalProductName" class="font-bold text-white text-right max-w-[200px] truncate"></span>
+                    <span class="text-stone-400">สินค้า:</span>
+                    <span id="modalProductName" class="font-bold text-white text-right max-w-[230px]"></span>
                 </div>
                 <div class="flex justify-between border-b border-stone-800/80 pb-2">
                     <span class="text-stone-400">ราคาสินค้า:</span>
@@ -232,6 +244,24 @@
                     <span class="text-stone-400">เครดิตของคุณ:</span>
                     <span id="modalUserCredit" class="font-bold text-amber-400"></span>
                 </div>
+                <div class="pt-1">
+                    <p id="modalProductDescription" class="text-xs text-stone-400 leading-relaxed max-h-28 overflow-y-auto whitespace-pre-line"></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <label class="text-xs text-stone-400">จำนวน
+                    <input id="buyAmount" type="number" inputmode="numeric" value="1" min="1" step="1" oninput="updatePurchaseTotal()" class="mt-1 w-full bg-stone-950 border border-stone-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-orange-500">
+                    <small id="buyAmountHint" class="block mt-1 text-stone-500"></small>
+                </label>
+                <label class="text-xs text-stone-400">คูปอง (ถ้ามี)
+                    <input id="buyCoupon" type="text" maxlength="100" placeholder="กรอกรหัสคูปอง" class="mt-1 w-full bg-stone-950 border border-stone-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-orange-500">
+                </label>
+            </div>
+
+            <div class="flex items-center justify-between rounded-xl border border-orange-500/25 bg-orange-500/10 px-4 py-3 mb-5">
+                <span class="text-sm text-stone-300">ยอดรวมโดยประมาณ</span>
+                <strong id="modalPurchaseTotal" class="text-xl text-orange-400">0.00 ฿</strong>
             </div>
 
             <div class="flex gap-3">
@@ -239,7 +269,7 @@
                     ยกเลิก
                 </button>
                 <button id="btnConfirmBuy" onclick="executePurchase()" class="flex-1 py-3 rounded-xl btn-gradient text-white font-bold text-sm transition-all active:scale-95 flex items-center justify-center gap-2">
-                    <span>ยืนยันการซื้อ</span>
+                    <span>ยืนยันและชำระเครดิต</span>
                 </button>
             </div>
         </div>
@@ -351,7 +381,7 @@
         </div>
     </div>
 
-    <script>
+    <script type="text/plain" id="legacyLocalShopScript">
         const urlParams = new URLSearchParams(window.location.search);
         const BACKEND_URL = urlParams.get('script_url') || localStorage.getItem("script_url") || "https://script.google.com/macros/s/AKfycbwvodWTq0b4Ct7YLi-BBx8KHw5UBzW14bhH2PQVjAwC3e98VHLGgQf39GKY2nYpBhhU/exec"; 
         const STORAGE_TOKEN = "mailly_session_token";
@@ -803,6 +833,7 @@
             }
         }
     </script>
+  <script src="shopnoi.js"></script>
   <script src="maintenance.js"></script>
 </body>
 </html>

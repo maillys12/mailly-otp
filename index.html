@@ -200,13 +200,13 @@
       </div>
     </section>
 
-    <nav class="quick-menu" aria-label="เมนูหลัก">
-      <div class="quick-menu-inner">
-        <a class="quick-menu-item active" href="index.html" aria-current="page"><span class="quick-menu-icon"><i class="fa-solid fa-mobile-screen-button"></i></span><span>ซื้อเบอร์</span></a>
-        <a class="quick-menu-item" href="page2.html"><span class="quick-menu-icon"><i class="fa-solid fa-wallet"></i></span><span>เติมเครดิต</span></a>
-        <a class="quick-menu-item" href="shop.html"><span class="quick-menu-icon"><i class="fa-solid fa-bag-shopping"></i></span><span>ร้านค้า</span></a>
-        <a class="quick-menu-item" href="youtube.html"><span class="quick-menu-icon"><i class="fa-brands fa-youtube"></i></span><span>YouTube</span></a>
-        <button class="quick-menu-item" type="button" id="copyUserButton"><span class="quick-menu-icon"><i class="fa-regular fa-user"></i></span><span>บัญชี</span><small id="miniUsername">—</small></button>
+    <nav class="quick-menu mobile-app-nav" aria-label="เมนูหลักบนมือถือ">
+      <div class="quick-menu-inner mobile-app-nav-inner">
+        <a class="quick-menu-item mobile-app-nav-item active" href="index.html" aria-current="page"><span class="quick-menu-icon mobile-app-nav-icon"><i class="fa-solid fa-mobile-screen-button"></i></span><span>ซื้อเบอร์</span></a>
+        <a class="quick-menu-item mobile-app-nav-item" href="page2.html"><span class="quick-menu-icon mobile-app-nav-icon"><i class="fa-solid fa-wallet"></i></span><span>เติมเงิน</span></a>
+        <a class="quick-menu-item mobile-app-nav-item" href="shop.html"><span class="quick-menu-icon mobile-app-nav-icon"><i class="fa-solid fa-bag-shopping"></i></span><span>ร้านค้า</span></a>
+        <a class="quick-menu-item mobile-app-nav-item" href="youtube.html"><span class="quick-menu-icon mobile-app-nav-icon"><i class="fa-brands fa-youtube"></i></span><span>YouTube</span></a>
+        <button class="quick-menu-item mobile-app-nav-item" type="button" id="copyUserButton"><span class="quick-menu-icon mobile-app-nav-icon"><i class="fa-regular fa-user"></i></span><span>บัญชี</span><small id="miniUsername">—</small></button>
       </div>
     </nav>
 
@@ -355,7 +355,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzNUlEwZRBSKYENgJYS3xFv42hLx0gitbpsmLlvhMaPSvgxshInBU-gunx-dKEi2hJU/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbylTtyGdABfeygPHEf7KsWD_cVz5bGtaXt_eGLMhU_y6MFs7iQ_-Z914Pm2-parIkaE/exec";
     const STORAGE_TOKEN = "mailly_session_token";
     let sessionToken = localStorage.getItem(STORAGE_TOKEN) || "";
     let currentUser = null;

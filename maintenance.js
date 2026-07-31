@@ -1,6 +1,5 @@
 (() => {
   const maintenanceMessages = {
-    'shop.html': 'อยู่ระหว่างปรับปรุงระบบร้านค้า',
     'youtube.html': 'อยู่ระหว่างปรับปรุงระบบต่อยูทูป'
   };
   let lastFocusedElement = null;

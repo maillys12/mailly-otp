@@ -36,6 +36,15 @@ const CONFIG = {
     purchase: 'getNumber.php',
     status: 'getStatus.php',
     setStatus: 'setStatus.php'
+  },
+
+  SHOPNOI: {
+    base: 'https://shopnoi.com/api/',
+    profile: 'profile.php',
+    products: 'products.php',
+    product: 'product.php',
+    order: 'order.php',
+    purchase: 'buy_product'
   }
 };
 
@@ -145,7 +154,14 @@ const SCHEMAS = {
     'product_name',
     'price',
     'item_data',
-    'created_at'
+    'created_at',
+    'quantity',
+    'provider',
+    'provider_order_id',
+    'status',
+    'coupon',
+    'updated_at',
+    'error_message'
   ],
 
   YTData: [
@@ -278,6 +294,24 @@ function dispatch_(action, p) {
 
     case 'buyProductWithCredit':
       return buyProduct_(p);
+
+    case 'getShopnoiCatalog':
+      return getShopnoiCatalog_(p);
+
+    case 'getShopnoiProduct':
+      return getShopnoiProduct_(p);
+
+    case 'buyShopnoiProductWithCredit':
+      return buyShopnoiProduct_(p);
+
+    case 'getMyShopnoiPurchases':
+      return getMyShopnoiPurchases_(p);
+
+    case 'getMyShopnoiOrder':
+      return getMyShopnoiOrder_(p);
+
+    case 'getShopnoiProfileForAdmin':
+      return getShopnoiProfileForAdmin_(p);
 
     case 'getYtUserData':
       return getYtUserData_(p);
@@ -2728,6 +2762,534 @@ function approveTopup(
 /* =====================================================
    PRODUCTS
 ===================================================== */
+
+function shopnoiApiKey_() {
+  const key = PropertiesService
+    .getScriptProperties()
+    .getProperty('SHOPNOI_API_KEY');
+
+  if (!key) {
+    throw new Error(
+      'ยังไม่ได้ตั้งค่า SHOPNOI_API_KEY ใน Script Properties'
+    );
+  }
+
+  return String(key).trim();
+}
+
+function shopnoiRequest_(endpoint, params, method) {
+  const values = Object.assign(
+    {},
+    params || {},
+    { api_key: shopnoiApiKey_() }
+  );
+
+  const options = {
+    method: String(method || 'get').toLowerCase(),
+    muteHttpExceptions: true,
+    followRedirects: true,
+    headers: {
+      Accept: 'application/json'
+    }
+  };
+
+  let url = CONFIG.SHOPNOI.base + endpoint;
+
+  if (options.method === 'get') {
+    const query = Object.keys(values)
+      .filter(function(key) {
+        return (
+          values[key] !== undefined &&
+          values[key] !== null &&
+          String(values[key]) !== ''
+        );
+      })
+      .map(function(key) {
+        return (
+          encodeURIComponent(key) +
+          '=' +
+          encodeURIComponent(String(values[key]))
+        );
+      })
+      .join('&');
+
+    url += '?' + query;
+  } else {
+    options.payload = values;
+  }
+
+  const response = UrlFetchApp.fetch(url, options);
+  const httpStatus = response.getResponseCode();
+  const text = response.getContentText();
+  let body;
+
+  try {
+    body = JSON.parse(text || '{}');
+  } catch (error) {
+    throw new Error(
+      'Shopnoi ส่งข้อมูลกลับมาในรูปแบบที่ไม่ถูกต้อง (HTTP ' +
+      httpStatus +
+      ')'
+    );
+  }
+
+  body._httpStatus = httpStatus;
+  return body;
+}
+
+function shopnoiSuccess_(body) {
+  return (
+    body &&
+    String(body.status || '').toLowerCase() === 'success'
+  );
+}
+
+function shopnoiError_(body, fallback) {
+  return String(
+    (body && (body.msg || body.message)) ||
+    fallback ||
+    'Shopnoi ไม่สามารถดำเนินการได้'
+  );
+}
+
+function shopnoiProductById_(productId) {
+  const response = shopnoiRequest_(
+    CONFIG.SHOPNOI.product,
+    { product: productId },
+    'get'
+  );
+
+  if (!shopnoiSuccess_(response)) {
+    throw new Error(
+      shopnoiError_(response, 'ไม่พบสินค้า Shopnoi')
+    );
+  }
+
+  const list = Array.isArray(response.product)
+    ? response.product
+    : response.product
+      ? [response.product]
+      : [];
+
+  if (!list.length) {
+    throw new Error('ไม่พบสินค้า Shopnoi');
+  }
+
+  return list[0];
+}
+
+function shopnoiProfile_() {
+  const response = shopnoiRequest_(
+    CONFIG.SHOPNOI.profile,
+    {},
+    'get'
+  );
+
+  if (!shopnoiSuccess_(response)) {
+    throw new Error(
+      shopnoiError_(response, 'โหลดข้อมูลบัญชี Shopnoi ไม่สำเร็จ')
+    );
+  }
+
+  return response.data || {};
+}
+
+function getShopnoiCatalog_(p) {
+  requireAuth_(p);
+
+  const response = shopnoiRequest_(
+    CONFIG.SHOPNOI.products,
+    {},
+    'get'
+  );
+
+  if (!shopnoiSuccess_(response)) {
+    throw new Error(
+      shopnoiError_(response, 'โหลดรายการ Shopnoi ไม่สำเร็จ')
+    );
+  }
+
+  const categories = Array.isArray(response.categories)
+    ? response.categories
+    : [];
+
+  return {
+    success: true,
+    categories: categories,
+    categoryCount: categories.length,
+    productCount: categories.reduce(function(total, category) {
+      return total + (
+        Array.isArray(category.products)
+          ? category.products.length
+          : 0
+      );
+    }, 0),
+    pricing: 'shopnoi-direct',
+    fetchedAt: new Date().toISOString()
+  };
+}
+
+function getShopnoiProduct_(p) {
+  requireAuth_(p);
+
+  const productId = String(p.productId || '').trim();
+  if (!/^\d+$/.test(productId)) {
+    throw new Error('รหัสสินค้าไม่ถูกต้อง');
+  }
+
+  return {
+    success: true,
+    product: shopnoiProductById_(productId)
+  };
+}
+
+function getShopnoiProfileForAdmin_(p) {
+  requireAdmin_(p);
+  const profile = shopnoiProfile_();
+
+  return {
+    success: true,
+    profile: {
+      username: profile.username || '',
+      money: money_(profile.money)
+    }
+  };
+}
+
+function shopnoiPurchaseData_(value) {
+  if (Array.isArray(value)) {
+    return value.map(String);
+  }
+
+  if (value === undefined || value === null || value === '') {
+    return [];
+  }
+
+  return [
+    typeof value === 'string'
+      ? value
+      : JSON.stringify(value)
+  ];
+}
+
+function parseStoredPurchaseData_(value) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  const text = String(value || '');
+  if (!text) return [];
+
+  try {
+    const parsed = JSON.parse(text);
+    return Array.isArray(parsed) ? parsed : [parsed];
+  } catch (error) {
+    return [text];
+  }
+}
+
+function ensureShopnoiPurchaseSchema_() {
+  ensureSchemaHeaders_(
+    sheet_('Purchases'),
+    SCHEMAS.Purchases
+  );
+}
+
+function buyShopnoiProduct_(p) {
+  const u = requireAuth_(p);
+  ensureShopnoiPurchaseSchema_();
+  const productId = String(p.productId || '').trim();
+  const quantity = Number(p.amount);
+  const coupon = String(p.coupon || '').trim().slice(0, 100);
+
+  if (!/^\d+$/.test(productId)) {
+    throw new Error('รหัสสินค้าไม่ถูกต้อง');
+  }
+
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    throw new Error('จำนวนสินค้าต้องเป็นเลขจำนวนเต็มตั้งแต่ 1 ขึ้นไป');
+  }
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) {
+    throw new Error('มีรายการอื่นกำลังดำเนินการ กรุณาลองใหม่อีกครั้ง');
+  }
+
+  let purchaseId = '';
+  let reservedTotal = 0;
+  let creditReserved = false;
+
+  try {
+    const product = shopnoiProductById_(productId);
+    const min = Math.max(1, Number(product.min) || 1);
+    const maxByApi = Math.max(min, Number(product.max) || quantity);
+    const available = Math.max(0, Number(product.amount) || 0);
+    const max = Math.min(maxByApi, available);
+
+    if (quantity < min) {
+      throw new Error('สินค้านี้สั่งขั้นต่ำ ' + min + ' ชิ้น');
+    }
+
+    if (available < quantity || quantity > max) {
+      throw new Error('สต็อกไม่เพียงพอ เหลือ ' + available + ' ชิ้น');
+    }
+
+    const unitPrice = money_(product.price);
+    if (unitPrice <= 0) {
+      throw new Error('ราคาสินค้าไม่ถูกต้อง');
+    }
+
+    reservedTotal = money_(unitPrice * quantity);
+    const freshUser = user_(u.username, true);
+
+    if (money_(freshUser.credit) < reservedTotal) {
+      throw new Error(
+        'เครดิตไม่เพียงพอ ต้องใช้ ' + reservedTotal.toFixed(2) + ' บาท'
+      );
+    }
+
+    let supplierBalanceBefore = null;
+    try {
+      supplierBalanceBefore = money_(shopnoiProfile_().money);
+    } catch (profileError) {
+      console.warn('Shopnoi profile before purchase unavailable');
+    }
+
+    purchaseId = newId_('SHP');
+    const newCreditAfterReserve = changeCredit_(
+      u.username,
+      -reservedTotal
+    );
+    creditReserved = true;
+
+    append_('Purchases', {
+      purchase_id: purchaseId,
+      username: u.username,
+      product_id: productId,
+      product_name: product.name || '',
+      price: reservedTotal,
+      item_data: '[]',
+      created_at: now_(),
+      quantity: quantity,
+      provider: 'shopnoi',
+      provider_order_id: '',
+      status: 'processing',
+      coupon: coupon,
+      updated_at: now_(),
+      error_message: ''
+    });
+
+    const purchaseRow = rows_('Purchases').find(function(row) {
+      return String(row.purchase_id) === purchaseId;
+    });
+
+    let response;
+    try {
+      response = shopnoiRequest_(
+        CONFIG.SHOPNOI.purchase,
+        {
+          action: 'buyProduct',
+          id: productId,
+          amount: quantity,
+          coupon: coupon
+        },
+        'post'
+      );
+    } catch (requestError) {
+      const refundedCredit = changeCredit_(u.username, reservedTotal);
+      creditReserved = false;
+
+      if (purchaseRow) {
+        updateRow_('Purchases', purchaseRow._row, {
+          status: 'failed_refunded',
+          updated_at: now_(),
+          error_message: safeError_(requestError)
+        });
+      }
+
+      throw new Error(
+        'เชื่อมต่อ Shopnoi ไม่สำเร็จ ระบบคืนเครดิตแล้ว (คงเหลือ ' +
+        refundedCredit.toFixed(2) +
+        ' บาท)'
+      );
+    }
+
+    if (!shopnoiSuccess_(response)) {
+      const reason = shopnoiError_(response, 'สั่งซื้อ Shopnoi ไม่สำเร็จ');
+      const refundedCredit = changeCredit_(u.username, reservedTotal);
+      creditReserved = false;
+
+      if (purchaseRow) {
+        updateRow_('Purchases', purchaseRow._row, {
+          status: 'failed_refunded',
+          updated_at: now_(),
+          error_message: reason
+        });
+      }
+
+      throw new Error(
+        reason +
+        ' — ระบบคืนเครดิตแล้ว (คงเหลือ ' +
+        refundedCredit.toFixed(2) +
+        ' บาท)'
+      );
+    }
+
+    // Shopnoi has accepted and fulfilled the order. From this point onward,
+    // never run the emergency full refund in finally, even if local history
+    // persistence or coupon reconciliation later encounters an error.
+    creditReserved = false;
+
+    const providerOrderId = String(
+      response.trans_id || response.order || response.order_id || ''
+    );
+    const deliveredItems = shopnoiPurchaseData_(response.data);
+    let chargedTotal = reservedTotal;
+
+    if (supplierBalanceBefore !== null) {
+      try {
+        const supplierBalanceAfter = money_(shopnoiProfile_().money);
+        const supplierCharge = money_(supplierBalanceBefore - supplierBalanceAfter);
+
+        if (supplierCharge >= 0 && supplierCharge <= reservedTotal) {
+          chargedTotal = supplierCharge;
+        }
+      } catch (profileError) {
+        console.warn('Shopnoi profile after purchase unavailable');
+      }
+    }
+
+    let finalCredit = newCreditAfterReserve;
+    const discountRefund = money_(reservedTotal - chargedTotal);
+    if (discountRefund > 0) {
+      finalCredit = changeCredit_(u.username, discountRefund);
+    }
+    if (purchaseRow) {
+      updateRow_('Purchases', purchaseRow._row, {
+        price: chargedTotal,
+        item_data: JSON.stringify(deliveredItems),
+        provider_order_id: providerOrderId,
+        status: 'completed',
+        updated_at: now_(),
+        error_message: ''
+      });
+    }
+
+    return {
+      success: true,
+      purchaseId: purchaseId,
+      orderId: providerOrderId || purchaseId,
+      productId: productId,
+      productName: product.name || '',
+      quantity: quantity,
+      unitPrice: unitPrice,
+      total: chargedTotal,
+      discount: discountRefund,
+      data: deliveredItems,
+      newCredit: finalCredit,
+      status: 'completed'
+    };
+  } finally {
+    if (creditReserved && reservedTotal > 0) {
+      try {
+        changeCredit_(u.username, reservedTotal);
+      } catch (refundError) {
+        console.error('Emergency Shopnoi credit refund failed: ' + safeError_(refundError));
+      }
+    }
+
+    lock.releaseLock();
+  }
+}
+
+function getMyShopnoiPurchases_(p) {
+  const u = requireAuth_(p);
+  ensureShopnoiPurchaseSchema_();
+
+  const purchases = rows_('Purchases')
+    .filter(function(row) {
+      return (
+        key_(row.username) === key_(u.username) &&
+        key_(row.provider) === 'shopnoi'
+      );
+    })
+    .sort(function(a, b) {
+      return String(b.created_at).localeCompare(String(a.created_at));
+    })
+    .slice(0, 100)
+    .map(function(row) {
+      return {
+        purchaseId: row.purchase_id,
+        orderId: row.provider_order_id || row.purchase_id,
+        productId: row.product_id,
+        productName: row.product_name,
+        quantity: Number(row.quantity) || 1,
+        total: money_(row.price),
+        data: parseStoredPurchaseData_(row.item_data),
+        status: row.status || 'completed',
+        coupon: row.coupon || '',
+        createdAt: row.created_at,
+        updatedAt: row.updated_at || row.created_at,
+        errorMessage: row.error_message || ''
+      };
+    });
+
+  return {
+    success: true,
+    purchases: purchases
+  };
+}
+
+function getMyShopnoiOrder_(p) {
+  const u = requireAuth_(p);
+  ensureShopnoiPurchaseSchema_();
+  const orderId = String(p.orderId || '').trim();
+
+  if (!orderId) {
+    throw new Error('ไม่พบรหัสคำสั่งซื้อ');
+  }
+
+  const purchase = rows_('Purchases').find(function(row) {
+    return (
+      key_(row.username) === key_(u.username) &&
+      key_(row.provider) === 'shopnoi' &&
+      String(row.provider_order_id || row.purchase_id) === orderId
+    );
+  });
+
+  if (!purchase) {
+    throw new Error('ไม่พบคำสั่งซื้อของบัญชีนี้');
+  }
+
+  if (!purchase.provider_order_id) {
+    return {
+      success: true,
+      order: {
+        orderId: purchase.purchase_id,
+        status: purchase.status || 'processing',
+        data: parseStoredPurchaseData_(purchase.item_data),
+        message: purchase.error_message || ''
+      }
+    };
+  }
+
+  const response = shopnoiRequest_(
+    CONFIG.SHOPNOI.order,
+    { order: purchase.provider_order_id },
+    'get'
+  );
+
+  if (!shopnoiSuccess_(response)) {
+    throw new Error(
+      shopnoiError_(response, 'ตรวจสอบคำสั่งซื้อไม่สำเร็จ')
+    );
+  }
+
+  return {
+    success: true,
+    order: response.order || response.data || response
+  };
+}
 
 function buyProduct_(p) {
   const u = requireAuth_(p);
