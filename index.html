@@ -257,6 +257,7 @@
     let selectedProviderId = "";
     let showAllServices = false;
     let showAllCountries = false;
+    let providerRequestId = 0;
 
     const $ = id => document.getElementById(id);
     async function api(action, payload = {}) {
@@ -415,7 +416,6 @@
       const matches = services.filter(x => normalized(x.name).includes(query));
       const visible = (query || showAllServices) ? matches : matches.slice(0, 24);
       $("serviceGrid").innerHTML = visible.length ? visible.map(item => `<button type="button" class="choice-card service-card ${String(item.ID) === $("serviceSelect").value ? "selected" : ""}" data-service-id="${escapeHtml(item.ID)}">${appLogoMarkup(item)}<span class="choice-name">${escapeHtml(item.name)}</span><i class="fa-solid fa-check card-check"></i></button>`).join("") + (!query && matches.length > 24 ? `<button type="button" class="show-more" data-show-services>${showAllServices ? "แสดงน้อยลง" : `แสดงทั้งหมด ${matches.length.toLocaleString("th-TH")} บริการ`} <i class="fa-solid fa-chevron-down"></i></button>` : "") : `<div class="choice-empty">ไม่พบบริการที่ค้นหา</div>`;
-      document.querySelectorAll("[data-service-id]").forEach(button => button.addEventListener("click", () => { $("serviceSelect").value = button.dataset.serviceId; $("serviceSelect").dispatchEvent(new Event("change")); }));
       document.querySelector("[data-show-services]")?.addEventListener("click", () => { showAllServices = !showAllServices; renderServiceCards(); });
     }
     function renderCountryCards() {
@@ -423,7 +423,6 @@
       const matches = rankByPopular(countries.filter(x => normalized(`${x.name || ""} ${x.code || ""}`).includes(query)), item => `${item.name || ""} ${item.code || ""}`, popularCountries);
       const visible = (query || showAllCountries) ? matches : matches.slice(0, 24);
       $("countryGrid").innerHTML = visible.length ? visible.map(item => { const id = item.country_id || item.id, name = item.name || item.code || id; return `<button type="button" class="choice-card country-card ${String(id) === $("countrySelect").value ? "selected" : ""}" data-country-id="${escapeHtml(id)}"><span class="country-flag">${countryFlag(item)}</span><span>${escapeHtml(name)}</span><i class="fa-solid fa-check card-check"></i></button>`; }).join("") + (!query && matches.length > 24 ? `<button type="button" class="show-more" data-show-countries>${showAllCountries ? "แสดงน้อยลง" : `แสดงทั้งหมด ${matches.length.toLocaleString("th-TH")} ประเทศ`} <i class="fa-solid fa-chevron-down"></i></button>` : "") : `<div class="choice-empty">ไม่พบประเทศที่ค้นหา</div>`;
-      document.querySelectorAll("[data-country-id]").forEach(button => button.addEventListener("click", () => { $("countrySelect").value = button.dataset.countryId; $("countrySelect").dispatchEvent(new Event("change")); }));
       document.querySelector("[data-show-countries]")?.addEventListener("click", () => { showAllCountries = !showAllCountries; renderCountryCards(); });
     }
     function resetProviders(message = "เลือกบริการและประเทศก่อน") {
@@ -448,6 +447,7 @@
     }
 
     $("serviceSelect").addEventListener("change", async event => {
+      providerRequestId++;
       resetProviders("เลือกประเทศเพื่อดู Provider ทั้งหมด");
       const country = $("countrySelect"); country.disabled = true; country.innerHTML = `<option value="">กำลังโหลดประเทศ...</option>`;
       countries = []; showAllCountries = false; $("countrySearch").value = ""; $("countrySearch").disabled = true; $("countryGrid").innerHTML = `<div class="choice-empty"><i class="fa-solid fa-circle-notch fa-spin"></i> กำลังโหลดประเทศ...</div>`; $("countryHint").textContent = "กำลังค้นหาประเทศที่รองรับ"; $("selectionText").textContent = "เลือกประเทศเพื่อดูราคา"; renderServiceCards();
@@ -459,18 +459,48 @@
       country.disabled = false; $("countrySearch").disabled = false; $("countryCount").textContent = `${countries.length.toLocaleString("th-TH")} ประเทศ`; $("countryHint").textContent = `ประเทศที่รองรับสำหรับ ${selectedService()?.name || "บริการนี้"}`; renderCountryCards();
     });
 
-    $("countrySelect").addEventListener("change", async event => {
+    $("serviceGrid").addEventListener("click", event => {
+      const card = event.target.closest("[data-service-id]");
+      if (!card || !$("serviceGrid").contains(card)) return;
+      event.preventDefault();
+      $("serviceSelect").value = card.dataset.serviceId;
+      $("serviceSelect").dispatchEvent(new Event("change"));
+    });
+
+    async function selectCountry(countryId) {
+      const countrySelect = $("countrySelect");
+      if (!countryId || countrySelect.disabled || ![...countrySelect.options].some(option => option.value === String(countryId))) return;
+      countrySelect.value = String(countryId);
+      renderCountryCards();
+      const requestId = ++providerRequestId;
       resetProviders("กำลังโหลด Provider และราคา...");
-      if (!event.target.value) return;
+      $("countryGrid").setAttribute("aria-busy", "true");
       try {
-        const result = await api("getProviderOptions", { serviceId: $("serviceSelect").value, countryId: event.target.value });
+        const result = await api("getProviderOptions", { serviceId: $("serviceSelect").value, countryId: countrySelect.value });
+        if (requestId !== providerRequestId) return;
         if (!result.success) throw new Error(result.message || "ไม่สามารถโหลด Provider ได้");
         providerOptions = result.providers || [];
         $("providerCount").textContent = `${providerOptions.length.toLocaleString("th-TH")} Provider`;
         $("providerHint").textContent = "เลือก Provider ที่เหมาะกับราคาและจำนวนเบอร์ที่ต้องการ";
         renderProviderCards(); renderCountryCards();
-      } catch (error) { resetProviders(error.message || "ไม่สามารถโหลด Provider ได้"); }
+        $("providerGrid").closest(".provider-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch (error) {
+        if (requestId !== providerRequestId) return;
+        const message = error.message || "ไม่สามารถโหลด Provider ได้";
+        resetProviders(message); toast(message);
+      } finally {
+        if (requestId === providerRequestId) $("countryGrid").removeAttribute("aria-busy");
+      }
+    }
+
+    // Delegation keeps country cards tappable after the grid is redrawn on mobile Safari.
+    $("countryGrid").addEventListener("click", event => {
+      const card = event.target.closest("[data-country-id]");
+      if (!card || !$("countryGrid").contains(card)) return;
+      event.preventDefault();
+      selectCountry(card.dataset.countryId);
     });
+    $("countrySelect").addEventListener("change", event => selectCountry(event.target.value));
 
     function openPurchaseModal() {
       if (currentQuote === null || !selectedProvider()) return;

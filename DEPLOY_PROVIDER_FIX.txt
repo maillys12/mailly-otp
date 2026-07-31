@@ -1,0 +1,19 @@
+Provider list fix
+=================
+
+The website now sends the action: getProviderOptions
+
+This ZIP includes the matching Google Apps Script implementation in Code.gs:
+
+  case 'getProviderOptions':
+    return getProviderOptions_(p);
+
+To make the Provider cards appear on the live site:
+
+1. Open the same Google Apps Script project used by the Vercel website.
+2. Replace its Code.gs with this ZIP's Code.gs.
+3. Save, then Deploy > Manage deployments > Edit > New version > Deploy.
+4. Confirm that the URL in index.html (API_URL) is that same deployment URL.
+
+The API key remains in Apps Script Script Properties under OTP_SMS_API_KEY.
+Do not put the key in index.html.

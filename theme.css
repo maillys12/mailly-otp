@@ -63,9 +63,10 @@ button, a, input, select, textarea { transition: border-color .18s ease, backgro
 .card-search input::placeholder { color: #9ba2b3; }
 .card-search:has(input:disabled) { opacity: .62; }
 .choice-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; max-height: 474px; padding-right: 3px; overflow: auto; }
-.choice-card { position: relative; display: flex; min-height: 112px; flex-direction: column; align-items: center; justify-content: center; gap: 9px; padding: 11px 7px; color: #333c59; border: 1px solid #e5e9f4; border-radius: 17px; background: #fff; font: 700 12px Prompt,Inter,sans-serif; line-height: 1.25; text-align: center; overflow: hidden; }
+.choice-card { position: relative; display: flex; min-height: 112px; flex-direction: column; align-items: center; justify-content: center; gap: 9px; padding: 11px 7px; color: #333c59; border: 1px solid #e5e9f4; border-radius: 17px; background: #fff; font: 700 12px Prompt,Inter,sans-serif; line-height: 1.25; text-align: center; overflow: hidden; cursor: pointer; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
 .choice-card:hover { transform: translateY(-2px); border-color: #ffb087; box-shadow: 0 10px 22px rgba(34,42,82,.09); }
 .choice-card.selected { color: #c55324; background: linear-gradient(145deg,#fff8f3,#fff); border: 2px solid #ff7d42; box-shadow: 0 8px 18px rgba(255,112,55,.13); }
+.choice-grid[aria-busy="true"] { opacity: .72; }
 .app-logo, .service-icon, .country-flag { display: grid; width: 44px; height: 44px; flex: 0 0 44px; place-items: center; border-radius: 14px; background: #f5f7fb; color: #475171; font-size: 19px; }
 .app-logo { padding: 7px; background: #fff; border: 1px solid #eef0f5; box-shadow: 0 3px 9px rgba(38,47,76,.05); }
 .app-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
